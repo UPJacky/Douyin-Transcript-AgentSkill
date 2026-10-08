@@ -1,0 +1,38 @@
+# Python environments and build output
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Test and tool caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# User data, browser sessions, models, media, and generated transcripts
+browser-profile/
+models/
+cache/
+logs/
+output/
+douyin-transcripts/
+*.sqlite
+*.sqlite3
+*.db
+*.part
+*.mp3
+*.m4a
+*.wav
+*.mp4
+*.mov
+*.md.tmp

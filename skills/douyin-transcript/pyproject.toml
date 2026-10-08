@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "douyin-transcript"
+version = "0.1.0"
+description = "Local-first Douyin speech transcription CLI and Agent Skill"
+requires-python = ">=3.11,<3.13"
+dependencies = []
+
+[project.scripts]
+douyin-transcript = "douyin_transcript.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+    "ruff>=0.14,<0.15",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/douyin_transcript"]
+
+[tool.pytest.ini_options]
+testpaths = ["../../tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
