@@ -10,7 +10,7 @@ The following reflects the local worktree as checked on 2026-10-09. Mocked or of
 
 | Area | Status |
 | --- | --- |
-| Windows offline regression | Latest worktree suite on Python 3.11.15: 382 passed, 20 skipped; whole-tree Ruff and sensitive-file scanning passed (2026-10-09). Python 3.12.13 last passed 376 tests with 20 skipped before this round's changes and has not been rerun. Skips include POSIX-only checks and tests requiring symlink creation unavailable on this host. |
+| Windows offline regression | Latest worktree suites on Python 3.11.15 and 3.12.13: 382 passed, 20 skipped each; whole-tree Ruff and sensitive-file scanning passed (2026-10-09). Skips include POSIX-only checks and tests requiring symlink creation unavailable on this host. |
 | macOS and Linux | Not verified on these operating systems. They are included in the CI configuration, but no remote CI run has been recorded. |
 | Real local ASR | Not verified with an authorized sample or downloaded model. Recognition quality and runtime are unknown. |
 | Douyin browser capture and download | Not verified with real links, login, or media. No account was used for this validation. |

@@ -8,6 +8,8 @@ No authorized Chinese speech sample has been processed with the real pinned mode
 
 - OS: Windows 11 Enterprise LTSC, version 10.0.26100 (build 26100)
 - Python: 3.11.15 (CPython)
+- CPU: 12th Gen Intel(R) Core(TM) i5-12400; 12 logical processors
+- Installed RAM: 31.7 GiB
 - `doctor --json`: `setup_required`; the Skill project's Python environment lacks faster-whisper, PyAV, model weights, Playwright, and Chromium (a separate system Python has faster-whisper 1.2.1 and PyAV 18.0.0, outside the Skill runtime)
 - Effective application data path: `%USERPROFILE%\.local\share\douyin-transcript`; not created
 - Default workspace output directory: `unsafe` on this host because the D: root grants Authenticated Users directory-replacement rights; do not use it for private transcripts
@@ -28,8 +30,8 @@ No authorized Chinese speech sample has been processed with the real pinned mode
 
 - OS and version: Windows 11 Enterprise LTSC, version 10.0.26100 (build 26100)
 - Python version: 3.11.15 (CPython)
-- CPU and logical cores: NOT MEASURED
-- RAM: NOT MEASURED
+- CPU and logical cores: 12th Gen Intel(R) Core(TM) i5-12400; 12 logical processors
+- Installed RAM: 31.7 GiB
 - faster-whisper / PyAV versions: NOT INSTALLED
 - Model repository and pinned revision: NOT DOWNLOADED
 - Model file digest / provenance: NOT MEASURED

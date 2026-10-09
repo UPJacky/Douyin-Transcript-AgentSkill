@@ -21,7 +21,7 @@ def strip_display_controls(text: str) -> str:
         if (
             character not in BIDI_CONTROLS
             and ord(character) >= 32
-            and ord(character) != 127
+            and not 127 <= ord(character) <= 159
         )
     )
 

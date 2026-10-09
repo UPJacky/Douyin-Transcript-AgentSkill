@@ -16,7 +16,9 @@ This file records the evidence available in the current local worktree. A unit t
 
 ## Local verification
 
-Latest local rerun (2026-10-09): Python 3.11.15 full suite **382 passed, 20 skipped**; the GitHub Actions Ruff paths, lock consistency, sensitive-file scan, and `git diff --check` passed. Python 3.12.13 `compileall` passed, but pytest is not installed for that interpreter, so the current 3.12 full suite remains unverified. Older Python 3.12 results apply to an earlier worktree snapshot.
+Latest local rerun (2026-10-09): Python 3.11.15 and Python 3.12.13 full suites each reported **382 passed, 20 skipped**. Python 3.12.13 ran in a separate temporary environment outside the repository with locked development dependencies and `UV_OFFLINE=1`. The GitHub Actions Ruff paths, lock consistency, sensitive-file scan, and `git diff --check` passed. Platform-specific skips remain; older 376/20 results apply to an earlier worktree snapshot.
+
+SEC-31 was dynamically checked with the locked PyAV 15.1.0 Windows wheel in a temporary environment: a synthetic HLS playlist referencing a loopback segment invoked the deny callback once and made zero mock-server requests; a synthetic 1-second PCM WAV validated. This confirms the tested Windows wheel behavior only; macOS/Linux wheels and additional media formats remain unverified.
 
 Run from the repository root in PowerShell:
 

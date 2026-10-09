@@ -402,7 +402,7 @@ def _clean_plain_text(value: str | None) -> str | None:
         return None
     # Page metadata is untrusted. Remove terminal and bidirectional controls
     # before it reaches console output, filenames, or a Markdown heading.
-    value = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", value)
+    value = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]", "", value)
     value = strip_bidi_controls(value)
     cleaned = " ".join(value.split()).strip()
     return cleaned or None

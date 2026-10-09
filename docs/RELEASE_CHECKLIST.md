@@ -8,7 +8,7 @@ Release state: **NOT READY**. Keep this checklist as a gate; checked boxes requi
 - [ ] P2 three authorized Douyin URL checks completed and documented in `P2_REPORT.md`.
 - [ ] P4 real transcript review completed: listen to at least three passages across clear Mandarin, Chinese with English terms, and speech with background music/pauses; record a 10+ minute run and check that stdout/stderr/Agent summaries do not contain the transcript body in `P1_REPORT.md` and `BENCHMARK.md`.
 - [x] Current worktree full Windows offline suite passed on Python 3.11.15: 382 passed, 20 skipped.
-- [ ] Re-run the full Windows offline suite on Python 3.12.13 after the latest worktree changes. Python 3.12.13 is available, but pytest is not installed in that interpreter environment; `compileall` passed and does not replace this test gate. The previous 376 passed, 20 skipped result predates this worktree.
+- [x] Re-run the full Windows offline suite on Python 3.12.13 after the latest code changes: 382 passed, 20 skipped, using locked development dependencies in a separate temporary environment with `UV_OFFLINE=1`.
 - [ ] Run and pass the Windows/macOS/Linux CI matrix on the release commit; explain any skipped platform tests.
 - [ ] Re-run both full suites and local release checks on the final release commit; run `git diff --check` and review untracked/staged files before committing.
 - [ ] Clean installation from the remote repository succeeds without access to the developer's checkout, model cache, or browser profile.
@@ -21,14 +21,14 @@ Release state: **NOT READY**. Keep this checklist as a gate; checked boxes requi
 - [x] AUD-53 recovery media/output checks run outside the SQLite write transaction; a second connection can write during slow validation, and a refreshed claim is preserved by snapshot recheck.
 - [x] SEC-28 sensitive-file checker rejects Git-visible files under generic `cache/` directories, including unknown extensions.
 - [x] Current worktree `python scripts/check_sensitive_files.py` passed for Git-visible files. The check fails closed on symlinks, non-regular files, files over 2 MiB, binary/NUL content, non-UTF-8 content, or read errors; it does not scan Git history and is not a general secret scanner.
-- [x] A read-only scan of all 3 current local commits covered 98 unique path/blob pairs with the known sensitive-path and high-confidence credential rules and found no hits; a targeted search found no exact workstation/user-profile markers. This is limited automated evidence, not a general secret-history scanner.
+- [x] A read-only scan of all four commits reachable from current HEAD `154d9ef` covered 101 unique path/blob pairs; all 101 were UTF-8 text under 2 MiB. The repository sensitive-path and high-confidence credential rules found no hits, and exact workspace-root/user-profile markers were absent. This is limited automated evidence, not a general secret-history scanner; repeat it for the final release commit and complete the manual review.
 - [ ] Before release, check the staged/release tree and full Git history for Cookie, token, private transcript, media cache, model weights, browser profile, task database, or local path data. The automated check is not a full secret-history scan.
 - [ ] Verify `doctor` reports the effective private data location and permissions on supported hosts.
 - [ ] Verify `doctor --output-dir`, dry-run, transcription, and retry report the actual output directory permissions on Windows/macOS/Linux; confirm shared-folder warnings do not change existing ACLs.
 - [ ] Recheck setup prompts before dependency/model/Chromium downloads and preserve no-bypass behavior for login, CAPTCHA, DRM, and access controls.
-- [ ] After authorized installation of the locked PyAV wheel, verify SEC-31 with a local HLS mock whose playlist references loopback; confirm no child request occurs and ordinary local media still validates.
+- [x] SEC-31 dynamic check on the locked Windows PyAV 15.1.0 wheel: synthetic HLS triggered the deny callback once with zero loopback requests; a synthetic 1-second PCM WAV validated. macOS/Linux wheels remain untested.
 - [x] Initial upstream license review for the pinned ASR code/model and Playwright Python package recorded in `docs/THIRD_PARTY_LICENSE_REVIEW.md`.
-- [ ] Audit the exact PyAV wheels' bundled FFmpeg configuration/notices for supported platforms and complete an SPDX inventory of all locked transitive dependencies before binary distribution.
+- [ ] Resolve PyAV 15.1.0 wheel licensing before any binary distribution: the tested Windows wheel contains and exposes `libx264`/`libx265`; inspect its exact FFmpeg build configuration, applicable notices/source and any license exception, then repeat for macOS/Linux wheels. Complete an SPDX inventory of all locked transitive dependencies.
 
 ## Repository owner decisions
 

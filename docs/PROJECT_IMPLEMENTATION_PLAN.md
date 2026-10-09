@@ -982,7 +982,8 @@ Git commit：<commit id>
 - [x] SEC-13：POSIX 敏感目标同时校验有效 UID 与 mode 位；完整祖先链另见 SEC-15
 - [ ] SEC-14：在目标 Agent 宿主验证远端标题/路径作为不可信输出数据处理（候选风险，尚未确认为漏洞）
 - [x] AUD-19：cache clean 在事务外扫描/规划，对每个候选用短事务重核任务 claim、媒体引用及本地输入路径，并在事务中做身份绑定删除；直接 cache API 默认保留 partial。AUD-56/57 回归见审核报告；单次 OS unlink 仍无严格时限保证。
-- [ ] SEC-15：敏感路径使用词法绝对路径，Windows 新目录原子设置 protected DACL，配置读取使用已检查句柄；`TaskStore` 保留词法路径。目录树和排他文件创建已局部加固：POSIX 使用 dir-fd 相对操作并核验对象身份，Windows 通过句柄校验目录/文件身份、创建文件时应用私有 DACL。SQLite、Playwright、模型下载等接口仍按 pathname 使用。当前没有证实跨用户利用；Windows ABA 窗口、DACL 属性、第二账户和 POSIX 实机集成仍待验收
+- [x] SEC-15 本地源码整改：敏感路径使用词法绝对路径；Windows 新目录在创建时应用 protected DACL；配置通过权限检查过的句柄读取；`TaskStore` 保留词法路径。目录树和排他文件创建已加固：POSIX 使用 dir-fd 相对操作并核验对象身份，Windows 通过句柄校验目录/文件身份并在创建文件时应用私有 DACL。源码与 Windows/模拟回归证据见审核报告 SEC-15。
+- [ ] SEC-15 平台与剩余边界验收：SQLite、Playwright、模型下载等第三方接口仍按 pathname 使用；Windows ABA 窗口/DACL 继承属性、第二账户和 POSIX 实机行为仍待验收。当前没有证实跨账户利用；不能把本地源码整改表述为跨平台边界已完全消除。
 - [x] SEC-16：不安全且不存在的 `%LOCALAPPDATA%` 数据目录改用受信用户 profile fallback；已有旧目录保留并拒绝写入，避免静默隐藏用户数据。本机 `doctor`/目录创建测试通过；多 Windows 环境验证待 CI
 - [x] SEC-17：ASR 显式模型路径校验后使用 canonical path；alias 替换回归通过。真实权重未下载
 - [x] SEC-18：外部 Hugging Face cache 检查 owner/祖先；blob ETag 内容摘要校验；共享缓存和替换内容回归通过。真实 Hub cache 未运行
@@ -1101,4 +1102,4 @@ Git commit：<commit id>
 
 > 2026-10-09 P6 初步许可来源复核：核对了锁定的 faster-whisper 1.2.1、Medium 模型固定 revision、Playwright 1.63.0 与 PyAV 15.1.0 的上游许可证/安装路径，新增 `docs/THIRD_PARTY_LICENSE_REVIEW.md`。PyAV wheel 链接 FFmpeg，但该版本各平台 wheel 内的 FFmpeg 构建配置/notice 尚未核查；完整依赖 SPDX 清单、项目 LICENSE 选择及二进制分发审阅仍待完成，发布门保持 NOT READY。
 
-> 2026-10-09 本轮项目收尾：整改 SEC-30 标题双向控制字符、SEC-31 PyAV 二次资源打开边界、SEC-32 敏感文件扫描静默跳过，并补齐 DOC-16/17 和计划中的三个 examples 文件。Windows Python 3.11.15 全套 **382 passed, 20 skipped**，全仓 Ruff、敏感文件扫描和 `git diff --check` 通过；Python 3.12.13 尚未重跑本轮改动。Skill 项目 venv 未安装锁定 PyAV 15.1.0；系统 Hermes Python 的 PyAV 18.0.0 已完成 loopback HLS 回调与合成 WAV 补充动态检查，锁定 wheel 验收仍待做。真实 P1/P2/P4/P5、跨平台 CI、许可证及发布决定仍未完成，整体 NOT READY；详见 `docs/PROJECT_AUDIT_REPORT.md`。
+> 2026-10-09 本轮项目收尾：整改 SEC-30 标题双向控制字符、SEC-31 PyAV 二次资源打开边界、SEC-32 敏感文件扫描静默跳过，并补齐 DOC-16/17 和计划中的三个 examples 文件；后续新增 SEC-33 C1 控制字符边界修复。Windows Python 3.11.15 与 3.12.13 全套均 **382 passed, 20 skipped**，全仓 Ruff、敏感文件扫描和 `git diff --check` 通过。锁定 PyAV 15.1.0 / FFmpeg libavformat 61.7.100 的 Windows 临时环境动态验收通过：HLS 子请求被拒绝且 loopback 请求为 0，合成 WAV 通过。真实 P1/P2/P4/P5、跨平台 CI、许可证及发布决定仍未完成，整体 NOT READY；详见 `docs/PROJECT_AUDIT_REPORT.md`。

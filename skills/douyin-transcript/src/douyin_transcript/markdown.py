@@ -21,7 +21,7 @@ from .text_safety import show_bidi_controls, strip_display_controls
 
 _KEY = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
 _LINE_BREAK = re.compile(r"(\r\n|\r|\n)")
-_NON_LINEBREAK_CONTROLS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+_NON_LINEBREAK_CONTROLS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]")
 # Leaves bounded room for a supported 256 KiB terminology ruleset after its
 # archive JSON is quoted again as a YAML scalar.
 MAX_FRONTMATTER_CHARACTERS = 4 * 1024 * 1024

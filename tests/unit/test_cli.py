@@ -236,14 +236,15 @@ def test_transcribe_rejects_oversized_positional_batch_before_creating_data_dir(
 
 def test_summary_terminal_output_strips_title_controls(capsys):
     summary = make_summary(
-        [ItemResult("success", title="safe\x1b[2J\x07\x7ftext", output_path="out.md")],
+        [ItemResult("success", title="safe\x1b[2J\x07\x7f\x85\x9btext", output_path="out.md")],
         ".",
     )
 
     cli._print_summary(summary, as_json=False, quiet=False)
 
     output = capsys.readouterr().out
-    assert "\x1b" not in output and "\x07" not in output and "\x7f" not in output
+    assert not any(0x7F <= ord(character) <= 0x9F for character in output)
+    assert "\x1b" not in output and "\x07" not in output
     assert "safe[2Jtext" in output
 
 

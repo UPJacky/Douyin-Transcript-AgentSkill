@@ -38,11 +38,11 @@ class FakeResponse:
     request = FakeRequest()
 
 
-def test_untrusted_page_title_drops_c0_and_del_control_characters():
-    cleaned = _clean_title("Title\x1b[31m\x07\x7f\u202e\tcontinued")
+def test_untrusted_page_title_drops_c0_c1_and_bidi_controls():
+    cleaned = _clean_title("Title\x1b[31m\x07\x7f\x85\x9b\u202e\tcontinued")
 
     assert cleaned == "Title[31m continued"
-    assert not any(ord(character) < 32 or ord(character) == 127 for character in cleaned)
+    assert not any(ord(character) < 32 or 127 <= ord(character) <= 159 for character in cleaned)
     assert "\u202e" not in cleaned
 
 

@@ -2,14 +2,14 @@
 
 - 审核日期：2026-10-09（Asia/Shanghai）
 - 项目：Douyin-Transcript-AgentSkill / `douyin-transcript`
-- 审核对象：本地实现检查点 `f298f11` 及其文档续审；不代表远端仓库或已发布版本
+- 审核对象：HEAD `154d9ef` 与当前工作树差异，结合 `f298f11` 以来的实现和历史复核记录；不代表远端仓库或已发布版本
 - 审核范围：CLI、URL 与网络边界、浏览器代理、下载、ASR、缓存、SQLite、文件权限、Markdown 输出、Skill 包、CI 与项目验收清单
 - 审核方式：源码与验收清单复核、Windows 本地离线单元/模拟测试、Codex Security 工作树差异扫描、Ruff、锁文件检查、Agent Skills 标准校验、仓库外干净安装命令验证；本地补充复测记录见第 9 节
 - 范围限制：未访问抖音或真实媒体，未登录账号，未下载模型或 Chromium，未执行远端 CI；Linux/macOS 实机行为未验证
 
 ## 1. 结论
 
-项目已有多轮源码整改与离线回归，覆盖敏感路径、配置句柄读取、任务/输出完整性、网络 deadline、下载取消、缓存清理和发布材料。AUD-64 至 AUD-66 阶段的 Windows Python 3.11.15 和 3.12.13 全套离线测试均为 **366 passed, 20 skipped**；此前统一快照为 **376 passed, 20 skipped**。本次本地整改后 Python 3.11.15 全套为 **382 passed, 20 skipped**；Python 3.12.13 尚未重跑本次改动。AUD-64/66 已完成本地整改与回归；AUD-65 已加入模型下载前的空间复查，uv/Chromium 动态占用仍只能预估，setup 明确预检只是快照。DOC-07 至 DOC-11 的 Skill 隐私、安装和 CI 说明已统一，ENG-02 已隔离干净安装脚本的虚拟环境。跳过项是 POSIX 专属权限/FIFO/symlink 用例或本机 symlink 能力限制，不能替代 Linux/macOS 实测。AUD-52 仍开放：安全创建后的身份校验失败可能留下私有文件或目录，当前策略保留对象并明确提示，避免按可变名称竞态删除。真实 ASR、抖音/Chromium、人工听审、性能记录、目标 Agent、远端 CI、许可证选择和发布授权尚未完成，整体 **NOT READY**。
+项目已有多轮源码整改与离线回归，覆盖敏感路径、配置句柄读取、任务/输出完整性、网络 deadline、下载取消、缓存清理和发布材料。AUD-64 至 AUD-66 阶段的 Windows Python 3.11.15 和 3.12.13 全套离线测试均为 **366 passed, 20 skipped**；此前统一快照为 **376 passed, 20 skipped**。本次本地续审后 Windows Python 3.11.15 和 3.12.13 全套均为 **382 passed, 20 skipped**。AUD-64/66 已完成本地整改与回归；AUD-65 已加入模型下载前的空间复查，uv/Chromium 动态占用仍只能预估，setup 明确预检只是快照。DOC-07 至 DOC-11 的 Skill 隐私、安装和 CI 说明已统一，ENG-02 已隔离干净安装脚本的虚拟环境。跳过项是 POSIX 专属权限/FIFO/symlink 用例或本机 symlink 能力限制，不能替代 Linux/macOS 实测。AUD-52 仍开放：安全创建后的身份校验失败可能留下私有文件或目录，当前策略保留对象并明确提示，避免按可变名称竞态删除。真实 ASR、抖音/Chromium、人工听审、性能记录、目标 Agent、远端 CI、许可证选择和发布授权尚未完成，整体 **NOT READY**。
 
 2026-10-09 独立复核发现 AUD-56（已整改）：缓存扫描与批量规划已移出 SQLite 写事务，删除前按单个候选短暂协调任务引用并复核文件身份；两个写连接和活动下载竞态已有回归。后续复核另发现 AUD-57（已整改）：已记录的本地源文件也纳入缓存保护。AUD-58 至 AUD-63 已完成本地代码整改和回归；真实 Chromium 集成仍待 P2 验收，见第 4 节及 P2 门槛。DOC-07 至 DOC-11 和 ENG-02 已修复并加入回归覆盖。
 
@@ -21,7 +21,7 @@ P6 本地清单复核另发现 CI 只运行测试与 Ruff，没有项目计划�
 
 复核新增 SEC-20 至 SEC-26 与 AUD-30 至 AUD-44。SEC-20 的词法 `..` 路径差异已拒绝，配置读取现在从通过权限检查的同一文件句柄解析；POSIX 使用目录句柄逐组件打开，Windows 对叶文件使用 reparse-aware handle 并从该句柄读取 ACL。SEC-21 的词典匹配工作量现在有累计预算；SEC-22 通过私有 SQLite 摘要绑定主稿；AUD-30/34/35 修复了旧配置 opt-in、本地失败重试状态和 force 快照更新。AUD-32/33 已将短链与浏览器 CONNECT 的解析、连接和响应步骤纳入 deadline，超时关闭 socket 并释放代理槽。SEC-23 已按实际解码样本累计时长并逐帧检查配置上限，也会跳过与 faster-whisper 一致的可恢复 `InvalidDataError`；真实媒体格式样本尚未验收。AUD-38 的重复全解码已通过验证身份交接整改并有回归，长媒体性能基准仍待授权样本。AUD-10 使用有界 JSON IPC worker；下载阶段现在受共享 deadline 限制，重试恢复原超时值，显式覆盖会更新快照。SEC-24 和 AUD-44 对敏感配置、URL 清单及词典 FIFO 使用非阻塞打开并按文件类型拒绝。SEC-25/26 的 Python 子进程已启用 safe-path，影子模块回归通过。AUD-39 统一 downloader 校验类型；AUD-43 现先将时间轴路径和摘要写入任务库，再原子发布；完成、skip、crash recovery 都验证 sidecar。旧 schema 中 completed/writing 且时间轴设置未知的任务 fail closed。上一轮结构化扫描的 5 项发现和此前 28 项 Diff Scan 的 1 项发现均绑定各自启动快照。2026-10-09 又完成一轮正式 Codex Security Diff Scan（Scan ID `8537ef61-e6e5-4b6a-8fc7-f162382c098a`，快照 digest `aa0314f296588ea1f7b0944b5e02167cfac1d57dea4fe9427d84f6c37f88e84a`）：28/28 个变更审查项完成复核，未发现新的可报告安全候选，扫描器 coverage 对该冻结差异为 complete。该结果不覆盖运行时行为和产品验收；POSIX 扩展 ACL、真实媒体/浏览器、Agent 宿主、远端 CI 等仍待验证。
 
-`retry-failed` 为新任务恢复非正文配置快照；旧任务无有效快照时默认跳过，只有显式 `--use-current-defaults` 才按当前配置排队。AUD-45 已将权限提示应用到配置目录和本次实际输出目标；AUD-46 已确保显式重试输出目录覆盖值写回快照。AUD-54/55/59–69 与 SEC-29 的本地整改均有回归覆盖；此前 Windows Python 3.11.15 和 3.12.13 全套均为 376 passed, 20 skipped。本次 Python 3.11.15 全套为 382 passed, 20 skipped；Python 3.12.13 需重跑本次改动。POSIX 扩展 ACL、真实媒体格式、SEC-15 其他 pathname-only/TOCTOU 边界、SEC-16 fallback、SEC-17/18、AUD-21 多机/真实缓存/第二账户集成仍待验收。SEC-14 需目标 Agent 宿主验证。真实本地 ASR、真实 Chromium/抖音链路、跨平台远端 CI、真实 Agent 调用和许可证决定仍未完成。缓存需用户主动清理。项目仍未达到真实产品与发布门槛。
+`retry-failed` 为新任务恢复非正文配置快照；旧任务无有效快照时默认跳过，只有显式 `--use-current-defaults` 才按当前配置排队。AUD-45 已将权限提示应用到配置目录和本次实际输出目标；AUD-46 已确保显式重试输出目录覆盖值写回快照。AUD-54/55/59–69 与 SEC-29 的本地整改均有回归覆盖；此前 Windows Python 3.11.15 和 3.12.13 全套均为 376 passed, 20 skipped。本次 Python 3.11.15 和 3.12.13 全套均为 382 passed, 20 skipped。POSIX 扩展 ACL、真实媒体格式、SEC-15 其他 pathname-only/TOCTOU 边界、SEC-16 fallback、SEC-17/18、AUD-21 多机/真实缓存/第二账户集成仍待验收。SEC-14 需目标 Agent 宿主验证。真实本地 ASR、真实 Chromium/抖音链路、跨平台远端 CI、真实 Agent 调用和许可证决定仍未完成。缓存需用户主动清理。项目仍未达到真实产品与发布门槛。
 
 ### 1.1 当前未完成项与对策（按项目阶段排序）
 
@@ -56,7 +56,7 @@ P6 本地清单复核另发现 CI 只运行测试与 Ruff，没有项目计划�
 | AUD-45/AUD-46，输出隐私诊断与重试快照 | 源码现检查配置目录、显式目录及重试快照目录；显式 `retry-failed --output-dir` 现在也持久化为该任务的新输出路径 | 已完成本机实现和回归；在 macOS/Linux 及 Windows 多账户 ACL 环境验证共享/未知路径诊断和继承行为，保持对已有目录只提示、不擅改 ACL |
 | P5，部分完成 | Skill validator 与离开仓库目录的离线干净副本安装/CLI dry-run 通过；真实 Agent 宿主调用未验证 | 在目标 Agent 宿主进行一次真实对话调用并确认只返回路径/简短状态；若调用真实媒体，仍须遵循 P1/P2 授权门槛 |
 | P6，尚未发布就绪 | 本机实现检查点 `f298f11` 已提交；无 remote、无远端 CI/GitHub 安装记录、无 LICENSE 决定 | 仓库所有者确认归属、名称、可见性、许可证和远端授权；配置 remote 后运行矩阵 CI 并验证远端干净安装 |
-| 安全覆盖 | 最新 Diff Scan 484bb340-323c-4bec-a20a-368b2fcd077d 已复核冻结差异内 30/30 个源码/配置审查项，0 项新候选；此前 Deep Scan 尝试因缺少 managed filesystem permission profile 未启动 | 仍需覆盖全仓及平台运行时的安全复核；POSIX ACL、Windows 多账户、真实浏览器/媒体和 Agent 宿主测试完成前，项目整体验收 coverage 仍为 partial |
+| 安全覆盖 | 最新记录的 Diff Scan `fd9a73df-3590-47b3-aada-ab36bde2fd61` 完成该冻结差异内 3/3 个源码审查项，0 项新候选；较早的 `484bb340-323c-4bec-a20a-368b2fcd077d` 完成 30/30 项；此前 Deep Scan 因缺少 managed filesystem permission profile 未启动 | 两次差异扫描都不覆盖全仓和平台运行时；POSIX ACL、Windows 多账户、真实浏览器/媒体和 Agent 宿主验收完成前，项目整体验收 coverage 仍为 partial |
 | AUD-47，代理隧道转发反压 | **已修复并本机回归**：非阻塞双向转发有 256 KiB 缓冲上限和 60 秒写等待上限；目的端停读后关闭隧道并释放槽位 | Linux/macOS 与真实 Chromium CONNECT 集成仍待平台验收；无新增代码对策 |
 | AUD-48，批量转写 Ctrl+C | **已修复并本机回归**：取消信号关闭活动下载连接、打断退避、取消待执行任务，并尽快关闭捕获/处理子进程；任务记为可重试的 `CANCELLED` | 有 deadline/取消的 DNS 现由 AUD-50 子进程处理并在退出时终止、回收；不带 deadline/取消的直接 helper 调用仍同步使用系统 resolver。真实 DNS、Chromium 与跨平台下载中断仍待集成验证 |
 | AUD-49，sidecar 崩溃恢复覆盖 | **已补齐回归**：先持久化预期 sidecar 路径/摘要，再模拟成功发布、缺失和摘要不符；只有绑定内容有效时才完成恢复 | Linux/macOS 文件系统行为仍待平台验收；无新增代码对策 |
@@ -69,7 +69,7 @@ P6 本地清单复核另发现 CI 只运行测试与 Ruff，没有项目计划�
 |---|---|---|
 | P0 CLI 启动与 doctor | **符合预期** | `douyin-transcript --help` 返回 0；`doctor --json` 返回 `setup_required`/退出码 1，并明确列出尚未安装的组件。doctor 没有创建数据目录或下载文件；缺少依赖是 P1 的环境门槛，不是 CLI 崩溃 |
 | Windows Python 3.11.15 离线 pytest（本轮源码与文档整改后） | **通过：382 passed, 20 skipped** | 当前代码全套结果；POSIX FIFO、权限、symlink 和 dir-fd 替换用例因平台限制跳过，不代表 Linux/macOS 行为已实机验证 |
-| Windows Python 3.12.13 离线 pytest（AUD-67–69、SEC-29 阶段） | **通过：376 passed, 20 skipped；待本轮复跑** | 最新 3.12 结果早于本轮改动；POSIX FIFO、权限、symlink 和 dir-fd 替换用例因平台限制跳过；远端 GitHub Actions 尚未运行 |
+| Windows Python 3.12.13 离线 pytest（本轮续审后，独立临时环境） | **通过：382 passed, 20 skipped** | 使用锁定开发依赖在仓库外独立环境运行；POSIX FIFO、权限、symlink 和 dir-fd 替换用例因平台限制跳过；远端 GitHub Actions 尚未运行 |
 | AUD-64–66 定向 pytest | **通过：107 passed, 3 skipped** | 覆盖不可信 fallback 输出 containment、依赖安装后模型空间复查、由控制字符扩大的真实术语 archive frontmatter、超限元数据在发布前拒绝。跳过为本机 symlink/FIFO 限制 |
 | SEC-15 独立复核及本轮整改 | **SEC-27 源码已整改；AUD-52 已加入提示并按私有残留策略处置** | 映射盘拒绝、unknown 诊断、失败创建残留提示有 Windows mock 回归；本机 GetDriveTypeW 将 C:、D: 识别为固定盘。没有真实映射盘可做集成验证，POSIX 消息行为未在本机实测 |
 | 配置、存储、doctor 与 CLI 定向 pytest | **通过：92 passed, 14 skipped** | 覆盖 Windows 创建/目录身份、配置句柄读取、doctor 与 CLI 路径检查；POSIX dir-fd、symlink、FIFO 和替换回归在本机跳过 |
@@ -88,7 +88,7 @@ P6 本地清单复核另发现 CI 只运行测试与 Ruff，没有项目计划�
 | 上一轮结构化安全扫描与修复复核 | **已完成：5 项源码发现（1 项中危、4 项低危），coverage partial** | 涵盖配置路径检查/读取不一致、术语匹配 CPU 工作量、远端输出关联真实性、短链 deadline、浏览器代理二次 DNS deadline。SEC-23 源码已改为计数实际解码帧，但真实畸形时长样本与损坏帧兼容性仍待确认；项目估算 75 个文件，本轮没有逐文件覆盖全仓。扫描工具提示扫描期间工作树变化，结构化报告对应启动时快照。 |
 | 上一轮 Codex Security Deep Scan | **未启动；不能视为无发现** | 当时扫描协调器拒绝启动只读 worker，原始原因是缺少 managed filesystem permission profile。此结果仅说明 Deep Scan 未运行；本轮另行成功完成了工作树差异扫描。 |
 | 上一轮 Codex Security Diff Scan（历史快照） | **完成：28/28 项变更文件全文件复核，发现 1 项中危；coverage partial** | Scan ID `422a6e6d-f1d0-45c7-8bba-d1f3a739f489`，快照 digest `895ffbacea7923b7dfd387f768b7131c7c88fe34e1b786724c20c9f48b41b7d3`。该快照不包含之后的 SEC-25/26 修复。 |
-| 最新 Codex Security Diff Scan（2026-10-09） | **完成：30/30 项源码/配置审查项复核，0 项新候选** | Scan ID `484bb340-323c-4bec-a20a-368b2fcd077d`，快照 digest `c09e0d0e5a42fbd769931e234c5317c45f01d10e2d7e2633f1398663bc8c2fab`。这是静态、冻结工作树差异扫描；不替代真实媒体、浏览器、Agent 宿主、POSIX ACL、远端 CI 或全仓验收；SEC-31 锁定 PyAV 行为仍待动态确认。 |
+| 最新 Codex Security Diff Scan（2026-10-09） | **完成：3/3 项源码审查项复核，0 项新候选** | Scan ID `fd9a73df-3590-47b3-aada-ab36bde2fd61`，快照 digest `310d9cb80df88511cea4e51cd1e9e7e4ea8a7e01d71f958eba88ab6465775dcf`。这是静态、冻结差异扫描；不替代真实媒体、浏览器、Agent 宿主、POSIX ACL、远端 CI 或全仓验收。较早扫描 `484bb340-323c-4bec-a20a-368b2fcd077d` 的 30/30 项仍按其快照有效；SEC-31 锁定 PyAV 15.1.0 的 Windows 动态验收随后已通过，见第 9 节。 |
 | 仓库外独立干净副本安装 | **最新复测通过** | 从 Skill 副本排除源 `.venv`、pytest/Ruff 缓存，在 `%TEMP%` 创建显式独立虚拟环境；`UV_OFFLINE=1` 锁定 no-dev 安装通过。从仓库外验证导入路径来自副本，`--version` 和直链 `--dry-run --json` 通过。未下载 ASR/浏览器依赖，dry-run 未访问媒体或创建运行时 data/output 目录 |
 | `doctor --json` | `setup_required`；敏感数据路径权限 `ok` | 缺 faster-whisper、PyAV、模型、Playwright、Chromium；未创建数据目录或下载。当前 `%LOCALAPPDATA%` 链被拒后，默认选择 `%USERPROFILE%\.local\share\douyin-transcript`，其尚未创建状态和数据库/profile/cache 父路径报告 `ok`。默认工作区输出路径仍因 `D:\` 向 Authenticated Users 授予目录替换权限报告 `unsafe`；显式 `%USERPROFILE%\Transcripts` 检查为 `ok`，目标未创建 |
 | GitHub Actions 矩阵 | **未运行** | 工作流已添加，但没有远端 GitHub 运行记录 |
@@ -99,7 +99,7 @@ P6 本地清单复核另发现 CI 只运行测试与 Ruff，没有项目计划�
 
 ## 3. 上轮问题状态
 
-本节部分问题的测试数量记录的是整改完成时的历史快照；最新结果见第 2 节和文末 2026-10-09 续审记录：Windows Python 3.11.15 为 382 passed, 20 skipped；Python 3.12.13 最近一次为 376 passed, 20 skipped，尚未复跑本轮修改。此前 303/17、308/17、315/17、316/17、323/17、325/20、331/20、334/20、337/20、340/20、356/20、366/20、375/20 和 3.12 的 376/20 均为对应阶段历史快照。
+本节部分问题的测试数量记录的是整改完成时的历史快照；最新结果见第 2 节和文末 2026-10-09 续审记录：Windows Python 3.11.15 与 3.12.13 均为 382 passed, 20 skipped。此前 303/17、308/17、315/17、316/17、323/17、325/20、331/20、334/20、337/20、340/20、356/20、366/20、375/20 和 3.12 的 376/20 均为对应阶段历史快照。
 
 | 原编号 | 当前状态 | 复核摘要 |
 |---|---|---|
@@ -529,11 +529,11 @@ uv run --project .\skills\douyin-transcript --locked --no-sync --group dev pytes
 git diff --check
 ```
 
-当前的发布前条件、证据与限制汇总见 [RELEASE_REPORT.md](RELEASE_REPORT.md)。架构、逐阶段证据和发布清单见 [ARCHITECTURE.md](ARCHITECTURE.md)、[ACCEPTANCE.md](ACCEPTANCE.md) 与 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)。上一轮 Codex Security 结构化扫描记录 5 项源码发现、此前 Diff Scan 记录 SEC-25；两者都绑定启动时快照。最新 Diff Scan `484bb340-323c-4bec-a20a-368b2fcd077d` 已覆盖其冻结清单内 30 个源码/配置审查项，未发现新候选；该结果不等于全仓或运行时验收通过。SEC-26 与 AUD-40 至 AUD-55 的后续修复情况以本报告各条记录为准。SEC-14 仍待目标 Agent 宿主验收；SEC-15 创建路径边界已进一步收紧，但 SQLite/Playwright/模型等 pathname-only API 仍有 TOCTOU 和多平台测试；SEC-16 fallback 需多主机验证，SEC-17/18 需真实模型/Hub cache 验收，AUD-21 需第二账户集成。SEC-19/20 配置路径及同句柄读取已整改，SEC-24 与 AUD-44 的 POSIX FIFO 行为待 Linux/macOS 运行验证；AUD-43 sidecar 路径/摘要已绑定并由完成、跳过和恢复流程校验，跨平台文件系统验收仍待完成。AUD-39 已通过 downloader 和默认 pipeline 回归。
+当前的发布前条件、证据与限制汇总见 [RELEASE_REPORT.md](RELEASE_REPORT.md)。架构、逐阶段证据和发布清单见 [ARCHITECTURE.md](ARCHITECTURE.md)、[ACCEPTANCE.md](ACCEPTANCE.md) 与 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)。上一轮 Codex Security 结构化扫描记录 5 项源码发现、此前 Diff Scan 记录 SEC-25；两者都绑定启动时快照。较早的 Diff Scan `484bb340-323c-4bec-a20a-368b2fcd077d` 覆盖其冻结清单内 30 个源码/配置审查项且未发现新候选；之后的扫描与动态验收见第 9、10 节。SEC-26 与 AUD-40 至 AUD-55 的后续修复情况以本报告各条记录为准。SEC-14 仍待目标 Agent 宿主验收；SEC-15 创建路径边界已进一步收紧，但 SQLite/Playwright/模型等 pathname-only API 仍有 TOCTOU 和多平台测试；SEC-16 fallback 需多主机验证，SEC-17/18 需真实模型/Hub cache 验收，AUD-21 需第二账户集成。SEC-19/20 配置路径及同句柄读取已整改，SEC-24 与 AUD-44 的 POSIX FIFO 行为待 Linux/macOS 运行验证；AUD-43 sidecar 路径/摘要已绑定并由完成、跳过和恢复流程校验，跨平台文件系统验收仍待完成。AUD-39 已通过 downloader 和默认 pipeline 回归。
 
 ## 6. 审核范围说明
 
-本报告审阅当前本地工作树与可见 Git 历史，不代表远端分支或已发布版本。SEC-19/20 的 Windows 配置回归通过；POSIX symlink/`..`、替换竞态与 FIFO 用例因当前主机是 Windows 而跳过。SEC-22 有伪造 frontmatter、文件修改及恢复行为回归；共享输出目录并发替换仍需平台集成。AUD-36 已实现 POSIX 目录同步和 Windows 写穿透发布，AUD-37 的通用 Win32 错误分类已整改；Linux/macOS 和其他文件系统的断电耐久性未验证。AUD-32/33 由阻塞 resolver 模拟回归覆盖，但真实 DNS/Chromium 链路未验证；SEC-23 源码修复有模拟覆盖，真实媒体格式仍待样本确认；AUD-38 的实际时耗尚无基准。最新 Codex Security Diff Scan 已复核冻结差异内 28 个审查项且无新候选，包括 SEC-25/26 修复所在文件；该扫描不代表全仓动态审计。POSIX 扩展 ACL 语义无法在 Windows 环境确认，故整体项目验收 coverage 仍为 partial。AUD-39 已由下载器缓存/新下载测试及默认远端 pipeline 回归修复。本机未动态验证真实抖音媒体、在线 CDN、ASR、远端 CI、第三方二进制、Linux/macOS 和 Agent 宿主行为。当前 `doctor --json` 仍为 `setup_required`：ASR/PyAV/模型/Playwright/Chromium 未安装，默认 D: 工作区输出路径仍报告 `unsafe`；显式 profile 下候选输出目录检查为 `ok` 且未创建。P1 真实转写是项目计划的最早未通过阶段。
+本报告审阅当前本地工作树与可见 Git 历史，不代表远端分支或已发布版本。SEC-19/20 的 Windows 配置回归通过；POSIX symlink/`..`、替换竞态与 FIFO 用例因当前主机是 Windows 而跳过。SEC-22 有伪造 frontmatter、文件修改及恢复行为回归；共享输出目录并发替换仍需平台集成。AUD-36 已实现 POSIX 目录同步和 Windows 写穿透发布，AUD-37 的通用 Win32 错误分类已整改；Linux/macOS 和其他文件系统的断电耐久性未验证。AUD-32/33 由阻塞 resolver 模拟回归覆盖，但真实 DNS/Chromium 链路未验证；SEC-23 源码修复有模拟覆盖，真实媒体格式仍待样本确认；AUD-38 的实际时耗尚无基准。截至该段形成时最新的 Codex Security Diff Scan 已复核冻结差异内 28 个审查项且无新候选，包括 SEC-25/26 修复所在文件；该扫描不代表全仓动态审计。POSIX 扩展 ACL 语义无法在 Windows 环境确认，故整体项目验收 coverage 仍为 partial。AUD-39 已由下载器缓存/新下载测试及默认远端 pipeline 回归修复。本机未动态验证真实抖音媒体、在线 CDN、ASR、远端 CI、第三方二进制、Linux/macOS 和 Agent 宿主行为。当前 `doctor --json` 仍为 `setup_required`：ASR/PyAV/模型/Playwright/Chromium 未安装，默认 D: 工作区输出路径仍报告 `unsafe`；显式 profile 下候选输出目录检查为 `ok` 且未创建。P1 真实转写是项目计划的最早未通过阶段。
 
 ## 7. 追加复审与整改验证（2026-10-09）
 
@@ -788,10 +788,10 @@ SEC-27/AUD-52 阶段复审历史快照：当时检查 `browser_proxy.py` 的 CON
 
 ### 2026-10-09 文档一致性续审
 
-- **DOC-12（P2，验证状态陈旧且相互矛盾，已修复）：** 修复前中文和英文 README 将当时当前 Windows Python 3.11/3.12 全套离线结果写为 **356 passed, 20 skipped**，而工作树实测为 **366 passed, 20 skipped**；发布报告第 44 行也把旧的 356 结果称为“latest”，与第 10 行冲突。此类差异会使用户和发布审阅者无法判断验证基线。两份 README、清单、审核报告及发布报告现均指向当前 **376 passed, 20 skipped**，旧数字明确标注为历史快照。
+- **DOC-12（P2，验证状态陈旧且相互矛盾，已修复）：** 修复前中文和英文 README 将当时当前 Windows Python 3.11/3.12 全套离线结果写为 **356 passed, 20 skipped**，而工作树实测为 **366 passed, 20 skipped**；发布报告第 44 行也把旧的 356 结果称为“latest”，与第 10 行冲突。此类差异会使用户和发布审阅者无法判断验证基线。DOC-12 修复后，两份 README、清单、审核报告及发布报告当时均指向 **376 passed, 20 skipped**，旧数字明确标注为历史快照；后续 382/20 续审结果见第 9 节和 DOC-15。
 - **DOC-13（P3，跨平台 CI 发布门重复，已修复）：** 发布清单原有两条独立未勾选项分别要求运行 Windows/macOS/Linux 矩阵和矩阵通过，属于同一门槛的重复记录，可能导致执行与通过状态被分别维护。已合并为一项“运行并通过”并要求解释跳过项。
 - **DOC-14（P3，本地多 Python 验证可能使用错误解释器，已修复文档）：** 在已由 Python 3.11 创建的 `.venv` 上运行 `uv run --python 3.12 --no-sync ...` 时，uv 发出环境不兼容警告但仍使用 Python 3.11.15；如果只记录命令参数，可能把 3.11 结果误记成 3.12。`docs/ACCEPTANCE.md` 现要求切换版本前先 `uv sync --python VERSION`，再运行 `python --version` 验证实际解释器，最后执行 pytest。CI 各矩阵 job 会独立创建/同步环境，本次远端矩阵仍未运行。
-- **文档复核：** 当前状态文档均指向 Windows Python 3.11.15 与 3.12.13 各 **376 passed, 20 skipped**；多 Python 本地测试要求先同步环境并核实解释器；旧测试数字只保留在明确标为历史快照的记录中；跨平台 CI 仅保留一个发布门。整体仍为 **NOT READY**。
+- **文档复核（DOC-12 修复当时）：** 状态文档当时均指向 Windows Python 3.11.15 与 3.12.13 各 **376 passed, 20 skipped**；多 Python 本地测试要求先同步环境并核实解释器；旧测试数字只保留在明确标为历史快照的记录中；跨平台 CI 仅保留一个发布门。后续当前结果更新为 382/20，见第 9 节。整体仍为 **NOT READY**。
 - **复核范围与结果：** 对照 README 中英文版本、发布报告、发布清单和当前审核报告，扫描了当前验证计数及 TODO/FIXME 标记；除上述文档问题外，本次没有确认新的源码缺陷。代码层结论仍受既有报告所列边界约束：真实 ASR/抖音/浏览器、POSIX 与 macOS/Linux、目标 Agent 和远端 CI 尚未完成，因此“未发现”仅指本轮本地源码与文档复核，不能视为全平台无缺陷或发布批准。
 
 ### 2026-10-09 源码续审与整改
@@ -810,7 +810,7 @@ SEC-27/AUD-52 阶段复审历史快照：当时检查 `browser_proxy.py` 的 CON
 
 ### 2026-10-09 第三方许可发行路径复核
 
-- **REL-01（P6，第三方二进制许可材料未闭合，待发布前完成）：** 当前锁定 PyAV 15.1.0 的上游源码许可为 BSD-3-Clause，但 PyAV 为其 wheel 链接 FFmpeg；FFmpeg 官方说明默认 LGPL，启用特定 GPL 组件可能改变整套 FFmpeg 的许可。当前没有下载/检查各目标平台的 PyAV wheel，故无法确定其内置 FFmpeg 组件与分发材料要求；没有据此认定工作树违法。Playwright 1.63.0 的 Python 包声明 Apache-2.0，固定 Medium 模型仓库页声明 MIT；浏览器与模型由运行时另行下载，Git 可见树未包含权重或浏览器/依赖二进制。
+- **REL-01（P6，第三方二进制许可材料未闭合，待发布前完成）：** 当前锁定 PyAV 15.1.0 的上游源码许可为 BSD-3-Clause，但 PyAV wheel 链接 FFmpeg。续审在 Windows wheel 中观察到 `libx264`、`libx265` DLL，且 PyAV 报告对应编码器可用；这是需要按 GPL 构建路径审查的强烈信号，但尚未提取完整 build configuration，也未确认潜在的商业许可例外或其他组件的 notice/源码材料。Windows wheel 未纳入 Git 或本项目发行，macOS/Linux wheel 未检查；因此尚不能确定所有目标二进制的分发义务。没有据此认定工作树违法。Playwright 1.63.0 的 Python 包声明 Apache-2.0，固定 Medium 模型仓库页声明 MIT；浏览器与模型由运行时另行下载，Git 可见树未包含权重或浏览器/依赖二进制。
 - **对策与进度：** 新增 `docs/THIRD_PARTY_LICENSE_REVIEW.md` 记录锁定版本、上游来源、当前发行边界和未决事项；验收清单已将已完成的初步来源核对与待完成的 wheel/完整 SPDX 审核分开。任何二进制分发前，应按 Windows/macOS/Linux 实际 wheel 收集 FFmpeg 版本、编译选项、许可证与源码/notice，并生成全锁定依赖 SPDX SBOM。项目自身 LICENSE 仍由仓库所有者选择。
 - **范围限制：** 本记录是技术许可来源核对，不构成法律意见；当前 Skill 以源代码目录分发，不随仓库提交 PyAV wheel、模型或浏览器。P6 仍 **NOT READY**。
 
@@ -819,7 +819,7 @@ SEC-27/AUD-52 阶段复审历史快照：当时检查 `browser_proxy.py` 的 CON
 - **SEC-30（P3，远端标题中的双向控制字符可伪装输出标题，发现时待整改）：** 抖音页面标题经 `capture.py` 清理后进入 pipeline，再用于输出文件名、Markdown frontmatter/标题和 CLI 摘要。发现时的清理只删除 C0/DEL；文件名清理只替换 Unicode `Cc`/`Cs`，未处理双向控制字符。恶意发布者可设置含有此类字符的标题，使支持双向文本的终端、文件管理器或 Markdown 查看器重排显示，造成文件名/内容误认。影响是本地显示欺骗；未发现代码执行、任意路径写入或跨用户权限提升。
   - **对策：** 在不可信标题进入 pipeline 前统一移除 Unicode `Bidi_Control` 字符（至少覆盖 U+061C、U+200E–U+200F、U+202A–U+202E、U+2066–U+2069）；`naming.clean_component()` 和 Markdown 输出边界再做防御性处理，并让任务标题、文件名、frontmatter/heading 使用同一规范化值。加入覆盖文件名、Markdown、JSON/CLI 摘要的回归。
   - **证据与限制：** 代码数据流为 `capture.py:336-342` → `pipeline.py:470-476` → `naming.py:38-47` / `markdown.py:30-43,103-112`。具体视觉效果依赖 viewer，尚未逐一实测；严重度评估为低。
-- **DOC-15（P3，审核报告首页测试数字过时，已修正）：** 首页曾把 AUD-64–66 阶段的 366/20 写成未标注的当前结论，和当时报告后文的 376/20 当前结果冲突。现已标明旧结果为历史快照；本轮跟进后的数字为 Python 3.11.15 的 382/20，Python 3.12.13 尚待复跑。
+- **DOC-15（P3，审核报告首页测试数字过时，已修正）：** 首页曾把 AUD-64–66 阶段的 366/20 写成未标注的当前结论，和当时报告后文的 376/20 当前结果冲突。现已标明旧结果为历史快照；续审后的当前结果为 Python 3.11.15 与 3.12.13 均 382/20。
 - **DOC-16（P3，输出目录环境变量未见于用户指南，发现时待补文档）：** `config.py` 接受 `DOUYIN_TRANSCRIPT_OUTPUT` 并将其作为输出目录覆盖值；发现时 README、CLI Reference 和 INSTALL 未说明该变量或优先级。调用者仅看用户指南可能无法解释环境变量为何覆盖配置文件。
   - **对策：** 在中文/英文 README、CLI Reference 和 INSTALL 中列出该变量，并写清优先级：`--output-dir` → `DOUYIN_TRANSCRIPT_OUTPUT` → `config.toml` 的 `paths.output_dir` → 默认目录。若不希望承诺环境变量接口，则移除该实现并保留明确的 CLI/config 行为。
 - **SEC-31（P2，中危，HLS 子请求可能绕过下载网络边界，发现时待动态确认）：** 页面捕获会接受 `application/vnd.apple.mpegurl`，下载器先校验首个 HLS URL 并下载清单；发现时 `validate_media_file()` 将文件包装成 file-like 对象交给 `av.open()`，没有设置 `protocol_whitelist` 或限制 PyAV 的 `io_open`。如果锁定版本 FFmpeg 的 HLS demuxer 按清单中的绝对 URI 打开片段，它可能自行请求 loopback/内网 HTTP 地址，绕过下载器的主机、DNS pinning、重定向和累计字节数边界。默认 CLI 在受监管子进程中执行媒体校验，超时可终止该进程；当前证据不支持声称此路径绕过整体处理 deadline。FFmpeg 文档说明协议可通过 `protocol_whitelist` 限制，HLS 源码会处理清单引用资源；PyAV 文档说明 `io_open` 用于格式额外打开的文件对象。尚未在项目锁定的 PyAV 15.1.0 wheel 上动态确认该调用链，因此按条件风险记录。参考：[FFmpeg Protocols](https://ffmpeg.org/ffmpeg-protocols.html)、[FFmpeg HLS 源码](https://ffmpeg.org/doxygen/7.1/hls_8c_source.html)、[PyAV 15.1 `av.open`](https://pyav.basswood.io/docs/15.1/api/_globals.html)。
@@ -836,26 +836,56 @@ SEC-27/AUD-52 阶段复审历史快照：当时检查 `browser_proxy.py` 的 CON
 ### 2026-10-09 发现项整改跟进
 
 - **SEC-30，本地整改完成：** 新增 `text_safety.py`，在远端标题清洗、任务标题写入/读取、文件名、Markdown 标题、CLI 文本和 JSON 摘要边界移除终端与 bidi 控制符；Markdown 正文将 bidi 控制符显示为 `<U+XXXX>`，并保留 ZWNJ/ZWJ 等普通文字格式符。补充 capture、任务库、文件名、Markdown、summary JSON 与 `status --json` 回归用例。真实终端/查看器渲染仍未逐一验证。
-- **SEC-31，源码 mitigation 已实现，动态验收仍开放：** PyAV `av.open()` 现在传入拒绝所有二次资源打开的 `io_open` 回调，下载后的 HLS 清单如果需要分段请求会失败；CLI Reference 明确该限制。添加回归用例验证回调拒绝 loopback URL。Skill 项目 venv 未安装 PyAV；当时尚未用系统 Hermes Python 的 PyAV 18.0.0 做补充动态检查，因此该轮只通过 mock 回归验证回调被传入。锁定的 PyAV 15.1.0 wheel 上仍需确认回调实际拦截 FFmpeg HLS 请求及普通媒体兼容性；该项保留动态确认状态，不宣称运行时风险已完全关闭。处理子进程的总 deadline 仍有效；网络地址与累计下载字节边界是需要验证的主要安全属性。
+- **SEC-31，源码 mitigation 已实现（本阶段记录时动态验收仍开放）：** PyAV `av.open()` 现在传入拒绝所有二次资源打开的 `io_open` 回调，下载后的 HLS 清单如果需要分段请求会失败；CLI Reference 明确该限制。添加回归用例验证回调拒绝 loopback URL。Skill 项目 venv 未安装 PyAV；当时尚未用系统 Hermes Python 的 PyAV 18.0.0 做补充动态检查，因此该阶段只通过 mock 回归验证回调被传入。锁定的 PyAV 15.1.0 wheel 后续动态验证已通过，见第 9 节；Linux/macOS wheel 和更多媒体格式仍未验收。处理子进程的总 deadline 仍有效。
 - **SEC-32，仓库内整改完成：** scanner 不再静默忽略 symlink、非普通文件、超 2 MiB 文件、NUL 文件或非 UTF-8 文件，遇到这些情况会报告具体路径并让 CI 失败关闭。新加覆盖大文件、二进制和编码失败的回归用例。当前 `python scripts/check_sensitive_files.py` 在 Git 可见工作树扫描通过；该脚本依然不是通用 secret scanner，也不检查完整 Git 历史。
 - **DOC-16/17，本地文档整改完成：** 中英文 README、CLI Reference 和 INSTALL 已说明 `DOUYIN_TRANSCRIPT_OUTPUT` 与输出目录优先级；英文 CLI Reference 已列明三项资源限制、默认值、硬上限和 `[limits]` 配置键。
 - **计划结构差异已补：** 新增 `examples/urls.example.txt`、`examples/sample_output.md`、`examples/sample_summary.json`，均为明确的虚构/占位示例，并在中文 README 加链接。
-- **本轮验证结果与限制：** Python 3.11.15 项目 venv 全套 pytest 为 **382 passed, 20 skipped**，全仓 Ruff 通过；敏感文件扫描、示例 JSON 解析、Python 编译、`git diff --check` 和本地安全 smoke checks 通过。该轮的 Skill venv 没有 PyAV，因此只记录了 mock 回归结果；后续 PyAV 18.0.0 动态补充验证见第 9 节，仍不替代锁定 15.1.0。Python 3.12.13 的本轮改动复跑尚待完成。整体仍为 **NOT READY**，因 P1/P2/P4/P5/P6 外部验收门槛尚未完成。
+- **本轮验证结果与限制：** Python 3.11.15 项目 venv 全套 pytest 为 **382 passed, 20 skipped**，全仓 Ruff 通过；敏感文件扫描、示例 JSON 解析、Python 编译、`git diff --check` 和本地安全 smoke checks 通过。该轮的 Skill venv 没有 PyAV，因此只记录了 mock 回归结果；后续 PyAV 18.0.0 动态补充验证见第 9 节，仍不替代锁定 15.1.0。Python 3.12.13 的全套复跑结果见第 9 节。整体仍为 **NOT READY**，因 P1/P2/P4/P5/P6 外部验收门槛尚未完成。
 
 ### 2026-10-09 当前工作树完整差异复审
 
 - **安全审查结果：** Codex Security Diff Scan `484bb340-323c-4bec-a20a-368b2fcd077d` 审查冻结快照 `codex-security-snapshot/v1:sha256:c09e0d0e5a42fbd769931e234c5317c45f01d10e2d7e2633f1398663bc8c2fab`。工作树登记 87 个变更文件，30/30 个源码/配置审查项完成；未发现新的可报告安全候选。URL 重定向、浏览器代理出口、媒体下载、标题显示、任务存储、子进程与 setup 下载、敏感文件扫描均有源码控制和调用路径证据。
-- **SEC-31 动态验证仍开放：** 当前源码给 PyAV `av.open()` 传入拒绝所有二级资源打开的回调；静态审查没有发现绕过路径。因 Skill 项目 venv 未安装锁定 PyAV 15.1.0，之前未动态验证该版本及其 FFmpeg 对 HLS 子资源的实际回调行为。系统 PyAV 18.0.0 的 loopback mock 与 WAV 补充结果见第 9 节；该项仍是锁定版本验证缺口，不是已确认漏洞。取得安装许可后，使用锁定 wheel 重做同一验收。
+- **SEC-31 动态验证已在本机锁定版本通过：** 当前源码给 PyAV `av.open()` 传入拒绝所有二级资源打开的回调。Windows 临时环境安装锁定 PyAV 15.1.0 后，合成 HLS 清单的 loopback 分段触发 `io_open` 回调 1 次，mock 服务收到 0 次请求；合成 WAV 验证通过。结果与系统 PyAV 18.0.0 补测一致。Linux/macOS 构建及更多媒体格式尚未动态验收；HLS 分段输入按当前设计会被拒绝。
+- **SEC-33（P3，C1 控制字符可能进入显示输出，已整改）：** 独立复审发现不可信标题清洗遗漏 Unicode C1 控制区 U+0080–U+009F。页面标题可能经 capture 进入任务/CLI 摘要和 Markdown frontmatter，Markdown 正文过滤也未移除 C1；U+009B 在部分终端可被解释为控制序列，具体效果依终端而异。没有证据表明其造成代码执行或权限提升。
+  - **对策与验证：** 标题采集、通用显示文本及 Markdown 正文过滤现覆盖 C1；文件名清理此前已按 Unicode `Cc` 处理。新增 U+0085/U+009B 回归，Windows Python 3.11.15 与 3.12.13 全套各 **382 passed, 20 skipped**，两套 Ruff 通过。此项为低危显示边界问题，仍需其他终端/查看器的渲染实测。
 - **DOC-18（P3，架构文档未准确描述路径配置，已修正文档）：** 原文笼统地说模型与全部用户数据都位于选定 data directory，没有说明 `config.toml` 先从命令行/环境/平台默认锚点读取，也没有说明模型可以从 `HF_HUB_CACHE`、`HF_HOME/hub` 或默认 Hugging Face cache 加载。现已在 `docs/ARCHITECTURE.md` 说明配置锚点、有效 data directory、模型缓存查找顺序和输出目录优先级。
 - **DOC-19（P3，发布清单描述的敏感文件检查行为过时，已修正文档）：** 清单曾称大于 2 MiB、二进制或非 UTF-8 文件会被跳过；当前扫描器遇到这些文件会报错并使检查失败。清单已改为记录 fail-closed 行为，同时说明 Git 历史与通用凭据扫描仍需单独审阅。
+- **DOC-20（P3，输出路径的隐私说明与产品验收目标含义不清，已修正文档）：** `SECURITY.md` 原文要求分享诊断前一概 redacting 私人路径，但项目验收要求 Agent 把生成的 Markdown 路径返回给发起请求的操作者（`docs/PROJECT_IMPLEMENTATION_PLAN.md` 的单链接场景）。两种说法可能让宿主误以为连请求者也不能收到结果路径，或忽略路径只应发给请求者的隐私边界。现已在 `SECURITY.md`、`docs/ARCHITECTURE.md` 和 Skill 中统一为：仅向请求转写的操作者返回所选路径；向其他接收方转发诊断前移除私人路径及个人信息。README 的 JSON 示例和行为说明与此一致；没有改变 CLI 输出或路径权限策略。
+- **DOC-21（P2，发布报告的“最新”安全状态滞后，已修正）：** `docs/RELEASE_REPORT.md` 将较早的 Diff Scan `484bb340-323c-4bec-a20a-368b2fcd077d` 称为最新，并称锁定 PyAV 15.1.0 的动态验证尚未完成；审核报告第 9/10 节已有更新扫描 `fd9a73df-3590-47b3-aada-ab36bde2fd61` 及锁定 wheel 的 HLS/WAV 动态结果。实施计划的 SEC-15 单一未勾选项也把已完成的本地源码整改与尚未完成的平台验收混在一起。过时说法会让发布审阅者误判证据时序。现已更新发布报告，并将 SEC-15 拆成本地源码整改（完成）与跨平台/多账户验收（未完成）；远端 CI、POSIX、真实 ASR/浏览器与发布门槛仍未完成。
 - **审查范围限制：** 这是一份静态差异审查，coverage 对 HLS 动态行为保持 partial；没有访问抖音、下载模型/浏览器组件、运行真实 ASR 或检查远端 CI。安全审查的 0 项候选不代表产品验收完成，P1/P2/P4/P5/P6 门槛、输出目录 advisory 风险、历史敏感文件审查和许可证/远端所有者决定仍按发布清单执行。上述文档更改发生在安全扫描冻结快照之后，不属于该扫描快照。
 
 ## 9. 2026-10-09 本机验收续审
 
-- Windows Python 3.11.15 项目虚拟环境重新运行全套离线 pytest：**382 passed, 20 skipped**。跳过项是 POSIX 专属行为或当前文件系统不能创建 symlink 的用例。
+- Windows Python 3.11.15 项目虚拟环境与 Python 3.12.13 独立临时环境重新运行全套离线 pytest，均为 **382 passed, 20 skipped**。跳过项是 POSIX 专属行为或当前文件系统不能创建 symlink 的用例。
 - 当前检查点的 P0 CLI 冒烟：`python -m douyin_transcript --help` 退出码 0；`doctor --json` 退出码 1，`overall` 与两种能力均为 `setup_required`，符合尚未安装 Skill 运行依赖和模型的预期。
 - GitHub Actions 中使用的 Ruff 路径 `scripts skills/douyin-transcript/src skills/douyin-transcript/scripts tests` 通过；`uv lock --project skills/douyin-transcript --check`、Git 可见敏感文件扫描和 `git diff --check` 均通过。工作树中统一应用项目 Ruff 配置的检查也已修复格式问题并通过。
-- 本机有 Python 3.12.13 解释器，但该解释器环境没有安装 pytest；本轮没有重跑 3.12 全套测试。Python 3.12 对源码、脚本和测试文件的 `compileall` 通过，但这不能代替测试；此前的 **376 passed, 20 skipped** 属于旧工作树快照。
-- **SEC-31 补充动态检查：** Skill 项目 venv 没有锁定 PyAV 15.1.0；系统 Hermes Python 3.11.15 使用 PyAV 18.0.0 / FFmpeg libavformat 62.12.102。用合成 HLS 清单和 loopback mock 服务调用当前 `validate_media_file()`：`io_open` 收到指向 loopback 的分段 URL 并被拒绝，回调触发 1 次、服务请求 0 次；随后生成的 1 秒 PCM WAV 验证为 `wav`。临时素材在仓库外创建并自动清理。该结果仅补充证明 PyAV 18.0.0 的行为，锁定 15.1.0 的 HLS 拦截和普通媒体兼容性仍待验收。
-- 截至 `f779ec2`（共 3 个本地提交）的只读历史扫描覆盖 **98 个唯一路径/blob 对**：使用仓库敏感路径规则及高置信度凭据模式，没有命中；针对本机工作区/用户目录标记的附加搜索也没有命中。该扫描不是通用 secret scanner，发布前仍须人工复核历史。
-- 上述续审的代码变更只调整导入顺序、行宽和测试 SQL 字符串的空白，不改变运行逻辑；这些格式变更发生在 Codex Security 冻结扫描快照之后。锁定 PyAV/HLS 动态验证、真实 P1/P2/P4、Agent 宿主、跨平台远端 CI、许可证和仓库所有者决定仍未完成，项目保持 **NOT READY**。
+- Python 3.12.13 使用锁定开发依赖在仓库外独立临时环境运行全套测试，结果 **382 passed, 20 skipped**；该环境通过 `UV_OFFLINE=1` 创建，未改动项目的 Python 3.11 虚拟环境。此前的 **376 passed, 20 skipped** 属于旧工作树快照。
+- **SEC-31 动态检查：** 系统 Hermes Python 3.11.15 使用 PyAV 18.0.0 / FFmpeg libavformat 62.12.102 的补充结果是：合成 HLS loopback 分段触发拒绝回调 1 次、服务请求 0 次，1 秒 PCM WAV 验证通过。随后在仓库外临时环境安装锁定 PyAV 15.1.0 / FFmpeg libavformat 61.7.100 重做验收，得到相同结果：回调 1 次、服务请求 0 次、HLS 以 `MEDIA_DECODE_FAILED` 失败关闭，1 秒 PCM WAV 验证为 `wav`。临时环境与素材在仓库外创建。
+- **SEC-33 C1 回归：** 标题采集、CLI 摘要、Markdown frontmatter/heading/body 的 U+0085、U+009B 回归通过；现有文件名清理使用 Unicode 类别 `Cc`，包含 C1。该修复发生在之前的正式安全扫描之后，后续差异扫描快照及其覆盖范围见单独审查记录。
+- 截至当前 HEAD `154d9ef`（4 个可达本地提交）的只读历史扫描覆盖 **101 个唯一路径/blob 对**；101 个均为 2 MiB 内 UTF-8 文本，未命中仓库敏感路径规则或高置信度凭据模式，也未命中工作区根目录/用户目录标记。当前 Git 可见工作树的敏感文件检查也通过。该扫描不是通用 secret scanner；发布前仍须复核最终提交和历史。
+- 本轮续审修改了文档中的 Python 3.12 当前测试结果和安全验收状态，并修复 SEC-33 的 C1 控制字符清理及回归测试；该源码差异包含在后续 Codex Security Diff Scan `fd9a73df-3590-47b3-aada-ab36bde2fd61` 的冻结快照中。锁定 PyAV/HLS 动态验收已在 Windows 通过；真实 P1/P2/P4、Agent 宿主、跨平台远端 CI、许可证和仓库所有者决定仍未完成，项目保持 **NOT READY**。
+
+## 10. 2026-10-09 C1 控制字符差异复审
+
+- **正式扫描结论：** Codex Security Diff Scan `fd9a73df-3590-47b3-aada-ab36bde2fd61` 已完成。扫描冻结在 base/head `154d9ef1d8fd8a75b6a8870bb2d99dc602ceae62`，snapshot digest 为 `codex-security-snapshot/v1:sha256:310d9cb80df88511cea4e51cd1e9e7e4ea8a7e01d71f958eba88ab6465775dcf`。冻结差异中的 3 个源码审查项逐项完成；本次差异未发现新的可报告安全问题。SEC-33 是本次修改前已记录并正在修复的低危问题，不是修复差异引入的新问题。
+- **快照边界：** 扫描工具提示扫描期间工作树发生变化，结果仍绑定上述冻结快照；本报告随后追加的文字不属于扫描输入。三个源码审查项及其代码状态按该快照记录。
+- **复核证据：** `capture.py:400-408` 在页面标题、作者及发布时间进入任务/展示前剔除 C0、C1 和双向控制符；`text_safety.py:16-26` 为 CLI 与任务展示提供同类过滤；`markdown.py:20-58,97-112` 过滤 Markdown 正文控制字符，并清理 frontmatter/标题。新增测试用 U+0085、U+009B 覆盖采集标题、CLI 摘要及 Markdown frontmatter、标题和正文。此处结论是源码差异复核；不同终端和 Markdown 查看器的实际渲染仍未逐一测试。
+- **仍待处理的问题及对策：**
+  1. **真实 ASR / P1：** 当前诊断仍为 `setup_required`，尚无获授权的中文样本或真实识别结果。由用户提供至少 60 秒且有权处理的本地媒体，并批准安装锁定 ASR 依赖和固定模型；随后生成 Markdown、人工抽听、记录质量和资源数据。
+  2. **真实抖音链路 / P2：** 尚未安装并运行 Playwright/Chromium，也没有三条授权链接的集成结果。用户提供可访问视频并授权后，手动登录执行可见浏览器验收；不绕过验证码、DRM 或访问控制。
+  3. **质量与性能 / P4：** 真实逐字稿听审、长音频计时和重复内容检查待 P1 样本。验收至少三处文本，并记录耗时、漏转/幻觉/重复及 stdout/stderr 泄漏检查。
+  4. **Agent 宿主 / P5：** Skill 标准校验和仓库外干净安装冒烟通过，但真实宿主调用未验收。确定目标宿主后，使用结构化参数完成一次端到端调用并检查正文未进入 Agent 上下文。
+  5. **发布 / P6：** 远端 CI、仓库所有者/可见性、LICENSE 选择和推送授权未落实。由仓库所有者确定许可证和目标仓库；再运行 Windows/macOS/Linux CI、复核提交历史中的敏感材料，最后按发布清单审批。
+  6. **本地输出隐私：** 输出目录权限诊断仍是 advisory；默认工作区输出路径祖先 ACL 不安全。逐字稿应写入权限检查为安全的用户目录；后续可考虑严格模式，在目标目录不安全时拒绝写出。
+  7. **第三方许可证：** Windows 锁定 PyAV wheel 的临时检查发现 x264/x265 DLL 和可用编码器，需在任何二进制分发前核验实际 FFmpeg 构建配置、许可证文本和分发义务，并由所有者决定许可证策略；详见 `THIRD_PARTY_LICENSE_REVIEW.md`。
+- **项目状态：** 本地 Python 3.11.15/3.12.13 全套测试各 382 passed、20 skipped；锁定 PyAV 15.1.0 的合成 HLS loopback 拒绝及 WAV 解码通过，详见第 9 节。静态差异扫描通过不等于产品验收完成；P1/P2/P4/P5/P6 与发布审查完成前，项目维持 **NOT READY**。
+
+## 11. 2026-10-09 项目完成目标续审
+
+- **当前运行状态：** 在当前 Windows 工作区重新执行锁定环境 `doctor --json`，结果仍为 `setup_required`；未安装依赖、下载模型或创建数据目录。报告显示固定 medium 模型、faster-whisper、PyAV、Playwright 和 Chromium 均未就绪；默认工作区输出目录的权限为 `unsafe`，原因是其 `D:\` 祖先向 Authenticated Users (`S-1-5-11`) 授予目录替换权限。隐私敏感的 P1 输出需明确指定并再次检查权限为 `ok` 的个人目录。
+- **P1 预检补充：** 只读测得当前主机 CPU 为 Intel Core i5-12400、12 个逻辑处理器、已安装内存 31.7 GiB，已同步写入 `docs/P1_REPORT.md`。本次没有处理媒体，未测量模型加载、推理、峰值内存或逐字稿质量，因此 P1/P4 仍 **NOT VERIFIED**。
+- **可用平台与远端：** 当前系统没有注册的 WSL Linux 发行版；本地 `git remote -v` 为空。因此本机无法补跑 POSIX 分支，远端矩阵 CI 和 GitHub 安装仍无执行目标。没有据此把未验收项标成通过。
+- **状态文档一致性整改：** `docs/RELEASE_REPORT.md` 现将 Diff Scan `fd9a73df-3590-47b3-aada-ab36bde2fd61` 作为已记录的最新差异扫描，并说明锁定 PyAV 15.1.0 在 Windows 的 HLS loopback 拒绝/WAV 动态验收已通过；DOC-12 的 376/20 记录与早期 SEC-31 动态状态改为明确的历史阶段说明。实施计划将 SEC-15 本地源码整改与跨平台/多账户验收拆分记录，后者继续未完成。
+- **当前工作树门禁复跑：** Windows Python 3.11.15 全套离线 pytest **382 passed, 20 skipped**。20 项跳过涉及 POSIX 权限/FIFO/dir-fd 语义，或本机文件系统不允许创建 symlink。GitHub Actions 使用的 Ruff 路径、`uv lock --check`、敏感文件扫描、固定 `skills-ref==0.1.1` Skill 校验及 `git diff --check` 均通过；未在本轮重跑 Python 3.12，全套 3.12.13 结果仍以第 9 节既有记录为准。
+- **仍需用户/所有者输入的真实门槛：** P1/P4/AUD-10/38/SEC-23 需要授权媒体和 ASR 安装/固定模型下载同意；P2 需要三条获授权链接并由操作者在可见浏览器手动登录（如需要）；P5/SEC-14 需要指定目标 Agent 宿主；P6 需要所有者决定许可证、仓库归属/可见性以及是否创建远端或发布。输出目录默认策略是否从 advisory 改为拒绝 unsafe/unknown 仍是产品策略选择；本续审保留原实施计划指定的当前工作目录默认路径，不擅自改变其含义。
+- **续审边界：** 本次重跑了 Windows Python 3.11.15 全套离线测试及静态发布前检查，补录硬件预检并修正文档状态；没有执行真实媒体、安装或联网流程，也没有新增源代码安全扫描。完整项目状态保持 **NOT READY**。

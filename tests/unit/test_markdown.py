@@ -86,11 +86,12 @@ def test_untrusted_title_and_transcript_markdown_syntax_is_escaped_as_text():
 
 
 def test_render_removes_title_control_characters_from_frontmatter_and_heading():
-    title = "safe\x1b[2J\x07\x7f\ncontinued"
+    title = "safe\x1b[2J\x07\x7f\x85\x9b\ncontinued"
 
-    rendered = render_transcript_markdown(title, "spoken\x1b[31m\nnext", {})
+    rendered = render_transcript_markdown(title, "spoken\x1b[31m\x85\x9b\nnext", {})
 
-    assert "\x1b" not in rendered and "\x07" not in rendered and "\x7f" not in rendered
+    assert not any(0x7F <= ord(character) <= 0x9F for character in rendered)
+    assert "\x1b" not in rendered and "\x07" not in rendered
     assert 'title: "safe[2Jcontinued"' in rendered
     assert "# safe\\[2Jcontinued" in rendered
     assert "spoken\\[31m\nnext" in rendered
