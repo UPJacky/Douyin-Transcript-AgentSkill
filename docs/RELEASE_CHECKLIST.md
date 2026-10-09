@@ -21,6 +21,7 @@ Release state: **NOT READY**. Keep this checklist as a gate; checked boxes requi
 - [x] AUD-53 recovery media/output checks run outside the SQLite write transaction; a second connection can write during slow validation, and a refreshed claim is preserved by snapshot recheck.
 - [x] SEC-28 sensitive-file checker rejects Git-visible files under generic `cache/` directories, including unknown extensions.
 - [x] Current worktree `python scripts/check_sensitive_files.py` passed for Git-visible files. The check fails closed on symlinks, non-regular files, files over 2 MiB, binary/NUL content, non-UTF-8 content, or read errors; it does not scan Git history and is not a general secret scanner.
+- [x] A read-only scan of all 3 current local commits covered 98 unique path/blob pairs with the known sensitive-path and high-confidence credential rules and found no hits; a targeted search found no exact workstation/user-profile markers. This is limited automated evidence, not a general secret-history scanner.
 - [ ] Before release, check the staged/release tree and full Git history for Cookie, token, private transcript, media cache, model weights, browser profile, task database, or local path data. The automated check is not a full secret-history scan.
 - [ ] Verify `doctor` reports the effective private data location and permissions on supported hosts.
 - [ ] Verify `doctor --output-dir`, dry-run, transcription, and retry report the actual output directory permissions on Windows/macOS/Linux; confirm shared-folder warnings do not change existing ACLs.

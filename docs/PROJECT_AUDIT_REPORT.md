@@ -853,7 +853,9 @@ SEC-27/AUD-52 阶段复审历史快照：当时检查 `browser_proxy.py` 的 CON
 ## 9. 2026-10-09 本机验收续审
 
 - Windows Python 3.11.15 项目虚拟环境重新运行全套离线 pytest：**382 passed, 20 skipped**。跳过项是 POSIX 专属行为或当前文件系统不能创建 symlink 的用例。
+- 当前检查点的 P0 CLI 冒烟：`python -m douyin_transcript --help` 退出码 0；`doctor --json` 退出码 1，`overall` 与两种能力均为 `setup_required`，符合尚未安装 Skill 运行依赖和模型的预期。
 - GitHub Actions 中使用的 Ruff 路径 `scripts skills/douyin-transcript/src skills/douyin-transcript/scripts tests` 通过；`uv lock --project skills/douyin-transcript --check`、Git 可见敏感文件扫描和 `git diff --check` 均通过。工作树中统一应用项目 Ruff 配置的检查也已修复格式问题并通过。
 - 本机有 Python 3.12.13 解释器，但该解释器环境没有安装 pytest；本轮没有重跑 3.12 全套测试。Python 3.12 对源码、脚本和测试文件的 `compileall` 通过，但这不能代替测试；此前的 **376 passed, 20 skipped** 属于旧工作树快照。
 - **SEC-31 补充动态检查：** Skill 项目 venv 没有锁定 PyAV 15.1.0；系统 Hermes Python 3.11.15 使用 PyAV 18.0.0 / FFmpeg libavformat 62.12.102。用合成 HLS 清单和 loopback mock 服务调用当前 `validate_media_file()`：`io_open` 收到指向 loopback 的分段 URL 并被拒绝，回调触发 1 次、服务请求 0 次；随后生成的 1 秒 PCM WAV 验证为 `wav`。临时素材在仓库外创建并自动清理。该结果仅补充证明 PyAV 18.0.0 的行为，锁定 15.1.0 的 HLS 拦截和普通媒体兼容性仍待验收。
+- 截至 `f779ec2`（共 3 个本地提交）的只读历史扫描覆盖 **98 个唯一路径/blob 对**：使用仓库敏感路径规则及高置信度凭据模式，没有命中；针对本机工作区/用户目录标记的附加搜索也没有命中。该扫描不是通用 secret scanner，发布前仍须人工复核历史。
 - 上述续审的代码变更只调整导入顺序、行宽和测试 SQL 字符串的空白，不改变运行逻辑；这些格式变更发生在 Codex Security 冻结扫描快照之后。锁定 PyAV/HLS 动态验证、真实 P1/P2/P4、Agent 宿主、跨平台远端 CI、许可证和仓库所有者决定仍未完成，项目保持 **NOT READY**。
