@@ -1,0 +1,14 @@
+# Copy this file to config.toml in the application data directory, then edit
+# only the settings you want to override. Paths are examples; use paths valid
+# on your operating system. Keep application data in a private local directory.
+
+[paths]
+# data_dir = "D:\\douyin-transcript-data"
+# output_dir = "D:\\Transcripts"
+
+[limits]
+# Defaults: 60 minutes, 20,000 output segments, and 2,000,000 output characters.
+# Hard caps: 240 minutes, 100,000 output segments, and 10,000,000 characters.
+max_media_duration_seconds = 3600
+max_output_segments = 20000
+max_output_characters = 2000000

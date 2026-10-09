@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-checks:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+
+    env:
+      HF_HUB_OFFLINE: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check Git-visible files for sensitive artifacts
+        run: python scripts/check_sensitive_files.py
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.7"
+          enable-cache: true
+          cache-dependency-glob: skills/douyin-transcript/uv.lock
+
+      - name: Validate Agent Skill metadata
+        run: uvx --from skills-ref==0.1.1 agentskills validate skills/douyin-transcript
+
+      - name: Verify the lock file
+        run: uv lock --project skills/douyin-transcript --check
+
+      - name: Verify isolated Skill installation and CLI smoke test
+        run: python scripts/check_clean_skill_install.py
+
+      - name: Install locked development dependencies
+        run: uv sync --project skills/douyin-transcript --locked --group dev
+
+      - name: Run Ruff
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project skills/douyin-transcript --locked --group dev
+          ruff check scripts skills/douyin-transcript/src skills/douyin-transcript/scripts tests
+
+      - name: Run offline unit and simulated integration tests
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project skills/douyin-transcript --locked --group dev
+          pytest -q

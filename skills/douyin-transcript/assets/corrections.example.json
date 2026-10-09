@@ -1,0 +1,8 @@
+[
+  {
+    "id": "approved-term-1",
+    "source": "示例误识别",
+    "replacement": "示例术语",
+    "note": "Example only; review and edit before use."
+  }
+]

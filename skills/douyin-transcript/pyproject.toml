@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.27,<2"]
+requires = ["hatchling==1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -8,6 +8,15 @@ version = "0.1.0"
 description = "Local-first Douyin speech transcription CLI and Agent Skill"
 requires-python = ">=3.11,<3.13"
 dependencies = []
+
+[project.optional-dependencies]
+asr = [
+    "av==15.1.0",
+    "faster-whisper==1.2.1",
+]
+browser = [
+    "playwright>=1.55,<2",
+]
 
 [project.scripts]
 douyin-transcript = "douyin_transcript.cli:main"
@@ -20,6 +29,9 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/douyin_transcript"]
+
+[tool.uv]
+default-groups = []
 
 [tool.pytest.ini_options]
 testpaths = ["../../tests"]

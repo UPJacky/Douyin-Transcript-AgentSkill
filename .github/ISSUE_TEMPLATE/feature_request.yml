@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest a user-facing improvement without sharing private media or account data.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach videos, audio, transcripts, cookies, signed media URLs, account details, or unredacted logs. For security vulnerabilities, follow `SECURITY.md` instead of opening a public issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this solve?
+      description: Describe the workflow or limitation in general terms.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain what the tool should do and how you would use it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional approaches or workarounds you have tried.
+    validations:
+      required: false

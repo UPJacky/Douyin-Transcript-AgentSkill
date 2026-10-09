@@ -109,8 +109,8 @@
 用户在自己电脑上运行：
 
 ```powershell
-# 以下命令为最终需实现的规范，当前尚不是已存在的程序
-uv run --project .\skills\douyin-transcript --locked douyin-transcript transcribe --file .\urls.txt
+# 以下命令是当前 CLI 的使用示例
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --file .\urls.txt
 ```
 
 预期：与 Agent 模式调用**相同核心代码**，输出完全一致。
@@ -120,7 +120,7 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript transcrib
 用户手动提供合法取得的 `.mp3`、`.m4a`、`.wav`、`.mp4`、`.mov` 文件：
 
 ```powershell
-uv run --project .\skills\douyin-transcript --locked douyin-transcript transcribe --input-file "D:\Videos\sample.mp4" --output-dir "D:\Transcripts"
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --input-file "D:\Videos\sample.mp4" --output-dir "D:\Transcripts"
 ```
 
 预期：直接本地转写，文件名取媒体文件名（支持 `--title` 显式覆盖），不依赖抖音网站。
@@ -318,18 +318,19 @@ douyin-transcript retry-failed [--limit N]
 | `--input-file PATH` | 空 | 本地媒体文件；与 URL 输入互斥（首版） |
 | `--output-dir PATH` | `./douyin-transcripts/output` | MD 输出目录 |
 | `--data-dir PATH` | 配置目录 | 数据/模型/任务所在目录 |
-| `--profile balanced\|fast\|turbo` | `balanced` | 模型档位；turbo 明示实验性 |
+| `--profile balanced\|fast` | `balanced` | 当前实现档位；turbo 是可选实验档，待真实模型验收后再评估 |
 | `--language zh\|auto` | `zh` | 识别输入语言；`auto` 支持非中文 |
 | `--timestamps` | `false` | 另存 `_timeline.md`，不破坏主 MD |
-| `--skip-existing` | `true` | 已完成且文件有效则跳过 |
+| `--skip-existing` | `true` | 已完成且文件有效则跳过；与 `--force` 互斥 |
 | `--force` | `false` | 明确要求重新识别；仍不得无提示覆盖他人文件 |
-| `--keep-media` | `false` | 完成后保留完整媒体供复核 |
+| 媒体缓存 | 保留至显式清理 | V1 为失败恢复和避免重复下载保留远端媒体；使用 `cache clean` 预览并显式清理。自动删除及 `--keep-media` 暂不属于 V1 |
 | `--title TEXT` | 空 | 本地文件等场景下指定标题 |
 | `--json` | `false` | 仅输出一个固定 schema JSON 摘要 |
 | `--quiet` | `false` | 仅输出最终摘要、错误码 |
 | `--dry-run` | `false` | 解析任务、检查路径、不下载或转写 |
 | `--max-downloads N` | `2` | 媒体下载并发数，取值 1–2（首版） |
 | `--retry N` | `2` | 网络下载/页面临时失败的重试次数，带退避 |
+| `--processing-timeout-seconds N` | `7200` | 单条媒体解码/下载/ASR 共用绝对墙钟时限；硬上限 86,400 秒，超时终止处理子进程 |
 
 规范：输入链接无效应给出明确错误；不能把所有异常折叠成“未知失败”；参数缺失时不触发自动大下载。`--force` 只重转写相关视频，不覆盖手工编辑过的 MD；若无法确认归属，另存安全后缀或请求用户明确允许覆盖。
 
@@ -449,16 +450,19 @@ segments, info = model.transcribe(
     task="transcribe",
     beam_size=1,
     vad_filter=True,
-    initial_prompt="以下是普通话口播。亚马逊广告、Listing、ACoS、TACoS、CPC、CVR。",
+    initial_prompt=None,  # 通用内容不注入行业先验；需要时由调用方显式提供
 )
-segments = list(segments)  # 必须消费 generator，转写才真正执行
+# 按段消费并受数量/字符上限约束；正常输入会完整消费，超限则关闭迭代器并失败。
+bounded_segments = []
+for segment in segments:
+    ...
 ```
 
 要求：
 
 - **一次模型加载，多视频复用**。CPU 密集推理默认**串行一个任务**，不要 10 个进程同时抢核。
 - `language=zh` 用于中文主要场景，提供 `auto` 处理非中文；不得默认翻译成英文。
-- `initial_prompt` 是可调整候选而不是“保证一定输出中文标点”的绝对技术规律，需同机 A/B 验证。
+- 通用转写默认不设置 `initial_prompt`。行业提示词仅允许调用方显式提供，并应在获授权样例上做同机 A/B 验证；提示词不能保证中文标点或术语准确。
 - VAD 阈值保守，不要误删停顿后音量较低的人声；至少测试一个带静音/弱声音的样例。
 - 处理每个 ASR `segment` 的文本和 `start/end`；确保最终段落与源顺序一致。
 - 模型首次从**明确可信**的仓库下载并校验需要的文件；候选包括原材料已测试的 ModelScope 模型镜像；模型 ID、许可证、完整性和 CTranslate2 兼容性需单独核查，不允许只下载 `model.bin` 就默认可运行。
@@ -615,9 +619,9 @@ compatibility: Requires permission to run local Python commands. First-time setu
 8. Consult `references/INSTALL.md` and `references/TROUBLESHOOTING.md` only when needed.
 
 ## Commands
-- `uv run --project <THIS_SKILL_DIR> --locked douyin-transcript doctor`
-- `uv run --project <THIS_SKILL_DIR> --locked douyin-transcript transcribe --file <URL_LIST> --json`
-- `uv run --project <THIS_SKILL_DIR> --locked douyin-transcript transcribe <URL> --json`
+- `uv run --project <THIS_SKILL_DIR> --locked --no-sync douyin-transcript doctor`
+- `uv run --project <THIS_SKILL_DIR> --locked --no-sync douyin-transcript transcribe --file <URL_LIST> --json`
+- `uv run --project <THIS_SKILL_DIR> --locked --no-sync douyin-transcript transcribe <URL> --json`
 
 Never assume successful output until the CLI confirms and files exist.
 ```
@@ -654,8 +658,8 @@ npx skills add <owner>/douyin-transcript --skill douyin-transcript -g -a claude-
 **验收命令（在仓库根目录）：**
 
 ```powershell
-uv run --project .\skills\douyin-transcript --locked douyin-transcript --help
-uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --json
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript --help
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript doctor --json
 ```
 
 **通过标准：** help 显示正确命令；doctor 能明确说明缺少模型/浏览器，不崩溃；`uv.lock` 存在。允许 doctor 返回环境缺失退出码。
@@ -667,7 +671,7 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --
 **步骤：**
 1. 支持给定本地音频/视频路径，检查可读与可解码。
 2. 模型下载/加载本地模型（首次确认，后续缓存），默认 medium；fast 用 small。
-3. 识别所有 segments，完整消费 generator；取真实时长。
+3. 在加载模型前校验媒体时长；按段消费 ASR generator，正常输入完整识别，超过可配置分段数/字符数上限时关闭迭代器并失败；取真实时长。
 4. 构造保真正文与有效 YAML frontmatter。
 5. 清理文件名并原子生成 MD，返回文件路径。
 6. 再跑一次相同输入，检查跳过或有明确重做逻辑。
@@ -730,7 +734,7 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --
 5. 在**离开仓库根目录**的工作目录调用 Skill 的 CLI，确保没有相对路径依赖。
 6. 分别在 Claude Code 和 Codex（可实际使用时）测试 Agent 是否命中 Skill、能启动命令、只回复结果路径。
 
-**验收：** 无预置代码/工作目录支持文件的全新 Agent 安装能运行 `doctor`；模型准备后能转写本地媒体；至少一个 Agent 的真实对话调用成功。**如果尚未实际测试 Codex 或 Claude Code，要分别标注未验证。**
+**验收：** Skill 在不依赖仓库工作目录的独立安装副本中能运行 `doctor`；模型准备后能转写本地媒体；至少一个目标 Agent 宿主的真实对话调用成功。离线干净副本测试与真实 Agent 调用是两项独立证据；从 GitHub 远端安装归入 P6。**如果尚未实际测试 Codex 或 Claude Code，要分别标注未验证。**
 
 ## P6 — CI、发布与维护
 
@@ -745,7 +749,7 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --
 6. 从 GitHub 远端重新安装一次，而不是只验证本地工作区。
 7. 生成 `RELEASE_REPORT.md`，列出已验证平台、版本、功能、已知限制、操作视频或日志证明（脱敏）。
 
-**发布门槛：** CI 绿灯 + 远端安装成功 + 至少 1 条真实授权视频端到端成功 + 批量断点测试通过 + 隐私数据检查通过。
+**发布门槛：** CI 绿灯 + 远端安装成功 + 至少 3 条真实授权视频端到端验收成功（与 P2 阶段验收对齐）+ 批量断点测试通过 + 隐私数据检查通过。
 
 ---
 
@@ -757,8 +761,8 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --
 | T02 | `?modal_id=ID` | 正确解析 ID | P0 |
 | T03 | 分享短链/非法重定向 | 正常解析或安全拒绝 | P0 |
 | T04 | `urls.txt` 10 行含重复/注释 | 归并并保留首次顺序 | P0 |
-| T05 | 本地 MP3/MP4 | 成功输出非空 MD | P0 |
-| T06 | 16.5 分钟中文音频基准 | 记录 CPU/模型/耗时/转写片段质检 | P0 |
+| T05 | 本地 MP3/MP4 | 成功输出非空 MD | P1 |
+| T06 | 16.5 分钟中文音频基准 | 记录 CPU/模型/耗时/转写片段质检 | P1 |
 | T07 | title 含 `:?*<>/\\|` | Windows 可创建文件 | P0 |
 | T08 | 2 个不同视频同标题 | 分别保存，互不覆盖 | P0 |
 | T09 | 同视频重复运行 | SKIP 或明确强制重跑，不产生副本 | P0 |
@@ -814,7 +818,7 @@ uv run --project .\skills\douyin-transcript --locked douyin-transcript doctor --
 ## 12.4 磁盘
 
 - 模型可能占数百 MB 到约 1.5 GB 或更多，具体依所选模型文件和镜像而定；首次 setup 必须提示预估所需空间。
-- cache 设置最大空间/清理策略；默认只删除成功转写后的**临时媒体**，不删除原始用户本地音视频文件。
+- V1 远端媒体缓存默认保留，以支持失败恢复和避免重复下载；用 `cache clean` 设置显式容量/保留期，默认只预览，复核后添加 `--apply` 执行。程序不删除原始用户本地音视频文件。自动清理及 `--keep-media` 暂不属于 V1。
 - 不将完整浏览器 profile、模型、音视频与 transcript 输出纳入 Git。
 
 ---
@@ -933,42 +937,112 @@ Git commit：<commit id>
 # 18. 最终交付核对清单
 
 **P0：项目环境**
-- [ ] 存在标准目录和可运行的 CLI entrypoint
-- [ ] `uv.lock` 由实际依赖解析生成
-- [ ] `doctor` 输出环境状态，不进行未经授权的安装
+- [x] 存在标准目录和可运行的 CLI entrypoint（本地 CLI 冒烟通过）
+- [x] `uv.lock` 由实际依赖解析生成（`uv lock --check` 通过）
+- [x] `doctor` 输出环境状态，不进行未经授权的安装（当前环境返回 `setup_required`，未创建目录或下载）
 
 **P1：真实转写**
 - [ ] 本地中文音频/视频能生成非空 `.md`
 - [ ] 主文是口播逐字稿，不是摘要或润色稿
-- [ ] 识别函数真正消费 faster-whisper generator
-- [ ] 输出 UTF-8、YAML 合法、安全命名、无全文 stdout
+- [x] 识别函数按段消费 faster-whisper generator；超出时长/分段/字符上限时在模型加载前或迭代期间明确失败
+- [x] 输出 UTF-8、YAML 合法、安全命名、无全文 stdout（单元/模拟测试通过；真实模型输出未验证）
 
 **P2：抖音获取**
 - [ ] 至少 3 个真实授权视频的获取与转写验证有记录
-- [ ] 优先音频，必要时视频兜底；缓存完整性验证
-- [ ] 登录需求提示用户，不绕过验证码
+- [x] 优先音频，必要时视频兜底；缓存完整性验证（模拟测试通过）
+- [x] 登录需求提示用户，不绕过验证码（错误处理和模拟测试已覆盖；真实页面未验证）
 
 **P3：批量恢复**
-- [ ] URL 清单、去重、任务状态和跳过逻辑正确
-- [ ] 异常不中断、失败可恢复、同名不覆盖
-- [ ] 下载有限并发、CPU ASR 串行、模型复用
+- [x] URL 清单、去重、任务状态和跳过逻辑正确（离线测试通过）
+- [x] URL 清单限制 1 MiB、单行 8192 字符、每批最多 100 条；50 条输入可接受
+- [x] 异常不中断、失败可恢复、同名不覆盖（模拟测试通过）
+- [x] 下载有限并发、CPU ASR 串行、模型复用（单元/模拟测试通过）
+- [x] 50 条混合任务完整模拟验收（覆盖缓存命中、失败、重复、并发上限、ASR 串行及结果/缓存/输出计数；不代替真实网络与模型验收）
 
 **P4：质量/低 Token**
-- [ ] 日志、stdout、Agent 上下文不包含完整逐字稿
-- [ ] 有可控术语词典和逐字稿抽样复核
+- [x] 日志、stdout、Agent 上下文不包含完整逐字稿（静态与模拟测试通过）
+- [x] 标题终端控制字符过滤、术语输出预算、`--quiet` 最终计数和时间轴顺序回归测试
+- [ ] 有可控术语词典和逐字稿抽样复核（显式词典已实现；真实逐字稿抽样待验收）
 - [ ] 真实耗时有实测记录，不写虚假倍速
 
 **P5：Skill 分发**
-- [ ] `SKILL.md` 完全符合标准
-- [ ] Skill 内代码自包含、可从非仓库目录启动
-- [ ] 另一个 Agent 环境安装和调用验证成功
+- [x] `SKILL.md` 完全符合标准（`skills-ref` 校验器通过）
+- [x] Skill 内代码自包含、可从非仓库目录启动（干净副本离线安装和 CLI 冒烟通过）
+- [x] Skill 将 URL、清单和媒体路径示例写为独立 argv，并要求 shell-only 宿主使用 shell 专属参数转义（标准校验通过）
+- [ ] 至少一个目标 Agent 宿主的真实安装与对话调用成功；Codex、Claude Code 等其他宿主按实际测试情况分别标注。离线干净副本安装已通过，GitHub 远端安装仍属 P6 未验证项
 
 **P6：GitHub 发布**
-- [ ] CI 测试通过、敏感文件检查通过
-- [ ] README、LICENSE、版本及安全说明齐备
+- [ ] CI 测试通过、敏感文件检查通过（当前 Git 可见文件检查脚本已加入 CI 配置并本机通过；远端矩阵仍未运行，完整 Git 历史需发布前人工审查）
+- [x] GitHub Actions 加入固定版本 `skills-ref==0.1.1` 的 Agent Skills 格式校验；该工作流远端尚未运行
+- [x] CI Action 固定完整 SHA，ASR 模型下载固定 Hugging Face revision（官方来源记于 Skill references）
+- [x] SEC-10 修复：拒绝由非当前用户、SYSTEM 或 Administrators 所有的既有敏感 Windows 路径；owner 策略回归测试通过，真实多账户 ACL 集成仍待验证
+- [x] SEC-09 修复：Skill 明确规定 argv 传参或 shell 专属转义；真实 Agent 宿主调用仍待验证
+- [x] SEC-11：总下载时限覆盖 DNS/连接/TLS、响应头、重定向、正文及解码提交，并可中断慢响应；真实 TLS/多平台集成仍待验证
+- [x] SEC-12：运行时只接受固定 revision；应用目录模型校验 setup 来源清单和必需文件摘要
+- [x] SEC-13：POSIX 敏感目标同时校验有效 UID 与 mode 位；完整祖先链另见 SEC-15
+- [ ] SEC-14：在目标 Agent 宿主验证远端标题/路径作为不可信输出数据处理（候选风险，尚未确认为漏洞）
+- [x] AUD-19：cache clean 在事务外扫描/规划，对每个候选用短事务重核任务 claim、媒体引用及本地输入路径，并在事务中做身份绑定删除；直接 cache API 默认保留 partial。AUD-56/57 回归见审核报告；单次 OS unlink 仍无严格时限保证。
+- [ ] SEC-15：敏感路径使用词法绝对路径，Windows 新目录原子设置 protected DACL，配置读取使用已检查句柄；`TaskStore` 保留词法路径。目录树和排他文件创建已局部加固：POSIX 使用 dir-fd 相对操作并核验对象身份，Windows 通过句柄校验目录/文件身份、创建文件时应用私有 DACL。SQLite、Playwright、模型下载等接口仍按 pathname 使用。当前没有证实跨用户利用；Windows ABA 窗口、DACL 属性、第二账户和 POSIX 实机集成仍待验收
+- [x] SEC-16：不安全且不存在的 `%LOCALAPPDATA%` 数据目录改用受信用户 profile fallback；已有旧目录保留并拒绝写入，避免静默隐藏用户数据。本机 `doctor`/目录创建测试通过；多 Windows 环境验证待 CI
+- [x] SEC-17：ASR 显式模型路径校验后使用 canonical path；alias 替换回归通过。真实权重未下载
+- [x] SEC-18：外部 Hugging Face cache 检查 owner/祖先；blob ETag 内容摘要校验；共享缓存和替换内容回归通过。真实 Hub cache 未运行
+- [x] AUD-21：Windows cache clean 固定目录与文件句柄、复核身份后按句柄标记删除；本机竞态用例通过，跨账户集成待验收
+- [x] SEC-19：读取 `config.toml` 前验证配置文件及路径链，拒绝不可信配置重定向数据/输出路径
+- [x] SEC-19/20：拒绝 `..` 路径组件；配置解析从权限检查过的同一句柄读取；POSIX 逐组件目录 FD/O_NOFOLLOW，Windows 使用 reparse-aware leaf handle 与同句柄 ACL 校验。POSIX symlink/替换/FIFO 和 Windows 多账户集成仍待实机验收
+- [x] SEC-21：术语匹配改用前缀树；最长有效命中和 ASCII 边界保持；正文/时间轴共享 2,500 万次转换预算；词典字段和 Trie 大小有硬上限，定向回归通过
+- [x] SEC-22：schema v5 在私有任务库保存本次预期 Markdown 摘要；写入不按公开 `video_id` 复用文件；完成/恢复校验摘要，旧任务无摘要时需显式 `--force` 重建。定向回归通过
+- [x] SEC-24：POSIX 配置文件以 `O_NONBLOCK` 打开后先按句柄类型检查，拒绝 FIFO，再对普通文件清除非阻塞标志；POSIX 回归因 Windows 开发环境跳过，仍待 Linux/macOS 验收
+- [x] SEC-25：`doctor` 的依赖和 Chromium 子解释器使用 Python `-P`，防止从当前工作目录导入影子模块；无害影子模块和两个探测参数回归通过。后续 Diff Scan `8537ef61-e6e5-4b6a-8fc7-f162382c098a` 覆盖相关文件，未发现新候选
+- [x] SEC-26：默认处理 worker 和 Chromium 安装子进程使用 Python `-P`；临时影子包与 setup 参数回归通过。后续 Diff Scan `8537ef61-e6e5-4b6a-8fc7-f162382c098a` 覆盖相关文件，未发现新候选；真实 Agent/跨平台行为仍待验收
+- [x] AUD-39：downloader 统一接受 `_Validation`、二元组或 `MediaFile` decoder 结果并保留媒体身份；新下载、缓存命中及默认远端 pipeline 回归通过
+- [x] AUD-40/41：默认 pipeline 将单条任务绝对 deadline 传给 downloader；使用任务期限与 downloader 自身 300 秒上限的较小值，任务期限到期映射为 `PROCESSING_TIMEOUT` 并写入任务库
+- [x] AUD-42：任务快照 schema v2 保存 `max_processing_seconds`；旧 v1 保持兼容，retry 默认恢复原值，显式超时参数覆盖并持久化
+- [x] AUD-43：schema v6 将 `timeline_required`、词法 sidecar 路径和 SHA-256 写入 TaskStore；在原子发布前绑定，完成、skip 与 crash recovery 校验完整性；旧任务时间轴需求未知时 fail closed。定向测试 51 passed, 2 skipped；symlink 冲突用例受当前 Windows 文件系统限制跳过，Linux/macOS 发布行为仍待验收
+- [x] AUD-44：URL 清单和术语词典以非阻塞方式读取并验证普通文件；FIFO 回归设有子进程超时，在 Windows 跳过
+- [x] AUD-45/46：doctor 支持检查显式输出路径；dry-run、转写和重试输出结构化目录权限状态并在文本模式提示；retry 的显式 output-dir 覆盖写入 schema v2 快照。Windows 定向与全套回归通过，POSIX/多账户 ACL 行为仍待验收
+- [x] AUD-47：浏览器 CONNECT relay 使用有界缓冲与非阻塞双向读写；目的端反压超时关闭隧道并释放代理槽位，回归通过
+- [x] AUD-48：Ctrl+C 取消传播至活动下载、退避等待和待执行 future；关闭浏览器/处理 worker 并将任务记为可重试 `CANCELLED`。AUD-50 已将有期限/可取消的 DNS 解析改为可终止子进程；无期限的直接 helper 仍可能等待系统 resolver，跨平台行为待集成验证
+- [x] AUD-49：sidecar 恢复回归遵循先绑定预期路径/摘要、后发布文件的生产顺序；覆盖缺失及摘要不符并确认恢复重跑
+- [x] AUD-36 源码与本机回归：POSIX 同步临时文件、发布后的父目录及新建目录祖先链；Windows 以 `MoveFileExW(MOVEFILE_WRITE_THROUGH)` 无覆盖发布文件和新建目录，失败时不返回成功。Windows 同会话创建互斥与并发目录回归通过。 [ ] Linux/macOS、远程/第三方文件系统和断电语义仍待多平台验证
+- [x] AUD-37：Windows 仅将明确的 Win32 已存在错误码映射成文件名冲突；通用移动失败保留原错误，新增目标同时出现时的错误码回归
+- [x] SEC-23 源码与模拟回归：PyAV 逐帧累计 `samples / sample_rate` 与时间戳跨度，并在每帧后检查配置上限；正容器声明超限时在解码前拒绝，声明偏小时仍以解码结果为准；可恢复 `InvalidDataError` 继续消费后续帧。模拟覆盖低报时长、声明/解码超限早停、下载/ASR 默认上限传递及坏帧恢复
+- [ ] SEC-23 真实媒体格式验收：授权的低报/未知时长、VBR/尾部 padding、坏包后有效帧样本；与 faster-whisper 解码行为对照
+- [x] AUD-38 源码与回归：本地/新下载远端任务各只做一次完整时长校验；验证结果携带实际解码文件身份传给 ASR，ASR 核对身份后从文件句柄读取，路径替换时失败关闭；直接 ASR 和缓存恢复仍单独校验
+- [ ] AUD-38 真实性能验收：用获授权的 16.5 分钟及接近配置上限媒体记录校验次数、CPU 和端到端耗时
+- [x] AUD-53：恢复任务的媒体/输出校验移出 SQLite 写事务，提交前重读并比对完整 Task 快照；慢 validator 下并发写入、heartbeat 续租保护回归通过
+- [x] SEC-28：敏感文件检查器拒绝 Git 可见树中的通用 `cache/` 目录，不依赖媒体扩展名；未知扩展名路径回归通过
+- [x] AUD-10 源码与本机回归：默认 pipeline 用有界 JSON IPC 子进程执行媒体解码和 ASR；单条任务共用绝对 deadline，超时杀死并回收 worker，下载 `.part` 清理、任务写入失败态；worker 在批次内复用模型。默认 7,200 秒，CLI 可调，硬上限 86,400 秒
+- [ ] AUD-10 真实集成：用授权媒体和真实 PyAV/faster-whisper 验证子进程文件句柄、超时阈值和 Windows/macOS/Linux 终止/清理行为
+- [x] AUD-32/33：短链所有跳转共用 30 秒 deadline；浏览器 CONNECT deadline 覆盖请求头、DNS、连接和成功响应，超时关闭 socket 并释放代理槽位；allowlist/公网地址校验保留。阻塞 resolver、共享短链 deadline 和槽位恢复定向测试通过；真实 Chromium/跨平台 DNS 集成待验收
+- [x] AUD-30：缺少/无效配置快照的旧任务默认跳过；`--use-current-defaults` 明确 opt-in 并持久化当前快照；schema 版本严格要求整数 `1`，拒绝布尔、浮点和字符串类型，CLI 回归通过
+- [x] AUD-34/35：本地 retry 验证原路径和内容摘要后才转为 `downloaded`；`--force` 在同一事务刷新最近 attempt 的 profile/title/options；定向回归通过
+- [x] AUD-31：第 12.4 节已与 V1 缓存行为对齐；远端媒体默认保留，显式 `cache clean` 管理
+- [x] AUD-20：并发首次打开数据库时 WAL 对 SQLite locking protocol 状态限时重试；确定性回归和全套测试通过
+- [x] README、CHANGELOG、SECURITY、安全报告指引、Skill 安装说明及示例配置齐备；[ ] LICENSE 仍待仓库所有者决定
 - [ ] GitHub 安装命令已真实验证
 - [ ] 只有获得用户授权才推送/公开项目
-- [ ] 产出 RELEASE_REPORT，明确通过项与未验证项
+- [x] 产出 `docs/RELEASE_REPORT.md`，明确通过项与未验证项
+- [x] 产出 `docs/ARCHITECTURE.md`、`docs/ACCEPTANCE.md` 和 `docs/RELEASE_CHECKLIST.md`，仅记录现有实现和证据，不伪造真实 P1/P2 结果
+
+> 2026-10-09 复审基线：当时 Windows 完整测试 **245 passed, 10 skipped**；Ruff、敏感文件检查、锁文件检查、`git diff --check` 与 Agent Skills 校验通过。AUD-24/25/26/28/29 源码整改及离线回归通过；AUD-27 已通过显式 `--skip-existing` 和 V1 媒体缓存范围对齐关闭，可选 turbo 待真实模型验收后再评估。SEC-11/12/13、AUD-19/20 已整改；SEC-17/18、AUD-21 有本机代码与定向回归；SEC-15/16 的平台集成仍待验收。追加复核发现 SEC-20 至 SEC-23、AUD-30 至 AUD-35，其中 SEC-23 仍待媒体样本确认；SEC-19 的 handle-bound 读取仍未完成，AUD-30 旧任务重试策略待定，AUD-31 的第 12.4 节缓存策略文案已修正。Codex Security 结构化扫描完成并记录 5 项源码发现（1 项中危、4 项低危），coverage partial；扫描工具提示结果对应启动时工作树快照。该轮没有修改实现代码或运行新测试。真实媒体/平台/Agent 验收、远端 CI 和许可证决定仍未完成，发布状态为 `NOT READY`。
+
+> 2026-10-09 AUD-32/33 整改复核的历史中间快照：短链 deadline 与浏览器 CONNECT DNS/连接 deadline 已实现，网络定向测试 **26 passed**，4 个相关源码/测试文件 Ruff 通过。当时共享工作树全套 pytest 为 **244 passed, 10 skipped, 9 failed**（失败涉及并行修改中的 markdown、pipeline、storage_security、tasks）；全仓 Ruff 被 `storage_security.py` 的 E501/F821 阻断。该临时快照已由下方最终本地离线复核取代。真实 Chromium、系统 DNS 和 Windows/macOS/Linux 集成仍待验收；详见 `docs/PROJECT_AUDIT_REPORT.md` 与 `docs/RELEASE_REPORT.md`。
+
+> SEC-21 专项整改补记（2026-10-09）：以 Trie 匹配替代逐位置逐规则扫描，最长有效命中、ASCII 边界、原文匹配和不级联替换语义保持；正文与时间轴共用单任务 25,000,000 次转换预算。增加 1,000 规则 × 200,000 字符确定性工作量用例、共享长前缀预算耗尽用例和 pipeline 共享预算用例。`uv run --offline --project .\skills\douyin-transcript --locked --no-sync --group dev pytest -q tests/unit/test_corrections.py tests/unit/test_cli.py tests/unit/test_pipeline.py` 最新定向复跑 **60 passed**；先前共享工作树全套离线测试快照为 **260 passed, 12 skipped**，当时全仓 Ruff 通过。后续当前快照全仓 Ruff 仅被并行 AUD-30 文案的 `cli.py:505`、`cli.py:521` 两条 E501 阻断，完整源码/测试检查加 `--ignore E501` 通过；最终全套测试和 Ruff 待收尾统一复跑确认。超预算时返回 `TERMINOLOGY_WORK_LIMIT`，不是静默截断。
+
+> SEC-22/AUD-30/34/35 整改补记（2026-10-09）：实现 output SHA-256 attempt 凭据及完成/skip/recovery 校验；旧任务无快照默认跳过，`--use-current-defaults` 持久化 opt-in 快照；本地 retry 保持 failed 直至原文件路径/内容验证通过；force reopen 原子更新最近 attempt 设置。相关定向测试 **76 passed**，实现与测试 Ruff 检查通过。此时全套 pytest 尚未重跑；该状态已由下方最终本地离线复核取代。SEC-22 的跨平台共享目录并发替换和旧 schema 输出重建体验仍需集成验收。
+
+> 2026-10-09 最终本地离线复核：Windows 全套 **283 passed, 14 skipped**；全仓 Ruff、`uv lock --check`、敏感文件扫描和 Agent Skills 校验均通过。14 个跳过项是 POSIX 专属权限/symlink/句柄替换/FIFO 用例，或当前 Windows 文件系统不允许创建 symlink。SEC-15 的 TaskStore 路径别名预处理已修复并有确定性回归；实际 symlink 用例本机跳过。SEC-19/20 配置同句柄读取修复已实现；AUD-36 POSIX 目录同步及 Windows 写穿透发布已实现并通过 Windows 本机回归，AUD-37 通用 Win32 错误码保留原样并通过回归。SEC-23 已完成逐帧解码时长检查的源码与模拟回归；AUD-38 的重复全解码已通过身份绑定校验结果整改并有模拟回归，真实长媒体基准仍待授权样本；AUD-10 子进程超时源码与 Windows 本机回归已通过；真实媒体和跨平台 worker 集成仍待验收。Linux/macOS 和其他文件系统耐久性仍待验证。以上结果不替代真实抖音/ASR/Agent、远端 CI、许可证决策和发布授权。
+
+> 2026-10-09 追加本地缺陷收尾：SEC-25/26 子进程加入 `-P` 并通过影子模块回归；AUD-39 的 downloader 接受 `MediaFile` 验证结果；AUD-10 绝对下载 deadline、超时错误码与重试快照已修复；AUD-43 schema v6 sidecar 路径/摘要绑定及完成、skip、crash recovery 校验已实现；AUD-44 FIFO 输入阻塞已拒绝。全套 Windows 离线测试 **303 passed, 17 skipped**，Ruff、锁文件、敏感文件与 Skill 标准校验通过。真实模型、获授权媒体、跨平台 CI、远端 Agent、许可证和仓库发布仍未验收。
+
+> 2026-10-09 早期续审快照（后续情况见下方记录）：再次复跑 Windows 离线全套为 **303 passed, 17 skipped**；Ruff、`uv lock --check`、敏感文件检查和 Agent Skills 校验均通过。`doctor --json` 返回 `setup_required`：faster-whisper、PyAV、模型、Playwright 和 Chromium 均缺失；默认 workspace 输出路径因 `D:\` 向 Authenticated Users 授予目录替换权限而为 `unsafe`。按阶段门槛，P1 真实本地转写是最早未通过阶段，需要获授权的至少 60 秒中文口播样本、用户批准安装依赖/下载固定模型，并使用经验证的私有输出目录。最近一次 Deep Scan 尝试未启动，协调器要求 parent 提供 managed filesystem permission profile；既有 Diff Scan 不能证明全仓无问题。SEC-15 仍为部分整改：POSIX/Windows 目录创建、SQLite、Playwright 与模型第三方接口仍有 pathname-only 边界，需按当前威胁模型继续收紧并完成平台集成验证。
+
+> 2026-10-09 AUD-45/46 续审整改：`doctor --output-dir`、dry-run、转写和 `retry-failed` 现在检查本次实际输出目录的权限；JSON 汇总携带目录状态，文本模式在 stderr 提示 `unsafe`/`unknown`，共享目录仍允许使用且不改既有 ACL。另修复 `retry-failed --output-dir` 单独使用时没有持久化到配置快照的问题。CLI/doctor 定向回归 **58 passed, 2 skipped**；全套 Windows 离线测试 **308 passed, 17 skipped**；全仓 Ruff、锁文件、敏感文件与 Agent Skills 校验通过。macOS/Linux、Windows 多账户 ACL、真实媒体/抖音/Agent、远端 CI、LICENSE 决策和发布仍未验收。
+
+> 2026-10-09 AUD-47/48/49 续审整改：浏览器 CONNECT relay 改为有界非阻塞双向转发，反压超时可释放代理槽；批量下载新增取消传播，Ctrl+C 会关闭活动网络连接、停止重试、取消待执行任务并尽快清理浏览器/处理 worker，活动任务以 `CANCELLED` 标记为可重试。原生 `getaddrinfo` 无法强杀；调用方会及时返回，后台 daemon 解析并发限制为 2。sidecar recovery 回归改为先持久化预期路径/摘要再模拟发布，并覆盖 sidecar 缺失和摘要不符。全套 Windows 离线测试 **315 passed, 17 skipped**；全仓 Ruff、离线锁文件检查、敏感文件检查和 Agent Skills 校验均通过。POSIX、真实 Chromium/DNS、ASR、抖音、远端 CI、Agent 宿主、LICENSE 和发布授权仍未验收。
+
+> 2026-10-09 AUD-50 DNS 可用性续审：带 deadline/取消的 DNS 解析改用 `sys.executable -I` 隔离子进程；超时/取消时终止并回收 worker 后释放两个共享解析名额。主进程仍执行公网 IP 校验。新增阻塞解析超时、双 worker 同时阻塞后取消与名额复用回归；首次全套测试发现 downloader 旧测试的父进程 `getaddrinfo` mock 不再适用于子进程，已改成本地模拟 resolver worker。相关定向回归 **29 passed**，AUD-50 完成时全套 Windows 离线测试 **316 passed, 17 skipped**；Ruff、锁文件、敏感文件和 Agent Skills validator 通过。无 deadline/cancellation 的直接 helper 调用仍同步使用系统 resolver，调用方应提供期限。Linux/macOS、真实 DNS/Chromium、ASR、抖音、远端 CI、Agent 宿主、LICENSE 和发布授权仍未验收。
 
 ---
 
@@ -995,3 +1069,36 @@ Git commit：<commit id>
 # 20. 一句话验收标准
 
 > 另一个人拿到 GitHub 地址后，能在受支持的 Agent 上安装 Skill，经一次明确的环境初始化和必要的人工登录，就能用一条命令将多个有访问权限的抖音视频转成以视频标题命名的 Markdown 逐字稿；既能批量断点续跑，又不会把正文塞进 Agent 上下文；失败有可理解的原因，整个功能在干净环境下可复现。
+
+> 2026-10-09 AUD-51 Windows ACL 诊断续审历史快照（由下一条续审刷新）：按权限掩码识别 foreign ACE；只含 `FILE_EXECUTE`/目录遍历和 `SYNCHRONIZE` 的 ACE 不再误报为可读取或可修改。7 组策略回归通过；`%USERPROFILE%\Transcripts` 检查为 `ok` 且未创建，默认 D: 输出仍 `unsafe`。当时全套 Windows 离线测试 **323 passed, 17 skipped**；Ruff、锁文件、敏感文件检查和固定 Agent Skills validator 通过。跨账户和平台权限继承仍待验收。
+> 2026-10-09 SEC-15 创建路径续审：POSIX 目录树使用 dir-fd 相对逐组件创建/打开与身份核验；排他文件通过父目录 fd 创建并从同一 fd 检查。Windows 文件通过 `CREATE_NEW` 在创建时应用私有 DACL，固定目录/文件句柄并复核 volume/file ID。Windows 父目录替换回归通过；文件身份不一致用确定性扰动验证 fail-closed（本机拒绝替换仍打开的叶文件）。配置、存储、doctor、CLI 定向测试 **92 passed, 14 skipped**；全套 Windows 离线测试 **325 passed, 20 skipped**。Ruff、离线锁、敏感文件扫描及 `skills-ref==0.1.1` validator 通过。POSIX 实机、Windows 多账户/ABA 边界和第三方 pathname-only API 仍待验收，SEC-15 继续保持未关闭。
+
+> 2026-10-09 SEC-27/AUD-52 续审历史快照：SEC-27 已通过 `GetDriveTypeW()` 拒绝远程映射盘并对未知盘类型失败关闭；mock 回归通过，本机 C:、D: 均识别为固定盘，当前无映射共享可做实测。AUD-52 对创建后身份核验失败的情况加入私有残留提示和排障说明；实现保留对象，避免按可变路径名进行有竞态的清理。Windows 回归覆盖提示，POSIX 分支仍待实机验证。全套 Windows 离线测试 **331 passed, 20 skipped**；storage_security 定向测试 **33 passed, 11 skipped**；Ruff、锁文件、敏感文件检查和 Agent Skills 校验通过。仓库外离线干净副本通过锁定 no-dev 安装、`--version` 与直链 `--dry-run --json`；首次选择 `%TEMP%` 下的数据路径被本机不安全祖先 ACL 拒绝，改用 doctor 确认为安全的用户 profile 候选路径后通过，且未创建运行时数据目录。该历史阶段的 P1/P2/P4/P5/P6 验收与所有者决定仍未完成。
+
+> 2026-10-09 AUD-53/SEC-28 续审与最新本机快照：恢复前的媒体/输出验证现移出 SQLite 写事务；提交时比对完整任务快照，避免长解码持锁或覆盖期间已续租的任务。敏感文件检查器现拒绝 Git 可见树中任意通用 `cache/` 目录内容。新增的两项并发回归与扫描器回归通过；全套 Windows 离线测试 **334 passed, 20 skipped**；全仓 Ruff、锁文件、敏感文件检查和 Agent Skills 校验通过。仓库外 Skill 副本排除源 `.venv`/缓存，在独立临时虚拟环境中 `UV_OFFLINE=1` 锁定 no-dev 安装成功；从仓库外确认模块导入路径来自副本，`--version` 与直链 `--dry-run --json` 通过，未启动 ASR/Chromium 或创建运行时数据目录。`docs/PROJECT_AUDIT_REPORT.md` 记录证据与对策。真实 P1/P2/P4、Agent 宿主、远端 CI、许可证和发布授权仍未完成，整体 `NOT READY`。
+
+> 2026-10-09 AUD-54/AUD-55 修复续审：tasks schema v7 增加 `claim_generation`，所有 worker 写入检查 owner 与代次；heartbeat claim 丢失时取消对应 pipeline 处理。Windows Python 3.12+ 缓存清理改用 `FILE_ID_INFO` 的 64 位卷序列号和 128 位文件 ID，Python 3.11 保留兼容路径。Windows Python 3.11.15 和 3.12.13 全套离线测试各 **337 passed, 20 skipped**；两环境 Ruff 通过，`uv lock --check`、敏感文件扫描和 Agent Skills validator 通过。AUD-54 定向任务/pipeline/downloader 测试 **109 passed, 3 skipped**；AUD-55 Python 3.12 缓存/CLI 定向测试 **26 passed, 2 skipped**。真实 ASR、抖音/Chromium、人工听审、性能记录、Linux/macOS、远端 CI、目标 Agent、许可证和发布授权仍未完成，整体 `NOT READY`。
+
+> 2026-10-09 审核续订（该时点快照）：AUD-56/57 缓存清理已改为事务外扫描与逐文件协调，并保护已记录的本地源路径。AUD-58 已加固浏览器 context、Service Worker、WebSocket 和代理 loopback 边界；AUD-59 至 AUD-62 修复重试状态、缓存恢复、并发本地 retry 和 claim-generation 强制；AUD-63 修复时间戳敏感测试 fixture；DOC-07/08 统一正文隐私规则和基础安装授权说明。后续续审发现 DOC-09（wrapper/示例漏用 `--no-sync`）和 ENG-02（干净安装脚本继承外部 `UV_PROJECT_ENVIRONMENT`），已修复并加入回归；DOC-10/11 对齐 CI 网络语义并写明 uv 0.12.7 验证基线。当时 Windows Python 3.11.15 与 3.12.13 全套离线测试各为 356 passed, 20 skipped；安装隔离定向用例 8 passed；Ruff、锁文件、敏感文件扫描及 Skill validator 通过。真实 Chromium/抖音、ASR、人工听审、Linux/macOS、远端 CI、Agent 宿主、许可证与发布授权仍未完成；项目仍 NOT READY。详见 PROJECT_AUDIT_REPORT.md。
+
+> 2026-10-09 后续安全差异复核：Codex Security Diff Scan `8537ef61-e6e5-4b6a-8fc7-f162382c098a` 对冻结工作树快照 `aa0314f296588ea1f7b0944b5e02167cfac1d57dea4fe9427d84f6c37f88e84a` 的 28 个代码审查项全部完成复核，未发现新的可报告候选；SEC-25/26 修复所在文件在范围内。此结果只覆盖该静态差异快照，未完成真实 ASR/抖音、Agent 宿主、Linux/macOS/Windows 多账户、远端 CI、许可证与发布授权门槛，项目仍为 `NOT READY`。
+
+> 2026-10-09 文档续审：中文 README 已补虚构 JSON/Markdown 输出样例和计划要求的 7 类 FAQ；新增 `.github/ISSUE_TEMPLATE/bug_report.yml` 与 `feature_request.yml`，明确不收集私人媒体和认证信息。`docs/PROJECT_AUDIT_REPORT.md` 的 DOC-04 记录证据和对策。表单的 GitHub 在线渲染仍待目标仓库发布后确认；不改变真实媒体、Agent、跨平台、远端 CI、许可证与发布授权的未完成状态。
+
+> 2026-10-09 缓存运维文档补记：README 增加每月人工检查建议，以 720 小时为预览示例，并说明先审阅后 `--apply`、可自行设定容量，以及活动/非完成任务媒体受保护。此为手动操作起点，未启用自动清理；`docs/PROJECT_AUDIT_REPORT.md` 记录为 DOC-05。
+
+> 2026-10-09 SEC-15 独立边界复核：对照 `ARCHITECTURE.md` 威胁模型检查 SQLite、Playwright profile、模型下载、缓存写入与输出发布调用链；在私有祖先不可被其他账户修改的假设下，未确认新的跨账户可利用缺陷。第三方 pathname-only API 的 ABA 边界及 POSIX/Windows 多账户实机证据仍未闭合，SEC-15 保持部分整改；详细边界、输出目录例外和平台验收要求见审核报告。
+
+> 2026-10-09 文案一致性复核：修正 CHANGELOG 对旧失败任务的错误描述。无有效配置快照的旧任务默认跳过；只有显式 `--use-current-defaults` 才接受并持久化当前设置。审核报告以 DOC-06 记录。
+
+> 2026-10-09 AUD-64–66 整改续审：文件名 fallback 现在与标题使用相同 basename 清理，空标题/恶意 video ID 的 writer 回归通过；setup 在 uv 与 Chromium 安装后、模型下载前复查模型卷 2 GiB 余量，安装后空间不足则停止下载，并将动态组件空间说明为快照；Markdown frontmatter serializer/task parser 共用 4 Mi 字符上限，解析器逐行有界读取，超限内容在发布前拒绝。Python 3.11.15 Windows 定向测试 107 passed, 3 skipped，全套 366 passed, 20 skipped；Python 3.12.13 全套 366 passed, 20 skipped；全仓 Ruff 通过。Linux/macOS、远端 CI、真实媒体/浏览器/Agent 和发布决定仍待完成。项目仍 NOT READY，详见 `docs/PROJECT_AUDIT_REPORT.md`。
+
+> 2026-10-09 源码续审收尾：AUD-67 将无 deadline 的处理 worker 请求转为一次性默认绝对时限，堵住 stale-task recovery 卡住后无限等待；AUD-68 按解析结果接受大小写不敏感的 HTTPS scheme 和末尾点 Douyin host；SEC-29 将 Markdown 输出 extension 限制为普通后缀，拒绝路径注入。新增回归后，定向测试 57 passed；Windows Python 3.11.15 与 3.12.13 全套各 375 passed, 20 skipped；全仓 Ruff、锁文件、敏感文件检查、Agent Skills validator、仓库外离线干净安装均通过。单提交 Git 历史敏感路径/凭据模式扫描无命中。Linux/macOS、真实媒体/抖音、目标 Agent、远端 CI、许可证与仓库发布授权仍未完成；整体保持 NOT READY，详见 `docs/PROJECT_AUDIT_REPORT.md` 与 `docs/RELEASE_REPORT.md`。
+
+> 2026-10-09 AUD-69 归一续审：修复英文字幕相邻分段的尾随空格丢失，并保留 CJK 不插空格的行为。五个定向测试模块 62 passed；Python 3.11.15 和 3.12.13 Windows 全套各 376 passed, 20 skipped。完整 Ruff、锁文件、敏感文件扫描、Agent Skills validator、仓库外离线干净安装均复核通过。真实音频听审、浏览器/抖音、Linux/macOS、目标 Agent、远端 CI、许可证和发布授权仍未完成；整体保持 NOT READY，详见 `docs/PROJECT_AUDIT_REPORT.md` 与 `docs/RELEASE_REPORT.md`。
+
+> 2026-10-09 本机阶段门复核：本轮在现有 Python 3.11.15 环境及独立 Python 3.12.13 环境分别重跑完整 Windows 离线套件，各 376 passed, 20 skipped；`doctor --json` 返回 `setup_required`，未安装 ASR/浏览器组件或下载模型。AST 检查未发现仅含 `pass` 的函数壳或 `NotImplementedError`。另发现 `uv run --python 3.12 --no-sync` 会在已有 3.11 venv 上警告后继续使用 3.11，已在 `docs/ACCEPTANCE.md` 记录切换前 `uv sync` 并检查 `python --version` 的步骤，审核报告记为 DOC-14。真实媒体、Linux/macOS、Agent 宿主、远端 CI 和许可证/仓库决策仍待完成。
+
+> 2026-10-09 P6 初步许可来源复核：核对了锁定的 faster-whisper 1.2.1、Medium 模型固定 revision、Playwright 1.63.0 与 PyAV 15.1.0 的上游许可证/安装路径，新增 `docs/THIRD_PARTY_LICENSE_REVIEW.md`。PyAV wheel 链接 FFmpeg，但该版本各平台 wheel 内的 FFmpeg 构建配置/notice 尚未核查；完整依赖 SPDX 清单、项目 LICENSE 选择及二进制分发审阅仍待完成，发布门保持 NOT READY。
+
+> 2026-10-09 本轮项目收尾：整改 SEC-30 标题双向控制字符、SEC-31 PyAV 二次资源打开边界、SEC-32 敏感文件扫描静默跳过，并补齐 DOC-16/17 和计划中的三个 examples 文件。Windows Python 3.11.15 全套 **382 passed, 20 skipped**，全仓 Ruff、敏感文件扫描和 `git diff --check` 通过；Python 3.12.13 尚未重跑本轮改动。Skill 项目 venv 未安装锁定 PyAV 15.1.0；系统 Hermes Python 的 PyAV 18.0.0 已完成 loopback HLS 回调与合成 WAV 补充动态检查，锁定 wheel 验收仍待做。真实 P1/P2/P4/P5、跨平台 CI、许可证及发布决定仍未完成，整体 NOT READY；详见 `docs/PROJECT_AUDIT_REPORT.md`。

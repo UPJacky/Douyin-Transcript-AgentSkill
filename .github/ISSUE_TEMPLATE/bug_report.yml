@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible problem without sharing private media or account data.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach videos, audio, transcripts, cookies, signed media URLs, account details, or unredacted logs. For security vulnerabilities, follow `SECURITY.md` instead of opening a public issue. Use a synthetic or otherwise shareable reproduction.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the problem without including private media or transcript text.
+      placeholder: The command exits with an error before creating an output file.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Project version
+      description: Run `douyin-transcript --version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 10
+        - Windows 11
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.11.15"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Use a synthetic input or a description that does not reveal a private URL, path, or media content. Redact usernames and tokens from commands.
+      placeholder: |
+        1. Run a command with a synthetic local fixture.
+        2. Observe the sanitized error code.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+      description: Include the error code and a short sanitized message. Do not paste a full log or `doctor --json` output because it can contain local paths.
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: Relevant checks
+      description: Optionally provide only sanitized status fields, such as `overall`, `capabilities.local_transcription`, `checks.decoder`, and `checks.model` from doctor output.
+    validations:
+      required: false
