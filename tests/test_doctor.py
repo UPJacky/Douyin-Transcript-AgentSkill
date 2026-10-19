@@ -494,6 +494,10 @@ def test_doctor_reports_shared_data_directory_without_changing_it(
     data_dir = tmp_path / "shared-data"
     data_dir.mkdir()
     data_dir.chmod(0o755)
+    database = data_dir / "tasks.sqlite3"
+    database.write_text("existing shared database\n", encoding="utf-8")
+    database.chmod(0o644)
+    initial_database = database.read_text(encoding="utf-8")
     monkeypatch.setenv("DOUYIN_TRANSCRIPT_HOME", str(data_dir))
     monkeypatch.setattr(
         doctor, "_module_status", lambda name: {"status": "ok", "detail": "test"}
@@ -519,7 +523,8 @@ def test_doctor_reports_shared_data_directory_without_changing_it(
     assert report["checks"]["task_database_permissions"]["status"] == "unsafe"
     assert report["capabilities"]["local_transcription"] == "setup_required"
     assert stat.S_IMODE(data_dir.stat().st_mode) == 0o755
-    assert not (data_dir / "tasks.sqlite3").exists()
+    assert stat.S_IMODE(database.stat().st_mode) == 0o644
+    assert database.read_text(encoding="utf-8") == initial_database
 
 
 def test_output_directory_permission_check_is_advisory_for_shared_folder(

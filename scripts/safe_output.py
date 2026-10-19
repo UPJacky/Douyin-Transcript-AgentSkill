@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import BinaryIO, Iterable, Iterator, TextIO, cast
 
 _FILE_ATTRIBUTE_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+# CPython does not include ``os.replace`` in ``supports_dir_fd`` on POSIX,
+# although it accepts the same directory-relative arguments as ``os.rename``.
+_POSIX_RENAME_DIR_FD_CAPABILITY = os.rename
 
 
 class SafeOutputError(OSError):
@@ -65,33 +68,50 @@ def _open_parent_directory(
         return
 
     # ``os.replace`` accepts dir_fd arguments on POSIX, but CPython does not
-    # list it in ``supports_dir_fd`` on every platform. ``os.rename`` provides
-    # the same atomic replacement semantics on POSIX and is capability-listed.
-    required = (os.open, os.mkdir, os.rename)
+    # list it in ``supports_dir_fd`` on every platform. Its directory-relative
+    # support is provided by the same POSIX rename operation.
+    required = (os.open, os.mkdir, _POSIX_RENAME_DIR_FD_CAPABILITY)
     if not all(function in os.supports_dir_fd for function in required):
         raise SafeOutputError("safe output requires directory-relative file operations")
     if not getattr(os, "O_NOFOLLOW", 0) or not getattr(os, "O_DIRECTORY", 0):
         raise SafeOutputError("safe output requires no-follow directory handles")
 
     flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    descriptor: int | None = None
     try:
         descriptor = os.open(path.anchor, flags)
-        try:
-            for component in path.parts[1:]:
+        for component in path.parts[1:]:
+            try:
+                child = os.open(component, flags, dir_fd=descriptor)
+            except FileNotFoundError:
+                if not create:
+                    raise SafeOutputError("output parent directory does not exist")
                 try:
-                    child = os.open(component, flags, dir_fd=descriptor)
-                except FileNotFoundError:
-                    if not create:
-                        raise SafeOutputError("output parent directory does not exist")
                     os.mkdir(component, dir_fd=descriptor)
-                    child = os.open(component, flags, dir_fd=descriptor)
-                os.close(descriptor)
-                descriptor = child
-            yield descriptor
-        finally:
+                except FileExistsError:
+                    # Another creator may have won the race; reopening below
+                    # still applies O_NOFOLLOW and verifies it is a directory.
+                    pass
+                child = os.open(component, flags, dir_fd=descriptor)
             os.close(descriptor)
+            descriptor = child
+    except SafeOutputError:
+        if descriptor is not None:
+            os.close(descriptor)
+        raise
     except OSError as exc:
+        if descriptor is not None:
+            os.close(descriptor)
         raise SafeOutputError("cannot safely open output parent directory") from exc
+
+    assert descriptor is not None
+    try:
+        # Keep caller operations outside the setup-error handler so their
+        # OSErrors (for example FileExistsError from create-only writes) retain
+        # their original meaning.
+        yield descriptor
+    finally:
+        os.close(descriptor)
 
 
 def _open_windows_parent(path: Path, *, create: bool) -> list[int]:
@@ -420,7 +440,7 @@ def write_atomic_text(path: Path, content: str, *, create_parents: bool = True) 
                         stream.write(content)
                         stream.flush()
                         os.fsync(stream.fileno())
-                    os.rename(
+                    os.replace(
                         temporary_name,
                         destination.name,
                         src_dir_fd=descriptor,

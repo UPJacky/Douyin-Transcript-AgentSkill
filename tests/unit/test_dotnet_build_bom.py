@@ -11,6 +11,16 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
+SDK_PIN_FILES = (
+    ROOT / "native/windows/capture-pipe/global.json",
+    ROOT / "native/windows/wfp-policy-core/global.json",
+    ROOT / "native/windows/wfp-policy-native-readback/global.json",
+    ROOT / "native/windows/wfp-policy-plan/global.json",
+    ROOT
+    / "native/windows/wfp-policy-plan/sandbox/b2-launcher/host-runner/lease-job-helper/global.json",
+    ROOT / "native/windows/wfp-policy-runtime/global.json",
+    ROOT / "scripts/nuget_content_hash/global.json",
+)
 SCRIPTS_DIR = str(ROOT / "scripts")
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
@@ -39,6 +49,19 @@ def _write(path: Path, payload: bytes) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(payload)
     return path
+
+
+def test_sdk_pins_match_ci_without_rolling_forward() -> None:
+    for path in SDK_PIN_FILES:
+        config = json.loads(path.read_text(encoding="utf-8"))
+        assert config["sdk"] == {
+            "version": "10.0.401",
+            "rollForward": "disable",
+            "allowPrerelease": False,
+        }
+
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert workflow.count('dotnet-version: "10.0.401"') == 2
 
 
 def test_package_record_binds_lock_metadata_archive_signature_and_verify(

@@ -7,6 +7,7 @@ import time
 import os
 
 import pytest
+from douyin_transcript import browser_proxy
 from douyin_transcript.browser_proxy import (
     PinnedHttpsConnectProxy,
     resolve_browser_destination,
@@ -97,8 +98,11 @@ def test_standalone_proxy_can_use_a_supplied_loopback_listener_socket():
             proxy.close()
         # The socket owner retains its original handle while the proxy closes
         # only the handle supplied to this standalone diagnostic instance.
-        assert broker_listener.getsockopt(socket.SOL_SOCKET, socket.SO_ACCEPTCONN) == 1
         assert broker_listener.getsockname() == endpoint
+        with socket.create_connection(endpoint, timeout=2):
+            broker_listener.settimeout(2)
+            accepted, _address = broker_listener.accept()
+            accepted.close()
 
 
 @pytest.mark.parametrize("bad_endpoint", [("0.0.0.0", 1234), ("127.0.0.1", 0)])
@@ -123,6 +127,23 @@ def test_proxy_rejects_socket_that_is_not_listening():
                 listener_socket=unbound,
                 expected_endpoint=unbound.getsockname(),
             )
+
+
+def test_proxy_listener_validation_fallback_handles_unavailable_acceptconn(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(browser_proxy, "_acceptconn_status", lambda listener: None)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listening:
+        listening.bind(("127.0.0.1", 0))
+        listening.listen(1)
+        assert browser_proxy._is_expected_loopback_listener(
+            listening, listening.getsockname()
+        )
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as unlistened:
+        unlistened.bind(("127.0.0.1", 0))
+        assert not browser_proxy._is_expected_loopback_listener(
+            unlistened, unlistened.getsockname()
+        )
 
 
 @pytest.mark.parametrize(

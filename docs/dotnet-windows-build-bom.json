@@ -466,8 +466,8 @@
       "generatedSources": [],
       "globalJson": {
         "path": "native/windows/wfp-policy-runtime/global.json",
-        "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-        "sizeBytes": 109
+        "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+        "sizeBytes": 105
       },
       "limitations": [
         "does not include a native BFE/WFP store or prove that filters were applied",
@@ -512,8 +512,8 @@
         },
         {
           "path": "native/windows/wfp-policy-core/global.json",
-          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-          "sizeBytes": 109
+          "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+          "sizeBytes": 105
         },
         {
           "path": "native/windows/wfp-policy-core/LeasePolicyCompiler.cs",
@@ -537,8 +537,8 @@
         },
         {
           "path": "native/windows/wfp-policy-native-readback/global.json",
-          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-          "sizeBytes": 109
+          "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+          "sizeBytes": 105
         },
         {
           "path": "native/windows/wfp-policy-native-readback/NativeMethods.txt",
@@ -587,8 +587,8 @@
         },
         {
           "path": "native/windows/wfp-policy-runtime/global.json",
-          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-          "sizeBytes": 109
+          "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+          "sizeBytes": 105
         },
         {
           "path": "native/windows/wfp-policy-runtime/NativeWfpPolicyStoreAdapter.cs",
@@ -1211,8 +1211,8 @@
       ],
       "globalJson": {
         "path": "native/windows/wfp-policy-native-readback/global.json",
-        "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-        "sizeBytes": 109
+        "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+        "sizeBytes": 105
       },
       "harnessCommand": "dotnet run --project <native readback harness> --configuration Release -p:Platform=x64 --no-build --no-restore",
       "limitations": [
@@ -1268,8 +1268,8 @@
         },
         {
           "path": "native/windows/wfp-policy-native-readback/global.json",
-          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-          "sizeBytes": 109
+          "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+          "sizeBytes": 105
         },
         {
           "path": "native/windows/wfp-policy-native-readback/NativeMethods.txt",
@@ -1350,8 +1350,8 @@
     },
     {
       "path": "native/windows/wfp-policy-core/global.json",
-      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-      "sizeBytes": 109
+      "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+      "sizeBytes": 105
     },
     {
       "path": "native/windows/wfp-policy-core/LeasePolicyCompiler.cs",
@@ -1370,8 +1370,8 @@
     },
     {
       "path": "native/windows/wfp-policy-plan/global.json",
-      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-      "sizeBytes": 109
+      "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+      "sizeBytes": 105
     },
     {
       "path": "native/windows/wfp-policy-plan/ManagedLayoutReport.cs",
@@ -1418,8 +1418,8 @@
     "buildCommand": "dotnet build <project> --configuration Release --runtime win-x64 --no-restore --nologo --verbosity quiet",
     "globalJson": {
       "path": "native/windows/wfp-policy-plan/global.json",
-      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
-      "sizeBytes": 109
+      "sha256": "4e7d5022b2a5a8d02bb951bb264a4c8613eabc332572a0af5f9743d23f23d84e",
+      "sizeBytes": 105
     },
     "packageSignatureCommand": "dotnet nuget verify --all <nupkg>",
     "sdkVersion": "10.0.401"

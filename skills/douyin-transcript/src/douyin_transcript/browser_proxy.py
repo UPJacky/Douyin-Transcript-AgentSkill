@@ -7,10 +7,12 @@ service-owned proxy or as proof of process-level egress isolation.
 
 from __future__ import annotations
 
+import errno
 import ipaddress
 import select
 import socket
 import socketserver
+import sys
 import threading
 import time
 from collections.abc import Callable
@@ -401,15 +403,53 @@ def _is_expected_loopback_listener(
         return False
     try:
         actual = listener.getsockname()
-        return (
-            listener.family == socket.AF_INET
-            and listener.getsockopt(socket.SOL_SOCKET, socket.SO_TYPE) == socket.SOCK_STREAM
-            and listener.getsockopt(socket.SOL_SOCKET, socket.SO_ACCEPTCONN) == 1
-            and actual[0] == expected_host
-            and actual[1] == expected_port
-        )
+        if (
+            listener.family != socket.AF_INET
+            or listener.getsockopt(socket.SOL_SOCKET, socket.SO_TYPE) != socket.SOCK_STREAM
+            or actual[0] != expected_host
+            or actual[1] != expected_port
+        ):
+            return False
+        acceptconn = _acceptconn_status(listener)
+        return _probe_listener(listener) if acceptconn is None else acceptconn
     except (OSError, AttributeError):
         return False
+
+
+def _acceptconn_status(listener: socket.socket) -> bool | None:
+    """Return listener state, or None where macOS has no SO_ACCEPTCONN."""
+    option = getattr(socket, "SO_ACCEPTCONN", None)
+    if option is None:
+        return None if sys.platform == "darwin" else False
+    try:
+        return listener.getsockopt(socket.SOL_SOCKET, option) == 1
+    except OSError as exc:
+        if sys.platform == "darwin" and exc.errno in {errno.EINVAL, errno.ENOPROTOOPT}:
+            return None
+        raise
+
+
+def _probe_listener(listener: socket.socket) -> bool:
+    """Use nonblocking accept to identify a listener on macOS.
+
+    macOS does not expose SO_ACCEPTCONN as a recognized SOL_SOCKET option.
+    An empty listener reports BlockingIOError; a bound, unlistened socket
+    reports EINVAL. If a local connection is already queued, close that
+    accepted socket rather than handing it to the proxy.
+    """
+    was_blocking = listener.getblocking()
+    try:
+        listener.setblocking(False)
+        try:
+            connection, _address = listener.accept()
+        except BlockingIOError:
+            return True
+        except OSError:
+            return False
+        connection.close()
+        return True
+    finally:
+        listener.setblocking(was_blocking)
 
 
 def _remaining(deadline: float) -> float:
