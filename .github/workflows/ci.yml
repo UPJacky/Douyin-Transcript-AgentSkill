@@ -59,6 +59,7 @@ jobs:
         run: |
           $output = & dotnet run --project CapturePipe.csproj -c Release -p:Platform=x64 --no-build -- --service 2>&1
           $exitCode = $LASTEXITCODE
+          $LASTEXITCODE = 0
           if ($exitCode -ne 1063) {
             throw "Expected ERROR_FAILED_SERVICE_CONTROLLER_CONNECT (1063), got $exitCode. Output: $output"
           }
