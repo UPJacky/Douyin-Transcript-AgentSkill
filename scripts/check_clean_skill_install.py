@@ -200,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
             ],
             cwd=root,
             env=env,
-            expected_returncode=2,
+            expected_returncode=0,
         )
         validate_dry_run_report(dry_run_output)
 
