@@ -507,8 +507,8 @@
       "sourceInputs": [
         {
           "path": "native/windows/Directory.Build.props",
-          "sha256": "da750517a9672957b8d1ef5d2bbc822ba55f1579dd4845ba126657c5743e6b9e",
-          "sizeBytes": 238
+          "sha256": "973926bd2226c46c7973f8eb2b51664c6effea0ec8a1b07284773db4901e5f78",
+          "sizeBytes": 386
         },
         {
           "path": "native/windows/wfp-policy-core/AssemblyInfo.cs",
@@ -1283,8 +1283,8 @@
       "sourceInputs": [
         {
           "path": "native/windows/Directory.Build.props",
-          "sha256": "da750517a9672957b8d1ef5d2bbc822ba55f1579dd4845ba126657c5743e6b9e",
-          "sizeBytes": 238
+          "sha256": "973926bd2226c46c7973f8eb2b51664c6effea0ec8a1b07284773db4901e5f78",
+          "sizeBytes": 386
         },
         {
           "path": "native/windows/wfp-policy-native-readback/AssemblyInfo.cs",
@@ -1365,8 +1365,8 @@
   "sourceInputs": [
     {
       "path": "native/windows/Directory.Build.props",
-      "sha256": "da750517a9672957b8d1ef5d2bbc822ba55f1579dd4845ba126657c5743e6b9e",
-      "sizeBytes": 238
+      "sha256": "973926bd2226c46c7973f8eb2b51664c6effea0ec8a1b07284773db4901e5f78",
+      "sizeBytes": 386
     },
     {
       "path": "native/windows/shared/PublicUnicastAddressPolicy.cs",

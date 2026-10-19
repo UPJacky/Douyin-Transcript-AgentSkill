@@ -2,6 +2,8 @@
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <EnableSourceLink>false</EnableSourceLink>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <PathMap>$(MSBuildThisFileDirectory)=/_/src/</PathMap>
   </PropertyGroup>
 </Project>
