@@ -23,8 +23,51 @@ jobs:
 
       - name: Set up the pinned .NET SDK
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}\dotnet-10.0.401
         with:
           dotnet-version: "10.0.401"
+
+      - name: Pin the Native build runtime to its SDK reference pack
+        shell: pwsh
+        run: |
+          # setup-dotnet installs the latest LTS runtime; keep reproducible artifacts on the SDK's pinned runtime patch.
+          $dotnet = (Get-Command dotnet).Source
+          $dotnetRoot = [IO.Path]::GetFullPath((Split-Path $dotnet))
+          $runnerTemp = [IO.Path]::GetFullPath($env:RUNNER_TEMP)
+          $runnerTempPrefix = $runnerTemp.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+          if (-not $dotnetRoot.StartsWith($runnerTempPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Expected the isolated .NET installation under RUNNER_TEMP, got $dotnetRoot"
+          }
+
+          $sdkVersion = (& $dotnet --version).Trim()
+          if ($sdkVersion -ne '10.0.401') { throw "Expected .NET SDK 10.0.401, got $sdkVersion" }
+
+          $buildInputs = & $dotnet msbuild native/windows/wfp-policy-plan/WfpPolicyPlan.csproj '-getProperty:TargetFramework' '-getItem:KnownFrameworkReference' | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Could not read the SDK framework reference metadata' }
+          $targetFramework = $buildInputs.Properties.TargetFramework
+          $targetVersion = [regex]::Match($targetFramework, '^net(?<version>\d+\.\d+)').Groups['version'].Value
+          if (-not $targetVersion) { throw "Unexpected target framework: $targetFramework" }
+          $frameworkReferences = @($buildInputs.Items.KnownFrameworkReference | Where-Object {
+            $_.Identity -eq 'Microsoft.NETCore.App' -and $_.TargetingPackVersion.StartsWith("$targetVersion.")
+          })
+          if ($frameworkReferences.Count -ne 1) { throw "Could not uniquely resolve the $targetFramework reference pack" }
+          $pinnedRuntime = $frameworkReferences[0].LatestRuntimeFrameworkVersion
+
+          $runtimeRoot = Join-Path $dotnetRoot 'shared/Microsoft.NETCore.App'
+          $pinnedRuntimePath = Join-Path $runtimeRoot $pinnedRuntime
+          if (-not (Test-Path -LiteralPath $pinnedRuntimePath -PathType Container)) {
+            throw "The SDK-pinned runtime $pinnedRuntime is missing from $runtimeRoot"
+          }
+          Get-ChildItem -LiteralPath $runtimeRoot -Directory | Where-Object Name -ne $pinnedRuntime | Remove-Item -Recurse -Force
+
+          $installedRuntimes = @(& $dotnet --list-runtimes | ForEach-Object {
+            if ($_ -match '^Microsoft\.NETCore\.App\s+(\S+)') { $Matches[1] }
+          })
+          if ($installedRuntimes.Count -ne 1 -or $installedRuntimes[0] -ne $pinnedRuntime) {
+            throw "Expected only Microsoft.NETCore.App $pinnedRuntime, found: $($installedRuntimes -join ', ')"
+          }
+          Write-Host "Pinned SDK $sdkVersion build runtime to Microsoft.NETCore.App $pinnedRuntime"
 
       - name: Restore locked WFP runtime projects
         run: dotnet restore tests/WfpPolicy.Runtime.Harness.csproj --locked-mode
@@ -136,7 +179,10 @@ jobs:
           Write-Host "Installed .NET reference packs: $((Get-ChildItem (Join-Path $dotnetRoot 'packs/Microsoft.NETCore.App.Ref') -Directory | Select-Object -ExpandProperty Name) -join ', ')"
           git ls-files --eol native/windows/shared/PublicUnicastAddressPolicy.cs native/windows/wfp-policy-core/WfpPolicy.Core.csproj native/windows/wfp-policy-core/packages.lock.json
           $project = 'native/windows/wfp-policy-plan/WfpPolicyPlan.csproj'
-          $buildInputs = & $dotnet msbuild $project '-p:ContinuousIntegrationBuild=true' '-getProperty:SourceRevisionId,EnableSourceControlManagerQueries,EnableSourceLink,IncludeSourceRevisionInInformationalVersion,PathMap,TargetLatestRuntimePatch,DeterministicSourcePaths' '-getItem:KnownFrameworkReference' | ConvertFrom-Json
+          $previousContinuousIntegrationBuild = $env:ContinuousIntegrationBuild
+          $env:ContinuousIntegrationBuild = 'true'
+          $buildInputs = & $dotnet msbuild $project '-getProperty:SourceRevisionId,EnableSourceControlManagerQueries,EnableSourceLink,IncludeSourceRevisionInInformationalVersion,PathMap,TargetLatestRuntimePatch,DeterministicSourcePaths' '-getItem:KnownFrameworkReference' | ConvertFrom-Json
+          if ($null -eq $previousContinuousIntegrationBuild) { Remove-Item Env:ContinuousIntegrationBuild } else { $env:ContinuousIntegrationBuild = $previousContinuousIntegrationBuild }
           $buildInputs.Properties | ConvertTo-Json -Compress
           $buildInputs.Items.KnownFrameworkReference | Where-Object Identity -eq 'Microsoft.NETCore.App' | Select-Object Identity,TargetingPackVersion,LatestRuntimeFrameworkVersion,DefaultRuntimeFrameworkVersion | ConvertTo-Json -Compress
           foreach ($assemblyInfoRoot in @('native/windows/wfp-policy-plan/obj', 'native/windows/wfp-policy-core/obj', 'native/windows/wfp-policy-runtime/obj', 'native/windows/wfp-policy-native-readback/obj')) {

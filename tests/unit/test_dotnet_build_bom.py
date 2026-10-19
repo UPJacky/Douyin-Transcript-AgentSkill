@@ -397,6 +397,17 @@ def test_wfp_projects_use_a_stable_source_path_mapping() -> None:
     )
 
 
+def test_native_bom_job_isolates_the_sdk_runtime_used_for_reproducible_builds() -> None:
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    native_job = workflow.split("\n  ci-checks:", maxsplit=1)[0]
+
+    assert "DOTNET_INSTALL_DIR: ${{ runner.temp }}\\dotnet-10.0.401" in native_job
+    assert "Pin the Native build runtime to its SDK reference pack" in native_job
+    assert "LatestRuntimeFrameworkVersion" in native_job
+    assert "Microsoft.NETCore.App" in native_job
+    assert "Expected the isolated .NET installation under RUNNER_TEMP" in native_job
+
+
 def test_source_file_record_normalizes_crlf_to_repository_lf(tmp_path: Path) -> None:
     source = tmp_path / "source.cs"
     source.write_bytes(b"class Example\r\n{\r\n}\r\n")
