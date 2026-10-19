@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <PathMap>$(MSBuildThisFileDirectory)=/_/src/</PathMap>
+  </PropertyGroup>
+</Project>

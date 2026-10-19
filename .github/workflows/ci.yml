@@ -90,7 +90,7 @@ jobs:
         working-directory: native/windows/wfp-policy-native-readback
 
       - name: Build non-deployable WFP structure preview
-        run: dotnet build WfpPolicyPlan.csproj -c Release --no-restore -p:Platform=x64
+        run: dotnet build WfpPolicyPlan.csproj -c Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true
         working-directory: native/windows/wfp-policy-plan
 
       - name: Run semantic and native-structure harness
@@ -98,11 +98,11 @@ jobs:
         working-directory: native/windows/wfp-policy-plan
 
       - name: Build read-only native WFP snapshot assembly
-        run: dotnet build WfpPolicy.NativeReadback.csproj -c Release --no-restore -p:Platform=x64
+        run: dotnet build WfpPolicy.NativeReadback.csproj -c Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true
         working-directory: native/windows/wfp-policy-native-readback
 
       - name: Build native WFP unmanaged fixture harness
-        run: dotnet build tests/WfpPolicy.NativeReadback.Harness.csproj -c Release --no-restore -p:Platform=x64
+        run: dotnet build tests/WfpPolicy.NativeReadback.Harness.csproj -c Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true
         working-directory: native/windows/wfp-policy-native-readback
 
       - name: Run native WFP unmanaged fixture harness
@@ -110,7 +110,7 @@ jobs:
         working-directory: native/windows/wfp-policy-native-readback
 
       - name: Build WFP baseline coordinator harness
-        run: dotnet build tests/WfpPolicy.Runtime.Harness.csproj -c Release --no-restore -p:Platform=x64
+        run: dotnet build tests/WfpPolicy.Runtime.Harness.csproj -c Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true
         working-directory: native/windows/wfp-policy-runtime
 
       - name: Run WFP baseline coordinator harness

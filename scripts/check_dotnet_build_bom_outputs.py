@@ -111,6 +111,17 @@ def verify_build_output_identities(
         actual_records = _output_records(actual_build, f"generated {actual_label}")
         expected_records = _output_records(expected_build, f"checked-in {actual_label}")
         if actual_records != expected_records:
+            actual_by_path = {record[0]: record[1:] for record in actual_records}
+            expected_by_path = {record[0]: record[1:] for record in expected_records}
+            for path in sorted(actual_by_path.keys() | expected_by_path.keys()):
+                actual_identity = actual_by_path.get(path)
+                expected_identity = expected_by_path.get(path)
+                if actual_identity != expected_identity:
+                    raise BomOutputError(
+                        f"{actual_label} build output path/size/SHA-256 inventory "
+                        f"differs at {path} (expected {expected_identity!r}, "
+                        f"got {actual_identity!r})"
+                    )
             raise BomOutputError(
                 f"{actual_label} build output path/size/SHA-256 inventory differs"
             )

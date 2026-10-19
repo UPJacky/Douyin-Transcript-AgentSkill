@@ -37,7 +37,7 @@ def test_related_build_output_identity_mismatch_fails(
 ) -> None:
     actual, expected = bom_pair
     actual["relatedBuilds"][0]["buildOutputs"][0][field] = value
-    with pytest.raises(verifier.BomOutputError, match="inventory differs"):
+    with pytest.raises(verifier.BomOutputError, match="inventory differs at"):
         verifier.verify_build_output_identities(actual, expected)
 
 

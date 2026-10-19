@@ -18,6 +18,7 @@ from safe_output import write_atomic_text
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = REPO_ROOT / "native" / "windows" / "wfp-policy-plan"
+PATH_MAP_PROPS = REPO_ROOT / "native" / "windows" / "Directory.Build.props"
 PROJECT_FILE = PROJECT_ROOT / "WfpPolicyPlan.csproj"
 LOCK_FILE = PROJECT_ROOT / "packages.lock.json"
 GLOBAL_FILE = PROJECT_ROOT / "global.json"
@@ -367,6 +368,7 @@ def _source_inputs(project_root: Path, repo_root: Path) -> list[Path]:
     paths = [
         GLOBAL_FILE,
         LOCK_FILE,
+        PATH_MAP_PROPS,
         PROJECT_FILE,
         project_root / "NativeMethods.txt",
         CORE_GLOBAL_FILE,
@@ -421,6 +423,7 @@ def _source_inputs(project_root: Path, repo_root: Path) -> list[Path]:
 
 def _runtime_source_inputs(repo_root: Path) -> list[Path]:
     fixed_inputs = [
+        PATH_MAP_PROPS,
         RUNTIME_GLOBAL_FILE,
         RUNTIME_PROJECT_FILE,
         RUNTIME_LOCK_FILE,
@@ -467,6 +470,7 @@ def _runtime_source_inputs(repo_root: Path) -> list[Path]:
 
 def _native_readback_source_inputs(repo_root: Path) -> list[Path]:
     fixed_inputs = [
+        PATH_MAP_PROPS,
         NATIVE_READBACK_GLOBAL_FILE,
         NATIVE_READBACK_PROJECT_FILE,
         NATIVE_READBACK_ROOT / "NativeMethods.txt",
@@ -593,6 +597,7 @@ def _native_readback_build_record(
         "Release",
         "--no-restore",
         "-p:Platform=x64",
+        "-p:ContinuousIntegrationBuild=true",
         "--nologo",
         "--verbosity",
         "quiet",
@@ -687,7 +692,7 @@ def _native_readback_build_record(
             }
             for package_id, version, record in locked_packages
         ],
-        "buildCommand": "dotnet restore <native readback harness> --locked-mode -p:NuGetAudit=false; dotnet build <native readback harness> --configuration Release --no-restore -p:Platform=x64 --nologo --verbosity quiet",
+        "buildCommand": "dotnet restore <native readback harness> --locked-mode -p:NuGetAudit=false; dotnet build <native readback harness> --configuration Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true --nologo --verbosity quiet",
         "harnessCommand": "dotnet run --project <native readback harness> --configuration Release -p:Platform=x64 --no-build --no-restore",
         "generatedSources": [_file_record(path, REPO_ROOT) for path in generated_files],
         "buildOutputs": [_file_record(path, REPO_ROOT) for path in output_files],
@@ -771,6 +776,7 @@ def _runtime_build_record(
                 "Release",
                 "--no-restore",
                 "-p:Platform=x64",
+                "-p:ContinuousIntegrationBuild=true",
                 "--nologo",
                 "--verbosity",
                 "quiet",
@@ -840,7 +846,7 @@ def _runtime_build_record(
             )
         ],
         "nugetPackages": [],
-        "buildCommand": "dotnet restore <runtime harness> --locked-mode; dotnet build <runtime harness> --configuration Release --no-restore -p:Platform=x64 --nologo --verbosity quiet",
+        "buildCommand": "dotnet restore <runtime harness> --locked-mode; dotnet build <runtime harness> --configuration Release --no-restore -p:Platform=x64 -p:ContinuousIntegrationBuild=true --nologo --verbosity quiet",
         "generatedSources": [_file_record(path, REPO_ROOT) for path in generated_files],
         "buildOutputs": [_file_record(path, REPO_ROOT) for path in output_files],
         "limitations": [
@@ -980,6 +986,7 @@ def create_bom(dotnet: str, *, run_build: bool = True) -> dict[str, Any]:
         "--runtime",
         "win-x64",
         "--no-restore",
+        "-p:ContinuousIntegrationBuild=true",
         "--nologo",
         "--verbosity",
         "quiet",
@@ -1050,7 +1057,7 @@ def create_bom(dotnet: str, *, run_build: bool = True) -> dict[str, Any]:
         "toolchain": {
             "sdkVersion": sdk_version,
             "globalJson": _file_record(GLOBAL_FILE, REPO_ROOT),
-            "buildCommand": "dotnet build <project> --configuration Release --runtime win-x64 --no-restore --nologo --verbosity quiet",
+            "buildCommand": "dotnet build <project> --configuration Release --runtime win-x64 --no-restore -p:ContinuousIntegrationBuild=true --nologo --verbosity quiet",
             "packageSignatureCommand": "dotnet nuget verify --all <nupkg>",
         },
         "sourceInputs": [

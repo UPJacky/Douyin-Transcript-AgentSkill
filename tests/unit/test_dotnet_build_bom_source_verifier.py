@@ -61,7 +61,7 @@ def test_related_build_source_mismatch_is_checked(
     actual["relatedBuilds"][0]["sourceInputs"].pop()
     with pytest.raises(
         verifier.BomOutputError,
-        match=r"relatedBuilds\[0\]\.sourceInputs \(expected 29 records, got 28\)",
+        match=r"relatedBuilds\[0\]\.sourceInputs \(expected 30 records, got 29\)",
     ):
         verifier.verify_source_identities(actual, expected)
 

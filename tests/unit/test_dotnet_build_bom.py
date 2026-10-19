@@ -363,6 +363,7 @@ def test_source_inventory_uses_repository_relative_paths_without_user_paths() ->
 
     assert "native/windows/wfp-policy-plan/global.json" in relative
     assert "native/windows/wfp-policy-plan/packages.lock.json" in relative
+    assert "native/windows/Directory.Build.props" in relative
     assert "native/windows/shared/PublicUnicastAddressPolicy.cs" in relative
     assert "native/windows/wfp-policy-core/global.json" in relative
     assert "native/windows/wfp-policy-core/WfpPolicy.Core.csproj" in relative
@@ -370,6 +371,30 @@ def test_source_inventory_uses_repository_relative_paths_without_user_paths() ->
     assert "native/windows/wfp-policy-core/AssemblyInfo.cs" in relative
     assert "native/windows/wfp-policy-core/LeasePolicyCompiler.cs" in relative
     assert all("Users/" not in path and "Users\\" not in path for path in relative)
+
+
+def test_wfp_projects_use_a_stable_source_path_mapping() -> None:
+    props = bom.PATH_MAP_PROPS.read_text(encoding="utf-8")
+
+    assert "<Deterministic>true</Deterministic>" in props
+    assert (
+        "<EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>"
+        in props
+    )
+    assert "<PathMap>$(MSBuildThisFileDirectory)=/_/src/</PathMap>" in props
+    assert bom.PATH_MAP_PROPS in bom._native_readback_source_inputs(bom.REPO_ROOT)
+
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert workflow.count("-p:ContinuousIntegrationBuild=true") == 4
+
+    document = json.loads(
+        (ROOT / "docs/dotnet-windows-build-bom.json").read_text(encoding="utf-8")
+    )
+    assert "-p:ContinuousIntegrationBuild=true" in document["toolchain"]["buildCommand"]
+    assert all(
+        "-p:ContinuousIntegrationBuild=true" in build["buildCommand"]
+        for build in document["relatedBuilds"]
+    )
 
 
 def test_source_file_record_normalizes_crlf_to_repository_lf(tmp_path: Path) -> None:
