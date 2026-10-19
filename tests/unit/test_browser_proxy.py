@@ -4,6 +4,7 @@ import socket
 import sys
 import threading
 import time
+import os
 
 import pytest
 from douyin_transcript.browser_proxy import (
@@ -19,6 +20,12 @@ def _read_response_headers(stream):
         lines.append(line)
         if line in {b"\r\n", b"", b"\n"}:
             return b"".join(lines)
+
+
+def _duplicate_socket(sock: socket.socket) -> socket.socket:
+    if sys.platform == "win32":
+        return socket.fromshare(sock.share(os.getpid()))
+    return socket.socket(fileno=os.dup(sock.fileno()))
 
 
 def test_connect_tunnel_uses_pinned_ip_and_relays_bytes():
@@ -49,7 +56,9 @@ def test_connect_tunnel_uses_pinned_ip_and_relays_bytes():
         ).start()
         try:
             proxy_host, proxy_port = proxy._server.server_address
-            with socket.create_connection((proxy_host, proxy_port), timeout=2) as client:
+            with socket.create_connection(
+                (proxy_host, proxy_port), timeout=2
+            ) as client:
                 stream = client.makefile("rb")
                 client.sendall(
                     b"CONNECT www.douyin.com:443 HTTP/1.1\r\n"
@@ -66,6 +75,56 @@ def test_connect_tunnel_uses_pinned_ip_and_relays_bytes():
             proxy.close()
 
 
+def test_standalone_proxy_can_use_a_supplied_loopback_listener_socket():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as broker_listener:
+        broker_listener.bind(("127.0.0.1", 0))
+        broker_listener.listen(8)
+        endpoint = broker_listener.getsockname()
+        client_copy = _duplicate_socket(broker_listener)
+        proxy = PinnedHttpsConnectProxy().start(
+            listener_socket=client_copy,
+            expected_endpoint=endpoint,
+        )
+        try:
+            assert proxy._server.server_address[:2] == endpoint
+            with socket.create_connection(endpoint, timeout=2) as client:
+                client.sendall(
+                    b"CONNECT www.douyin.com:80 HTTP/1.1\r\n"
+                    b"Host: www.douyin.com:80\r\n\r\n"
+                )
+                assert client.recv(256).startswith(b"HTTP/1.1 403")
+        finally:
+            proxy.close()
+        # The socket owner retains its original handle while the proxy closes
+        # only the handle supplied to this standalone diagnostic instance.
+        assert broker_listener.getsockopt(socket.SOL_SOCKET, socket.SO_ACCEPTCONN) == 1
+        assert broker_listener.getsockname() == endpoint
+
+
+@pytest.mark.parametrize("bad_endpoint", [("0.0.0.0", 1234), ("127.0.0.1", 0)])
+def test_proxy_rejects_untrusted_expected_endpoint(bad_endpoint):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(1)
+        duplicate = _duplicate_socket(listener)
+        with pytest.raises(ValueError, match="does not match"):
+            PinnedHttpsConnectProxy().start(
+                listener_socket=duplicate,
+                expected_endpoint=bad_endpoint,
+            )
+        duplicate.close()
+
+
+def test_proxy_rejects_socket_that_is_not_listening():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as unbound:
+        unbound.bind(("127.0.0.1", 0))
+        with pytest.raises(ValueError, match="does not match"):
+            PinnedHttpsConnectProxy().start(
+                listener_socket=unbound,
+                expected_endpoint=unbound.getsockname(),
+            )
+
+
 @pytest.mark.parametrize(
     "payload",
     [
@@ -77,7 +136,8 @@ def test_connect_tunnel_uses_pinned_ip_and_relays_bytes():
 def test_proxy_rejects_non_https_or_non_allowlisted_connect(payload: bytes):
     resolver_calls = []
     proxy = PinnedHttpsConnectProxy(
-        resolve_address=lambda host, *, deadline: resolver_calls.append(host) or "8.8.8.8"
+        resolve_address=lambda host, *, deadline: resolver_calls.append(host)
+        or "8.8.8.8"
     ).start()
     try:
         host, port = proxy._server.server_address
@@ -116,10 +176,15 @@ def test_resolve_browser_destination_uses_host_allowlist_and_rejects_private_dns
         calls.append((url, kwargs))
         return (None, "8.8.4.4")
 
-    monkeypatch.setattr("douyin_transcript.browser_proxy.validate_https_url", fake_validate)
+    monkeypatch.setattr(
+        "douyin_transcript.browser_proxy.validate_https_url", fake_validate
+    )
 
     deadline = time.monotonic() + 5
-    assert resolve_browser_destination("v3-web.douyinvod.com", deadline=deadline) == "8.8.4.4"
+    assert (
+        resolve_browser_destination("v3-web.douyinvod.com", deadline=deadline)
+        == "8.8.4.4"
+    )
     assert calls[0][0] == "https://v3-web.douyinvod.com/"
     assert calls[0][1]["resolve_dns"] is True
     assert calls[0][1]["deadline"] == deadline
@@ -136,7 +201,9 @@ def test_resolve_browser_destination_uses_host_allowlist_and_rejects_private_dns
         resolve_browser_destination("www.douyin.com", deadline=deadline)
 
 
-def test_proxy_dns_timeout_closes_connect_and_releases_client_slot(monkeypatch, tmp_path):
+def test_proxy_dns_timeout_closes_connect_and_releases_client_slot(
+    monkeypatch, tmp_path
+):
     import douyin_transcript.browser_proxy as proxy_module
     import douyin_transcript.urls as urls_module
 
@@ -232,8 +299,7 @@ def test_proxy_relay_backpressure_times_out_and_releases_client_slot(monkeypatch
         first_client = socket.create_connection((proxy_host, proxy_port), timeout=1)
         first_client.settimeout(1)
         first_client.sendall(
-            b"CONNECT www.douyin.com:443 HTTP/1.1\r\n"
-            b"Host: www.douyin.com:443\r\n\r\n"
+            b"CONNECT www.douyin.com:443 HTTP/1.1\r\nHost: www.douyin.com:443\r\n\r\n"
         )
         with first_client.makefile("rb") as stream:
             response = _read_response_headers(stream)
@@ -266,8 +332,7 @@ def test_proxy_relay_backpressure_times_out_and_releases_client_slot(monkeypatch
         second_client = socket.create_connection((proxy_host, proxy_port), timeout=1)
         second_client.settimeout(1)
         second_client.sendall(
-            b"CONNECT www.douyin.com:443 HTTP/1.1\r\n"
-            b"Host: www.douyin.com:443\r\n\r\n"
+            b"CONNECT www.douyin.com:443 HTTP/1.1\r\nHost: www.douyin.com:443\r\n\r\n"
         )
         with second_client.makefile("rb") as stream:
             response = _read_response_headers(stream)

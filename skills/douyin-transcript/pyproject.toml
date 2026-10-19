@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling==1.27.0"]
+requires = ["editables==0.5.0", "hatchling==1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -22,16 +22,22 @@ browser = [
 douyin-transcript = "douyin_transcript.cli:main"
 
 [dependency-groups]
+build = [
+    "editables==0.5.0",
+    "hatchling==1.27.0",
+]
 dev = [
     "pytest>=8.3,<9",
     "ruff>=0.14,<0.15",
+    "skills-ref==0.1.1",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/douyin_transcript"]
 
 [tool.uv]
-default-groups = []
+default-groups = ["build"]
+no-build-isolation-package = ["douyin-transcript"]
 
 [tool.pytest.ini_options]
 testpaths = ["../../tests"]

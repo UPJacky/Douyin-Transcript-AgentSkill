@@ -98,8 +98,7 @@ def _dispatch(
     result = asr.transcribe(path, language=language, validated_media=media)
     return {
         "segments": [
-            {"start": item.start, "end": item.end, "text": item.text}
-            for item in result.segments
+            {"start": item.start, "end": item.end, "text": item.text} for item in result.segments
         ],
         "duration_seconds": result.duration_seconds,
         "language": result.language,
@@ -191,9 +190,12 @@ def _failure(name: str, code: str | None, message: str) -> dict[str, Any]:
 
 def _write_frame(protocol_fd: int, payload: dict[str, Any]) -> bool:
     try:
-        frame = json.dumps(
-            payload, ensure_ascii=False, allow_nan=False, separators=(",", ":")
-        ).encode("utf-8") + b"\n"
+        frame = (
+            json.dumps(payload, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode(
+                "utf-8"
+            )
+            + b"\n"
+        )
     except (TypeError, ValueError, UnicodeError):
         frame = _failure("ProcessingWorkerError", None, "invalid result")
         frame = json.dumps(frame, separators=(",", ":")).encode("utf-8") + b"\n"

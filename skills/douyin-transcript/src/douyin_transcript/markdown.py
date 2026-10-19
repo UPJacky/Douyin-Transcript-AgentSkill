@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from .naming import candidate_output_paths
+from .storage_security import PrivateStorageError, inspect_private_path, open_private_regular_file
 from .text_safety import show_bidi_controls, strip_display_controls
 
 _KEY = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
@@ -25,6 +26,15 @@ _NON_LINEBREAK_CONTROLS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]")
 # Leaves bounded room for a supported 256 KiB terminology ruleset after its
 # archive JSON is quoted again as a YAML scalar.
 MAX_FRONTMATTER_CHARACTERS = 4 * 1024 * 1024
+MAX_REVIEWED_TRANSCRIPT_BYTES = 16 * 1024 * 1024
+MAX_REVIEWED_TRANSCRIPT_CHARACTERS = 1_000_000
+MAX_UNPUNCTUATED_REVIEWED_CHARACTERS = 160
+RAW_TRANSCRIPT_NOTICE = "> 本文为自动语音识别逐字稿，未经人工逐字校对。"
+REVIEWED_TRANSCRIPT_NOTICE = (
+    "> 本文已由当前 Agent 默认模型进行文本校对和标点整理；未对照音视频逐字听审，存疑处需复听确认。"
+)
+TRANSCRIPT_SECTION_HEADING = "## 口播逐字稿"
+_CHINESE_SENTENCE_ENDINGS = frozenset("。！？…")
 
 
 def strip_control_characters(text: str) -> str:
@@ -52,8 +62,7 @@ def escape_markdown_text(text: str) -> str:
         leading_length = len(chunk) - len(chunk.lstrip(" \t"))
         escaped.extend("&#32;" if char == " " else "&#9;" for char in chunk[:leading_length])
         escaped.extend(
-            "\\" + char if char in string.punctuation else char
-            for char in chunk[leading_length:]
+            "\\" + char if char in string.punctuation else char for char in chunk[leading_length:]
         )
     return "".join(escaped)
 
@@ -88,9 +97,7 @@ def serialize_frontmatter(metadata: Mapping[str, Any]) -> str:
     # Rendered Markdown adds a newline after the closing delimiter, which is
     # included in the parser's bounded read.
     if len(serialized) + 1 > MAX_FRONTMATTER_CHARACTERS:
-        raise ValueError(
-            f"frontmatter exceeds {MAX_FRONTMATTER_CHARACTERS} characters"
-        )
+        raise ValueError(f"frontmatter exceeds {MAX_FRONTMATTER_CHARACTERS} characters")
     return serialized
 
 
@@ -342,3 +349,130 @@ def write_transcript_markdown(
             continue
     # Keep API consistent with path selection and provide an explicit failure.
     raise FileExistsError(f"unable to find an unused transcript filename under {destination_dir}")
+
+
+def write_reviewed_transcript_markdown(raw_path: Path, reviewed_body: str) -> Path:
+    """Save model-reviewed plain text beside a raw transcript, without replacing files.
+
+    The raw file is read-only input. Its frontmatter and document framing are
+    retained, the raw-ASR notice is replaced with a review-scope notice, and
+    the reviewed body is escaped before being written as Markdown.
+    """
+    source = Path(raw_path).expanduser()
+    if not isinstance(reviewed_body, str):
+        raise ValueError("reviewed text must be a string")
+    if len(reviewed_body) > MAX_REVIEWED_TRANSCRIPT_CHARACTERS:
+        raise ValueError("reviewed text exceeds the allowed size")
+
+    with open_private_regular_file(source) as stream:
+        source_info = os.fstat(stream.fileno())
+        if source_info.st_size > MAX_REVIEWED_TRANSCRIPT_BYTES:
+            raise ValueError("raw transcript exceeds the allowed size")
+        raw_bytes = stream.read(MAX_REVIEWED_TRANSCRIPT_BYTES + 1)
+        if len(raw_bytes) > MAX_REVIEWED_TRANSCRIPT_BYTES:
+            raise ValueError("raw transcript exceeds the allowed size")
+        if _file_version(source_info) != _file_version(os.fstat(stream.fileno())):
+            raise ValueError("raw transcript changed while it was being read")
+    try:
+        raw_text = raw_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        raise ValueError("raw transcript is not valid UTF-8 Markdown") from None
+
+    lines = raw_text.splitlines(keepends=True)
+    if not lines or _markdown_line_value(lines[0]) != "---":
+        raise ValueError("raw transcript has no valid frontmatter")
+    frontmatter_end = next(
+        (index for index in range(1, len(lines)) if _markdown_line_value(lines[index]) == "---"),
+        None,
+    )
+    if frontmatter_end is None:
+        raise ValueError("raw transcript has no closing frontmatter delimiter")
+    if sum(len(line) for line in lines[: frontmatter_end + 1]) > MAX_FRONTMATTER_CHARACTERS:
+        raise ValueError("raw transcript frontmatter exceeds the allowed size")
+
+    heading_indexes = [
+        index
+        for index in range(frontmatter_end + 1, len(lines))
+        if _markdown_line_value(lines[index]) == TRANSCRIPT_SECTION_HEADING
+    ]
+    if len(heading_indexes) != 1:
+        raise ValueError("raw transcript has no unique transcript section")
+    heading_index = heading_indexes[0]
+    if heading_index + 1 >= len(lines) or _markdown_line_value(lines[heading_index + 1]):
+        raise ValueError("raw transcript section is malformed")
+
+    prefix_lines = lines[: heading_index + 2]
+    notice_indexes = [
+        index
+        for index, line in enumerate(prefix_lines)
+        if _markdown_line_value(line) == RAW_TRANSCRIPT_NOTICE
+    ]
+    if len(notice_indexes) != 1:
+        raise ValueError("raw transcript has no unique review-scope source notice")
+    notice_index = notice_indexes[0]
+    line_ending = _markdown_line_ending(prefix_lines[notice_index])
+    prefix_lines[notice_index] = REVIEWED_TRANSCRIPT_NOTICE + line_ending
+
+    normalized_body = reviewed_body.replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not normalized_body:
+        raise ValueError("reviewed text is empty")
+    paragraphs = [
+        paragraph.strip()
+        for paragraph in re.split(r"\n\s*\n", normalized_body)
+        if paragraph.strip()
+    ]
+    if len(normalized_body) >= 300 and len(paragraphs) < 2:
+        raise ValueError("long reviewed text needs readable paragraph breaks")
+    for paragraph in paragraphs:
+        if not any(character in _CHINESE_SENTENCE_ENDINGS for character in paragraph):
+            raise ValueError(
+                "every reviewed paragraph needs Chinese sentence punctuation (。！？…)"
+            )
+        unpunctuated_runs = re.split(r"[，。！？；：、…,.!?;:]", paragraph)
+        if any(len(run) > MAX_UNPUNCTUATED_REVIEWED_CHARACTERS for run in unpunctuated_runs):
+            raise ValueError(
+                "reviewed text has an unpunctuated run over "
+                f"{MAX_UNPUNCTUATED_REVIEWED_CHARACTERS} characters"
+            )
+
+    rendered = "".join(prefix_lines) + escape_markdown_text(normalized_body) + "\n"
+    for destination in candidate_output_paths(
+        source.parent,
+        source.stem,
+        extension=".reviewed.md",
+    ):
+        if destination.exists():
+            continue
+        parent_report = inspect_private_path(source.parent)
+        if parent_report.status != "private":
+            raise PrivateStorageError(
+                "reviewed sidecar directory is not verified private; select a private output folder"
+            )
+        try:
+            _atomic_publish(destination, rendered)
+            return destination
+        except FileExistsError:
+            continue
+    raise FileExistsError("unable to find an unused reviewed transcript filename")
+
+
+def _markdown_line_value(line: str) -> str:
+    if line.endswith("\r\n"):
+        return line[:-2]
+    if line.endswith(("\r", "\n")):
+        return line[:-1]
+    return line
+
+
+def _markdown_line_ending(line: str) -> str:
+    if line.endswith("\r\n"):
+        return "\r\n"
+    if line.endswith("\r"):
+        return "\r"
+    if line.endswith("\n"):
+        return "\n"
+    return ""
+
+
+def _file_version(info: os.stat_result) -> tuple[int, int, int, int]:
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns)

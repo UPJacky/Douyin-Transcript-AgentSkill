@@ -1,0 +1,1427 @@
+{
+  "bomFormat": "douyin-transcript-dotnet-build-bom",
+  "buildOutputs": [
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicy.Core.dll",
+      "sha256": "3ce9331e31826b90f301b172c4b2af3eade0ca5a05ea52a48c74ebdc225ba332",
+      "sizeBytes": 53760
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicy.Core.pdb",
+      "sha256": "fb65a7a44d11ad531ea8629bf5467d496e6f5a4515cc9eff29622dbe3a9c624d",
+      "sizeBytes": 19100
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicyPlan.deps.json",
+      "sha256": "7ee2714c796b3f032b9764ff3450843afc4c3626d63aea0c5fab5f61e6faede5",
+      "sizeBytes": 882
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicyPlan.dll",
+      "sha256": "66a64e1e561fff3997ebf50cd93709f1b626d21696621b58a9fc48652d764711",
+      "sizeBytes": 117760
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicyPlan.exe",
+      "sha256": "2dd3509e074e0c7b09e92a7bece5a1a37c0d4c414259dde5d29745673c8e53e6",
+      "sizeBytes": 162304
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicyPlan.pdb",
+      "sha256": "7631d52d39184de609b56353339fc279762c528df4e4f03008bd1687f9a19f74",
+      "sizeBytes": 77808
+    },
+    {
+      "path": "bin/Release/net10.0/win-x64/WfpPolicyPlan.runtimeconfig.json",
+      "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097",
+      "sizeBytes": 342
+    }
+  ],
+  "generatedSources": [
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.BOOL.g.cs",
+      "sha256": "9bde9ab49d16cdd4a3a621ed45248e1d5374cc5efe9aa1222c52afbf0f917869",
+      "sizeBytes": 1895
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.byte.InlineArrays.g.cs",
+      "sha256": "844ee643e6a51791fbcff424644c2a8dcab67a594f521e1bcde456f2b1f10dcb",
+      "sizeBytes": 4100
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.CsWin32Stamp.g.cs",
+      "sha256": "2956f9a987546471f3b1769027694328709e37a20086090ce402f83778cfa79c",
+      "sizeBytes": 583
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_ACTION_TYPE.g.cs",
+      "sha256": "55e650ab59c69c5bf265ab908c60ebe99ba533526d4fa75e1da0f41153a72085",
+      "sizeBytes": 1269
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_ARRAY16.g.cs",
+      "sha256": "1140ca0bafe890c32fc8b039b0488b4f2df43670b236ca950bf1d8bf3f3fec98",
+      "sizeBytes": 1219
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_ARRAY6.g.cs",
+      "sha256": "06a4c1c52f85f770f723ac6136eba6cbcd7fb195bafafd50bb1a8fa3ea1acd46",
+      "sizeBytes": 1206
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_BLOB.g.cs",
+      "sha256": "ed050a9f427d4b9d5357373c9c4057cd2c52658fffdbc233800865236caf21da",
+      "sizeBytes": 1436
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_CONDITION_VALUE0.g.cs",
+      "sha256": "a7f33a40317a615378073d274fcc27f259ff3fc33614178ce45ed998d45db684",
+      "sizeBytes": 15830
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_DATA_TYPE.g.cs",
+      "sha256": "dd5cee132c67caeb7ce186cf09432c5e0afe2ec9463461888e0756f9413bf31d",
+      "sizeBytes": 4304
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_MATCH_TYPE.g.cs",
+      "sha256": "f5406a9972af5db503003758dbce809f35613546d235f2eb317310f100e54bdc",
+      "sizeBytes": 7085
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_RANGE0.g.cs",
+      "sha256": "8860676e89761d3023c58748d1520a8a412b73647c8546aecada1c5198ed4ed7",
+      "sizeBytes": 2644
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_TOKEN_INFORMATION.g.cs",
+      "sha256": "6306bfd807af306c2541cab7e942a6b168c6a48f8c28a61b3401883bbe80a495",
+      "sizeBytes": 2389
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_V4_ADDR_AND_MASK.g.cs",
+      "sha256": "710cdbcdbd6721625e9d130172cc45d80baf8c715bc1edc64e2c5b66d8641a25",
+      "sizeBytes": 1432
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_V6_ADDR_AND_MASK.g.cs",
+      "sha256": "c14ffe70cefef37c6e39eded8a25f59df55a164677125b24596c01e88e6ab5a8",
+      "sizeBytes": 1699
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_VALUE0.g.cs",
+      "sha256": "f02c4149e26709f7492844a0c75cc712dab93a331d0aa65211044662f46bfe05",
+      "sizeBytes": 12599
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_ACTION0.g.cs",
+      "sha256": "7e67674ee19bde62b7298a345fc297e5079385b484ca4da701632c74ef396f38",
+      "sizeBytes": 3316
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_DISPLAY_DATA0.g.cs",
+      "sha256": "a2aed120d85849e41e89d2941b7846b1225e4f7fb72baa380d321541b25710ff",
+      "sizeBytes": 2023
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_ENGINE_HANDLE.g.cs",
+      "sha256": "d10acc4829da62a57b1569a2938261293dd9925fa0ee9bc32ab55214200b40ad",
+      "sizeBytes": 2441
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER0.g.cs",
+      "sha256": "8c649e51cb59f8eaf8aa36614cf1a4a51d0a73feb46b6cbe59bc339a9e4280d5",
+      "sizeBytes": 8979
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_CONDITION0.g.cs",
+      "sha256": "86beff39426f34925c3c30ea8b17b79a506d9d03124fc2bed2f554c7b1cded58",
+      "sizeBytes": 2745
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_FLAGS.g.cs",
+      "sha256": "78df880491146dbf52dd1a11e507552c4bab8ff2b40077a44ddf50745549a272",
+      "sizeBytes": 1389
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER0.g.cs",
+      "sha256": "af407cbdbb0f6e57597e567886f9b5a541cb719b8b6d8afd3a3c9afd04761a55",
+      "sizeBytes": 3170
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SESSION0.g.cs",
+      "sha256": "7e4663a4935408e7fb6f499883d383a3ca1fbe7d176d1a20cc90a46165bde973",
+      "sizeBytes": 4232
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SUBLAYER0.g.cs",
+      "sha256": "609bbdc4e216b33bdaa2c5f343e05eeca9f8c1eadc60f14e53a170f2e0fe9133",
+      "sizeBytes": 3451
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FwpmEngineClose0SafeHandle.g.cs",
+      "sha256": "89044cdd218983f7ef036149b7603c499967bbd7e1601057b8d4dff77f86877f",
+      "sizeBytes": 1744
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.InlineArrayIndexerExtensions.g.cs",
+      "sha256": "9eaa36ccbd781a34997419d9fb412d63796cc5036fb8ab9f321a0d497b56165e",
+      "sizeBytes": 1394
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PCWSTR.g.cs",
+      "sha256": "d0af9be4f781c929fd080fd79ed389dcaf77b74b2edbdc582828a3e7617123b2",
+      "sizeBytes": 2774
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PInvoke.fwpuclnt.dll.g.cs",
+      "sha256": "d3c3b12a7f71bc16e3ae08aab04a1651783048b508c65e0bb369d379b19a238f",
+      "sizeBytes": 54236
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PInvoke.g.cs",
+      "sha256": "bcbc11d1a184d9b3c08939c45e870c0e3642ddb037e061f5d85f54b4b9b04c86",
+      "sizeBytes": 1814
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PSECURITY_DESCRIPTOR.g.cs",
+      "sha256": "deaa1869e567721abe5a96fe2e4e3a38fa8ee9f9e88e56583f19d531363cf976",
+      "sizeBytes": 2445
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PSID.g.cs",
+      "sha256": "1408b3f8bf54fa02db44d82b4be4d3cabbce8cdc77aeb0ddc3d9bfbcb9b70b6b",
+      "sizeBytes": 2141
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PWSTR.g.cs",
+      "sha256": "043efaa08989c9e42621d92c2b6d2350bd9160d242abe24b9f6d1e698a232d9b",
+      "sizeBytes": 2397
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SEC_WINNT_AUTH_IDENTITY.g.cs",
+      "sha256": "fc1bd0a9384c41ec8260bd6207ee8a72d5a323e4e6ea36abedbf3b3239aa6863",
+      "sizeBytes": 1613
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SEC_WINNT_AUTH_IDENTITY_W.g.cs",
+      "sha256": "60d20b9ea63523250cd2c468aa96eba6ab7d99f5a9c5bc78b1271415d03b71d8",
+      "sizeBytes": 3090
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID.g.cs",
+      "sha256": "13c7ea9ee7bc8ab49cce8b301230337d73b2235df26f03298b74a5b43e213f93",
+      "sizeBytes": 1861
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID_AND_ATTRIBUTES.g.cs",
+      "sha256": "8dd9dad220d86b651a8877e80fdbe9bddeaf05564921bd259e5986055367451a",
+      "sizeBytes": 1900
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID_IDENTIFIER_AUTHORITY.g.cs",
+      "sha256": "b47edec6e558e5692dd6f9fdedd973928c0ce361283a178d5b910a81ad41abfa",
+      "sizeBytes": 1274
+    },
+    {
+      "path": "obj/Release/net10.0/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.VariableLengthInlineArray.g.cs",
+      "sha256": "5d2f77596432659ec82ac61661858963480aa436a3c91611159447a970151547",
+      "sizeBytes": 1206
+    }
+  ],
+  "nugetLock": {
+    "path": "native/windows/wfp-policy-plan/packages.lock.json",
+    "sha256": "07d11b1b03db7621602ac37b65cf8f7c4ae92329d08d9e0a1fcb3a75b1ea22ad",
+    "sizeBytes": 1502
+  },
+  "packages": [
+    {
+      "dependencies": {
+        "Microsoft.Windows.SDK.Win32Docs": "0.1.42-alpha",
+        "Microsoft.Windows.SDK.Win32Metadata": "71.0.30-preview",
+        "Microsoft.Windows.WDK.Win32Metadata": "0.13.25-experimental"
+      },
+      "dependencyType": "Direct",
+      "id": "Microsoft.Windows.CsWin32",
+      "lockContentHash": "hz2kh3RP3CaQWSfOYx8Oy5fyZQvQtjR7DERp0cH6YO/CKoV8tuFhVaWWHA51OHDqIFmas65uJuas1zHSaWZojw==",
+      "nupkg": {
+        "lockContentHashMatchesNuGetComputedContentHash": true,
+        "lockContentHashMatchesNuGetMetadata": true,
+        "nugetVerifyAll": {
+          "command": "dotnet nuget verify --all <nupkg>",
+          "status": "passed"
+        },
+        "path": "microsoft.windows.cswin32/0.3.360/Microsoft.Windows.CsWin32.0.3.360.nupkg",
+        "sha256": "3892e02f320ec5ae0cedd0c3879073e3492202a2ae03787d3778df6596cd0699",
+        "sha512Base64": "MsmgL4zaHSxZPitRrH5aOw92Sm4dGB7BKlZJS3psxPldc69u6p5GZFl5jUv1NQ9HIrm88HJfMEQ9Cbu/JZN6vg==",
+        "signatureFile": {
+          "path": "microsoft.windows.cswin32/0.3.360/.signature.p7s",
+          "sha256": "b09d3b3a9446ad0fabf0f5d1c40a1e21abea64cbc9a4bf648c13ee4a055308af",
+          "sizeBytes": 25990
+        },
+        "sizeBytes": 9161099
+      },
+      "version": "0.3.360"
+    },
+    {
+      "dependencies": {},
+      "dependencyType": "Transitive",
+      "id": "Microsoft.Windows.SDK.Win32Docs",
+      "lockContentHash": "Z/9po23gUA9aoukirh2ItMU2ZS9++Js9Gdds9fu5yuMojDrmArvY2y+tq9985tR3cxFxpZO1O35Wjfo0khj5HA==",
+      "nupkg": {
+        "lockContentHashMatchesNuGetComputedContentHash": true,
+        "lockContentHashMatchesNuGetMetadata": true,
+        "nugetVerifyAll": {
+          "command": "dotnet nuget verify --all <nupkg>",
+          "status": "passed"
+        },
+        "path": "microsoft.windows.sdk.win32docs/0.1.42-alpha/Microsoft.Windows.SDK.Win32Docs.0.1.42-alpha.nupkg",
+        "sha256": "e83bf398dceb1957d698d24daa8a23f986beedb0109727a0ee99b229a525230b",
+        "sha512Base64": "/nmzaNfPY3CLP/iEsb2egDnX5Mn0YKF4Hm11PhB/6oH9ko9zR/s483vwP7nDabHDzZ4ZKzrcyFIMRvyeo7Ersg==",
+        "signatureFile": {
+          "path": "microsoft.windows.sdk.win32docs/0.1.42-alpha/.signature.p7s",
+          "sha256": "85213b85b1f7bcaa8c27bc24c8d9d1c4c28d1318bc195c1f3a6c6fba83bfbf57",
+          "sizeBytes": 22809
+        },
+        "sizeBytes": 19486529
+      },
+      "version": "0.1.42-alpha"
+    },
+    {
+      "dependencies": {},
+      "dependencyType": "Transitive",
+      "id": "Microsoft.Windows.SDK.Win32Metadata",
+      "lockContentHash": "h/FD+SrIlxgr+HD/WrJnLvpTdyWFAX7F0FCMPRxPJFTt4Qz70wGXKEBZvvIDX7om4hP0Tb7O0s1ND3aUvigL8g==",
+      "nupkg": {
+        "lockContentHashMatchesNuGetComputedContentHash": true,
+        "lockContentHashMatchesNuGetMetadata": true,
+        "nugetVerifyAll": {
+          "command": "dotnet nuget verify --all <nupkg>",
+          "status": "passed"
+        },
+        "path": "microsoft.windows.sdk.win32metadata/71.0.30-preview/Microsoft.Windows.SDK.Win32Metadata.71.0.30-preview.nupkg",
+        "sha256": "b1f4ae72797e76c7512f08ba24ee3fd2deff01c26a7d812083d56229f7d62a3b",
+        "sha512Base64": "lEg58PTbUOMlLgBJeHEsdIvM0ldRuU9V4n5DUehlKuJ9b71dHRCZkpm/0jK+QeqIgOP5EYwOdCZvkzrH0aqI+g==",
+        "signatureFile": {
+          "path": "microsoft.windows.sdk.win32metadata/71.0.30-preview/.signature.p7s",
+          "sha256": "c79909fe15d3d7d7d0fbda147173632163c926bded8dd7eaff25c8bd0ba1fa7c",
+          "sizeBytes": 25991
+        },
+        "sizeBytes": 6606168
+      },
+      "version": "71.0.30-preview"
+    },
+    {
+      "dependencies": {
+        "Microsoft.Windows.SDK.Win32Metadata": "63.0.31-preview"
+      },
+      "dependencyType": "Transitive",
+      "id": "Microsoft.Windows.WDK.Win32Metadata",
+      "lockContentHash": "IM50tb/+UIwBr9FMr6ZKcZjCMW+Axo6NjGqKxgjUfyCY8dRnYUfrJEXxAaXoWtYP4X8EmASmC1Jtwh4XucseZg==",
+      "nupkg": {
+        "lockContentHashMatchesNuGetComputedContentHash": true,
+        "lockContentHashMatchesNuGetMetadata": true,
+        "nugetVerifyAll": {
+          "command": "dotnet nuget verify --all <nupkg>",
+          "status": "passed"
+        },
+        "path": "microsoft.windows.wdk.win32metadata/0.13.25-experimental/Microsoft.Windows.WDK.Win32Metadata.0.13.25-experimental.nupkg",
+        "sha256": "79079a449d8f621052bcaf13039e411d1c1b77aec4a89cf04d96518d0a619617",
+        "sha512Base64": "a+ckO4IT8LbPX1UrlF2R9yKr7/uNFu/stDh6TupyA3A2v/R2CQbNahW1u1DCMn+ueM2Zf3OADc2etel3YgXQfw==",
+        "signatureFile": {
+          "path": "microsoft.windows.wdk.win32metadata/0.13.25-experimental/.signature.p7s",
+          "sha256": "87836335295da83a9cd77be754d997510ebeeae178dbf660360fa66d5ed4d557",
+          "sizeBytes": 25613
+        },
+        "sizeBytes": 405497
+      },
+      "version": "0.13.25-experimental"
+    }
+  ],
+  "relatedBuilds": [
+    {
+      "buildCommand": "dotnet restore <runtime harness> --locked-mode; dotnet build <runtime harness> --configuration Release --no-restore -p:Platform=x64 --nologo --verbosity quiet",
+      "buildOutputs": [
+        {
+          "path": "native/windows/wfp-policy-core/bin/x64/Release/net10.0/WfpPolicy.Core.deps.json",
+          "sha256": "c55383f24141fb8ce573a0d24d67d7129d75c7c5d3060ade9716a70b1d9e2574",
+          "sizeBytes": 436
+        },
+        {
+          "path": "native/windows/wfp-policy-core/bin/x64/Release/net10.0/WfpPolicy.Core.dll",
+          "sha256": "f4ba163f02753806ae37f8d3dbc43fc76d78e695e90e1565cc91683f70614020",
+          "sizeBytes": 53248
+        },
+        {
+          "path": "native/windows/wfp-policy-core/bin/x64/Release/net10.0/WfpPolicy.Core.pdb",
+          "sha256": "ce74e3ae168da7561fed6466edde1f8f1d3be352b8d62dd17dc83d5921157148",
+          "sizeBytes": 19104
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.deps.json",
+          "sha256": "f36198151e174fd4bb99ef57cf6e073a524c885c2ca5cb0feb2e8fcfef2bc903",
+          "sizeBytes": 520
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.dll",
+          "sha256": "fad4ff820dd844e64e8764acb05c7cf09c18247df851415a53e71b6cb1d63123",
+          "sizeBytes": 105984
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.pdb",
+          "sha256": "701f6e40fa7971f099968c787bbde47f8c4485519097ea22450cfeab500951dc",
+          "sizeBytes": 161644
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.Core.dll",
+          "sha256": "f4ba163f02753806ae37f8d3dbc43fc76d78e695e90e1565cc91683f70614020",
+          "sizeBytes": 53248
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.Core.pdb",
+          "sha256": "ce74e3ae168da7561fed6466edde1f8f1d3be352b8d62dd17dc83d5921157148",
+          "sizeBytes": 19104
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.NativeReadback.dll",
+          "sha256": "fad4ff820dd844e64e8764acb05c7cf09c18247df851415a53e71b6cb1d63123",
+          "sizeBytes": 105984
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.NativeReadback.pdb",
+          "sha256": "701f6e40fa7971f099968c787bbde47f8c4485519097ea22450cfeab500951dc",
+          "sizeBytes": 161644
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.Runtime.deps.json",
+          "sha256": "bc00ed74e4ef3f39a62fafd3b29f50af4acdc5d7da4b2540cd4e0296747483a7",
+          "sizeBytes": 1237
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.Runtime.dll",
+          "sha256": "acdbbc6efbd1e890b716423051aa3df95e5e9c2e1982f2dd7b58662b414877a8",
+          "sizeBytes": 77824
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/bin/x64/Release/net10.0-windows/WfpPolicy.Runtime.pdb",
+          "sha256": "ca0a593e920ec75291ff3c4dddad34c0de3c9b7830b87e3ec3dbea8569fda633",
+          "sizeBytes": 24848
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Core.dll",
+          "sha256": "f4ba163f02753806ae37f8d3dbc43fc76d78e695e90e1565cc91683f70614020",
+          "sizeBytes": 53248
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Core.pdb",
+          "sha256": "ce74e3ae168da7561fed6466edde1f8f1d3be352b8d62dd17dc83d5921157148",
+          "sizeBytes": 19104
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.dll",
+          "sha256": "fad4ff820dd844e64e8764acb05c7cf09c18247df851415a53e71b6cb1d63123",
+          "sizeBytes": 105984
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.pdb",
+          "sha256": "701f6e40fa7971f099968c787bbde47f8c4485519097ea22450cfeab500951dc",
+          "sizeBytes": 161644
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.dll",
+          "sha256": "acdbbc6efbd1e890b716423051aa3df95e5e9c2e1982f2dd7b58662b414877a8",
+          "sizeBytes": 77824
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.Harness.deps.json",
+          "sha256": "df746dd4b1889da33d91dc77faaff688a5859bd36bb2e6ed7d3ef69b34decbf6",
+          "sizeBytes": 1722
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.Harness.dll",
+          "sha256": "34f12dacce38220ed5288efeb3b0c0cfbb52b3c4066639f782f9baf9dbb5d350",
+          "sizeBytes": 52224
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.Harness.exe",
+          "sha256": "276e738fa795ba11eea29a352687677333f9f854198605f07053bb7ce7f0a03d",
+          "sizeBytes": 162816
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.Harness.pdb",
+          "sha256": "ef82790bc626cc02ea49f4bc0f6e70b2e548e438c1a9a7198a568eef9eae5317",
+          "sizeBytes": 20336
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.Harness.runtimeconfig.json",
+          "sha256": "3e965cd7cfd553c2ff4e842d8d8019aaae2da0a21d92ff85a87573dd8d1b95c6",
+          "sizeBytes": 399
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.Runtime.pdb",
+          "sha256": "ca0a593e920ec75291ff3c4dddad34c0de3c9b7830b87e3ec3dbea8569fda633",
+          "sizeBytes": 24848
+        }
+      ],
+      "generatedSources": [],
+      "globalJson": {
+        "path": "native/windows/wfp-policy-runtime/global.json",
+        "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+        "sizeBytes": 109
+      },
+      "limitations": [
+        "does not include a native BFE/WFP store or prove that filters were applied",
+        "the native readback adapter rejects the current incomplete reader snapshot before mutation and is not connected to the default store or CaptureService",
+        "does not prove CaptureService integration, process isolation, or deployed service behavior"
+      ],
+      "nugetLocks": [
+        {
+          "path": "native/windows/wfp-policy-runtime/packages.lock.json",
+          "sha256": "40373c99adf9ef6c8bd0d7b4ccead84a2a77074fee40f031b7606dbfa43855ba",
+          "sizeBytes": 220
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
+          "sha256": "66bf3e109975270ede8108bcb6401aab048d462313a8497af49063735588730e",
+          "sizeBytes": 458
+        },
+        {
+          "path": "native/windows/wfp-policy-core/packages.lock.json",
+          "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
+          "sizeBytes": 66
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
+          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
+          "sizeBytes": 1460
+        }
+      ],
+      "nugetPackages": [],
+      "projects": [
+        "native/windows/wfp-policy-runtime/WfpPolicy.Runtime.csproj",
+        "native/windows/wfp-policy-runtime/tests/WfpPolicy.Runtime.Harness.csproj",
+        "native/windows/wfp-policy-native-readback/WfpPolicy.NativeReadback.csproj"
+      ],
+      "purpose": "source-only persistent WFP baseline coordinator, strict native readback adapter, and fake-store harness; no native WFP mutation store",
+      "runtimeIdentifier": "win-x64",
+      "sourceInputs": [
+        {
+          "path": "native/windows/wfp-policy-core/AssemblyInfo.cs",
+          "sha256": "25ee4b787d1ad936efe2ed60be37165c46eafed051cfeac01a71533adc807b07",
+          "sizeBytes": 200
+        },
+        {
+          "path": "native/windows/wfp-policy-core/global.json",
+          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+          "sizeBytes": 109
+        },
+        {
+          "path": "native/windows/wfp-policy-core/LeasePolicyCompiler.cs",
+          "sha256": "a05b2af6ea04ef87a4aad8db2c5c795c1e6301e0e659a66ab03ceaafd15b3400",
+          "sizeBytes": 34710
+        },
+        {
+          "path": "native/windows/wfp-policy-core/packages.lock.json",
+          "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
+          "sizeBytes": 66
+        },
+        {
+          "path": "native/windows/wfp-policy-core/WfpPolicy.Core.csproj",
+          "sha256": "80fc928ad755a22453fd1d0fd3a29106c140a4c0f22ed646c3cd05576df0754e",
+          "sizeBytes": 504
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/AssemblyInfo.cs",
+          "sha256": "e3ed73591f04f9fb54fd36d2c3ae81715ad934a8cde68e9e36e59c5c493d286d",
+          "sizeBytes": 167
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/global.json",
+          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+          "sizeBytes": 109
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/NativeMethods.txt",
+          "sha256": "b0105ae89eb50b780ea3a4a4a872f7a98bd0d0fc8b26067251b79ebaa530524c",
+          "sizeBytes": 4448
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/NativeObjectDecoder.cs",
+          "sha256": "42e756c1c103b920d3eacd49438e64c2b65b7e5f843b453dfc6d9d79caeb56ea",
+          "sizeBytes": 25074
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
+          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
+          "sizeBytes": 1460
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/SecurityDescriptorNormalizer.cs",
+          "sha256": "dd7b9c7f6d46f18f6169b225f5340a8dded1cf266d3f64f9383e5eb9e9e51189",
+          "sizeBytes": 2393
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/SnapshotModels.cs",
+          "sha256": "1516e1297f14ab878d4402d383b7576d1c310a2228fe49a169a958fb80671343",
+          "sizeBytes": 12209
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/WfpNativeReadbackReader.cs",
+          "sha256": "b25b85604bc941e73ebe6c2479d099221df05e2d65228eb6206b4e330494f886",
+          "sizeBytes": 46744
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/WfpPolicy.NativeReadback.csproj",
+          "sha256": "f378f46f7d7874f4ee9a695f0860622d769e2af2e2d0f298de9670e7e58d8f28",
+          "sizeBytes": 814
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/AssemblyInfo.cs",
+          "sha256": "7cc178bd8a870c1c82ad861e786e5cfa808c3c0a66bfbe06990ebdc62ee333dc",
+          "sizeBytes": 100
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/BaselineCoordinator.cs",
+          "sha256": "d0ff67ae169f27a7fbc8b1ee5058583d8fd1de08d4c236eb4f8bbf113e19dac8",
+          "sizeBytes": 22004
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/global.json",
+          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+          "sizeBytes": 109
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/NativeWfpPolicyStoreAdapter.cs",
+          "sha256": "cd5f1a3212d35aeb7c1d655ddb654e0205f102e2e5a2493def237cfe9ec85df7",
+          "sizeBytes": 29574
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/packages.lock.json",
+          "sha256": "40373c99adf9ef6c8bd0d7b4ccead84a2a77074fee40f031b7606dbfa43855ba",
+          "sizeBytes": 220
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/NativeWfpPolicyStoreAdapterHarness.cs",
+          "sha256": "4a6e584c320a5d4c86fe71fa32820ca21a10892d7cdb666991b8046e0ebbfc6c",
+          "sizeBytes": 22610
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
+          "sha256": "66bf3e109975270ede8108bcb6401aab048d462313a8497af49063735588730e",
+          "sizeBytes": 458
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/Program.cs",
+          "sha256": "45ed8b61ae7e12326a587298a6c0dabfc2f71bb9857cf501d7f93b3b64ab849b",
+          "sizeBytes": 30948
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/tests/WfpPolicy.Runtime.Harness.csproj",
+          "sha256": "d110b7bd37373225e85522b41dda880b1f4aa4967f467291686a2efe502b845d",
+          "sizeBytes": 597
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/WfpNativeObjectProjection.cs",
+          "sha256": "cf42ba6f2d3af85141fa885758282fe41851c96dbbcbfb0537693d868600c1ee",
+          "sizeBytes": 11959
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/WfpNativeReadbackAdapter.cs",
+          "sha256": "970d1eb1374847b34466483003e754659716b200dfa6bb8e40f8ea5559e357bf",
+          "sizeBytes": 20940
+        },
+        {
+          "path": "native/windows/wfp-policy-runtime/WfpPolicy.Runtime.csproj",
+          "sha256": "9dbfe87c87331489323b37e8612c87f8c7604b4908779570eebc3249963497fa",
+          "sizeBytes": 651
+        }
+      ],
+      "targetFramework": "net10.0-windows"
+    },
+    {
+      "buildCommand": "dotnet restore <native readback harness> --locked-mode -p:NuGetAudit=false; dotnet build <native readback harness> --configuration Release --no-restore -p:Platform=x64 --nologo --verbosity quiet",
+      "buildOutputs": [
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.deps.json",
+          "sha256": "f36198151e174fd4bb99ef57cf6e073a524c885c2ca5cb0feb2e8fcfef2bc903",
+          "sizeBytes": 520
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.dll",
+          "sha256": "fad4ff820dd844e64e8764acb05c7cf09c18247df851415a53e71b6cb1d63123",
+          "sizeBytes": 105984
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.pdb",
+          "sha256": "701f6e40fa7971f099968c787bbde47f8c4485519097ea22450cfeab500951dc",
+          "sizeBytes": 161644
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.dll",
+          "sha256": "fad4ff820dd844e64e8764acb05c7cf09c18247df851415a53e71b6cb1d63123",
+          "sizeBytes": 105984
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.Harness.deps.json",
+          "sha256": "94ebfc248611b13f6264d62b2841db626ef36f50a3188bdad60c8e5c4499ed75",
+          "sizeBytes": 979
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.Harness.dll",
+          "sha256": "448280835672c6c415e4733d1070e823367a162e1a054766bf87879a15d5a5a5",
+          "sizeBytes": 79360
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.Harness.exe",
+          "sha256": "d0db71fe36d75104b4e9d050a213a7c11b6ca299b3ff6a2badfc39ba0afd65b3",
+          "sizeBytes": 162816
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.Harness.pdb",
+          "sha256": "b145bd8d74a1005c68f6de5b596de8ac2b48357bd1f31705c3c7ebf9775c809b",
+          "sizeBytes": 24864
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.Harness.runtimeconfig.json",
+          "sha256": "3e965cd7cfd553c2ff4e842d8d8019aaae2da0a21d92ff85a87573dd8d1b95c6",
+          "sizeBytes": 399
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/bin/x64/Release/net10.0-windows/win-x64/WfpPolicy.NativeReadback.pdb",
+          "sha256": "701f6e40fa7971f099968c787bbde47f8c4485519097ea22450cfeab500951dc",
+          "sizeBytes": 161644
+        }
+      ],
+      "generatedSources": [
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.ACL.g.cs",
+          "sha256": "d654aa32c3c5d34cc487cd36a93346dfb04def8556e41ce1d0805d41ca077d5b",
+          "sizeBytes": 4007
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.BOOL.g.cs",
+          "sha256": "9bde9ab49d16cdd4a3a621ed45248e1d5374cc5efe9aa1222c52afbf0f917869",
+          "sizeBytes": 1895
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.byte.InlineArrays.g.cs",
+          "sha256": "844ee643e6a51791fbcff424644c2a8dcab67a594f521e1bcde456f2b1f10dcb",
+          "sizeBytes": 4100
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.CsWin32Stamp.g.cs",
+          "sha256": "2956f9a987546471f3b1769027694328709e37a20086090ce402f83778cfa79c",
+          "sizeBytes": 583
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_ACTION_TYPE.g.cs",
+          "sha256": "55e650ab59c69c5bf265ab908c60ebe99ba533526d4fa75e1da0f41153a72085",
+          "sizeBytes": 1269
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_ARRAY16.g.cs",
+          "sha256": "1140ca0bafe890c32fc8b039b0488b4f2df43670b236ca950bf1d8bf3f3fec98",
+          "sizeBytes": 1219
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_ARRAY6.g.cs",
+          "sha256": "06a4c1c52f85f770f723ac6136eba6cbcd7fb195bafafd50bb1a8fa3ea1acd46",
+          "sizeBytes": 1206
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_BYTE_BLOB.g.cs",
+          "sha256": "ed050a9f427d4b9d5357373c9c4057cd2c52658fffdbc233800865236caf21da",
+          "sizeBytes": 1436
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_CLASSIFY_OPTION_TYPE.g.cs",
+          "sha256": "033ed2e06828e660a02207d00b608d946e2cd5c4b3bdc601f626df22aba0bf25",
+          "sizeBytes": 4348
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_CONDITION_VALUE0.g.cs",
+          "sha256": "a7f33a40317a615378073d274fcc27f259ff3fc33614178ce45ed998d45db684",
+          "sizeBytes": 15830
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_DATA_TYPE.g.cs",
+          "sha256": "dd5cee132c67caeb7ce186cf09432c5e0afe2ec9463461888e0756f9413bf31d",
+          "sizeBytes": 4304
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_FILTER_ENUM_TYPE.g.cs",
+          "sha256": "03bc163af3d943171758d44a1e57b25ea55823d5e2ff0fe71b822646809fd7d2",
+          "sizeBytes": 1684
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_IP_VERSION.g.cs",
+          "sha256": "03e90c6bfb462ea75c23dc8bb5d332a8b936b36289ed80eade7f552191e55522",
+          "sizeBytes": 1545
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_MATCH_TYPE.g.cs",
+          "sha256": "f5406a9972af5db503003758dbce809f35613546d235f2eb317310f100e54bdc",
+          "sizeBytes": 7085
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_RANGE0.g.cs",
+          "sha256": "8860676e89761d3023c58748d1520a8a412b73647c8546aecada1c5198ed4ed7",
+          "sizeBytes": 2644
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_TOKEN_INFORMATION.g.cs",
+          "sha256": "6306bfd807af306c2541cab7e942a6b168c6a48f8c28a61b3401883bbe80a495",
+          "sizeBytes": 2389
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_V4_ADDR_AND_MASK.g.cs",
+          "sha256": "710cdbcdbd6721625e9d130172cc45d80baf8c715bc1edc64e2c5b66d8641a25",
+          "sizeBytes": 1432
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_V6_ADDR_AND_MASK.g.cs",
+          "sha256": "c14ffe70cefef37c6e39eded8a25f59df55a164677125b24596c01e88e6ab5a8",
+          "sizeBytes": 1699
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWP_VALUE0.g.cs",
+          "sha256": "f02c4149e26709f7492844a0c75cc712dab93a331d0aa65211044662f46bfe05",
+          "sizeBytes": 12599
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_ACTION0.g.cs",
+          "sha256": "7e67674ee19bde62b7298a345fc297e5079385b484ca4da701632c74ef396f38",
+          "sizeBytes": 3316
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_CALLOUT0.g.cs",
+          "sha256": "70c2f473595e95462b7ea8eaa83ac40f41a1aeabcb2523a6ec7e78ca57d97491",
+          "sizeBytes": 4276
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_CALLOUT_ENUM_HANDLE.g.cs",
+          "sha256": "833ffe79be74d38c5853adc216662d6c89ee47ea00359c430b02ef64d58d7421",
+          "sizeBytes": 2555
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_CALLOUT_ENUM_TEMPLATE0.g.cs",
+          "sha256": "d234c49e9ae0f8df0b589b7bbf19b4cfe41cf7d5c85accddf2b8dae0fbc24a94",
+          "sizeBytes": 1859
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_CLASSIFY_OPTION0.g.cs",
+          "sha256": "d88dd2730bdd628e207907a7158f3b878c0a62242f503c6a3f8ccaaae0373aa0",
+          "sizeBytes": 1843
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_CLASSIFY_OPTIONS0.g.cs",
+          "sha256": "94ddaacbe25b39b5bc7515121e46ef44b741d7f67487d97bab2a6f32998e792f",
+          "sizeBytes": 2078
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_DISPLAY_DATA0.g.cs",
+          "sha256": "a2aed120d85849e41e89d2941b7846b1225e4f7fb72baa380d321541b25710ff",
+          "sizeBytes": 2023
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_ENGINE_HANDLE.g.cs",
+          "sha256": "d10acc4829da62a57b1569a2938261293dd9925fa0ee9bc32ab55214200b40ad",
+          "sizeBytes": 2441
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FIELD0.g.cs",
+          "sha256": "881e1855303e4e789511cb2bfa48856f75e8a285fff0ba030fe2b43688f336cb",
+          "sizeBytes": 2551
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FIELD_TYPE.g.cs",
+          "sha256": "94f5c7d83c004c17165f6031d7c807aedcd70585d3689c8e0e4a41bff90b72d7",
+          "sizeBytes": 1951
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER0.g.cs",
+          "sha256": "8c649e51cb59f8eaf8aa36614cf1a4a51d0a73feb46b6cbe59bc339a9e4280d5",
+          "sizeBytes": 8979
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_CONDITION0.g.cs",
+          "sha256": "86beff39426f34925c3c30ea8b17b79a506d9d03124fc2bed2f554c7b1cded58",
+          "sizeBytes": 2745
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_ENUM_HANDLE.g.cs",
+          "sha256": "9dcbbd49561bc143fecae787ac765f6b429a152ad13736a9c2d35dcd34327cb8",
+          "sizeBytes": 2536
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_ENUM_TEMPLATE0.g.cs",
+          "sha256": "4880b43f9d548b867633ae282ebfc1a2037e3b55653b550991c635d8b180f1c5",
+          "sizeBytes": 3897
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_FILTER_FLAGS.g.cs",
+          "sha256": "78df880491146dbf52dd1a11e507552c4bab8ff2b40077a44ddf50745549a272",
+          "sizeBytes": 1389
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_LAYER0.g.cs",
+          "sha256": "fc45db22b9ec6f7a459b301c40c575b8694cf81af6726fe064bf57f5677cc73f",
+          "sizeBytes": 2830
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_LAYER_ENUM_HANDLE.g.cs",
+          "sha256": "2669bc96261081937fab9a246fe7389b9547c89889cdb9ab9fd1827b9880f80e",
+          "sizeBytes": 2517
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_LAYER_ENUM_TEMPLATE0.g.cs",
+          "sha256": "55ea19ed81c210dc08034391a9e6f6023c4119c6eb224a5b56d09e8b51485553",
+          "sizeBytes": 1763
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER0.g.cs",
+          "sha256": "af407cbdbb0f6e57597e567886f9b5a541cb719b8b6d8afd3a3c9afd04761a55",
+          "sizeBytes": 3170
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_CONTEXT0.g.cs",
+          "sha256": "e18817b6de0c4691df336b249680f66189d3ea1411f2ccae40dab35d1f7a1a0f",
+          "sizeBytes": 10544
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_CONTEXT_ENUM_HANDLE.g.cs",
+          "sha256": "36b123a4636cd1ca46e30cd1a57c66009c5e8090f3f71806cfb8b426510e651d",
+          "sizeBytes": 2726
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_CONTEXT_ENUM_TEMPLATE0.g.cs",
+          "sha256": "6838c9eef55fab142556ad36a3c9ec56b859aa606b72775aea0433a4c518d6e9",
+          "sizeBytes": 2185
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_CONTEXT_TYPE.g.cs",
+          "sha256": "14c6ad7c0ecefce9ff7dab5f51457bd6c9488be680f499e1d7dc3f8f418ac044",
+          "sizeBytes": 4192
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_ENUM_HANDLE.g.cs",
+          "sha256": "55ccb18de937c6f8a482eef10b575c0ee30696aa8542be9bc3ce945d0f1d3755",
+          "sizeBytes": 2574
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_PROVIDER_ENUM_TEMPLATE0.g.cs",
+          "sha256": "5192271f1d03012d7147ab110f66d56426bea22c27dff371cd3b8d7fc2e712c3",
+          "sizeBytes": 1781
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SESSION0.g.cs",
+          "sha256": "7e4663a4935408e7fb6f499883d383a3ca1fbe7d176d1a20cc90a46165bde973",
+          "sizeBytes": 4232
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SUBLAYER0.g.cs",
+          "sha256": "609bbdc4e216b33bdaa2c5f343e05eeca9f8c1eadc60f14e53a170f2e0fe9133",
+          "sizeBytes": 3451
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SUBLAYER_ENUM_HANDLE.g.cs",
+          "sha256": "40befbe6d5ce04aa651415cde85ba6f1dd56c7a5d91f11cd66d4e120386ad67d",
+          "sizeBytes": 2574
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FWPM_SUBLAYER_ENUM_TEMPLATE0.g.cs",
+          "sha256": "fddfff9f8f4bff2a77f07830c38e100d1295d278db354fcf53780306bd0d7665",
+          "sizeBytes": 1653
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.FwpmEngineClose0SafeHandle.g.cs",
+          "sha256": "89044cdd218983f7ef036149b7603c499967bbd7e1601057b8d4dff77f86877f",
+          "sizeBytes": 1744
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_AUTHENTICATION_IMPERSONATION_TYPE.g.cs",
+          "sha256": "bcce3efdd65526899c2e2a78c0b1776cd65feceee450b7e8df71e3b3f6be4b79",
+          "sizeBytes": 1683
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_AUTHENTICATION_METHOD0.g.cs",
+          "sha256": "52294866f617945b60fa6f9df1d722237c78fc6d24b67d71b3d87f924f3a5417",
+          "sizeBytes": 7223
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_AUTHENTICATION_METHOD_TYPE.g.cs",
+          "sha256": "8a9b2c06c1dcba8a0e8c1320a5bb6156b31da4e8d6cbc0c7a942b760ac224df6",
+          "sizeBytes": 5254
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CERT_AUTH.g.cs",
+          "sha256": "8a8b5e7105ecf216d168dfdc6dea4cbff8cbab1f0d73281a27a4ad71be533726",
+          "sizeBytes": 1285
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CERT_CONFIG_TYPE.g.cs",
+          "sha256": "9c5e6546de6faaf7da1cea1b6bfa46bb728b61fd7a3f55e8878887fb06525fa3",
+          "sizeBytes": 2229
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CERT_FLAGS.g.cs",
+          "sha256": "123264ae9cd90efda3eaebafd8b3e85c2f7399f7488701cd8862c3b5319d4a2f",
+          "sizeBytes": 1527
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CERT_ROOT_CONFIG0.g.cs",
+          "sha256": "d509c92cb29c88f34e725efe14c98c2a67ad77b7926f32905228913498eeaade",
+          "sizeBytes": 2024
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CERTIFICATE_AUTHENTICATION0.g.cs",
+          "sha256": "61d96aef646c1c6e720848e2b137f21eaca4d9a3e8be5aaa311b5bb02e4d4060",
+          "sizeBytes": 11340
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CIPHER_ALGORITHM0.g.cs",
+          "sha256": "25333d6b1f518549dd9cbe884295cc1e13df668b0438dc88e4ea6e025fc0a0b6",
+          "sizeBytes": 2089
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_CIPHER_TYPE.g.cs",
+          "sha256": "538f15c1b389ba97e723835931ff5598a5882a5ee9d18da9820388b7deecbb5b",
+          "sizeBytes": 2014
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_DH_GROUP.g.cs",
+          "sha256": "6189a37c6e0c0ccf7d0f7d56a1788d1a644ea858375c7de77e7f3362a32eb557",
+          "sizeBytes": 3177
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_EM_POLICY0.g.cs",
+          "sha256": "b5ac2fb2ca59f6ba9135c2497e90dafb1dedcc327c7224bbf4009a3f9a53e6b1",
+          "sizeBytes": 2379
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_INTEGRITY_ALGORITHM0.g.cs",
+          "sha256": "e38aaec75bda41ffbb5be1604ed46219350afffa5359be191b2a9eea2e9bfc04",
+          "sizeBytes": 1900
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_INTEGRITY_TYPE.g.cs",
+          "sha256": "2c2866e9ec19a77d2fe80dc7027db0ba9038509140f7c052f1bce2da495c8f9a",
+          "sizeBytes": 2494
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_IPV6_CGA_AUTHENTICATION0.g.cs",
+          "sha256": "cdc97f0ef6a1076e86e6f5748b54a712130b725e1b66c129c2d814ad7965ccb4",
+          "sizeBytes": 3992
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_KERBEROS_AUTHENTICATION0.g.cs",
+          "sha256": "e4cdd2b7867980c47e24db2950fc3c6439ffe280c0959969b69d264835d11153",
+          "sizeBytes": 1489
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_KERBEROS_AUTHENTICATION_FLAGS.g.cs",
+          "sha256": "8bd09ec38616cf3fec33f76a1f6cca56b8675c41d431acbcea0c82f8f8fc9c05",
+          "sizeBytes": 1159
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_NTLM_V2_AUTHENTICATION0.g.cs",
+          "sha256": "6e7aeac04a9e6adaacd647351eb26fd0b9c3cc215a42a9a45eedc57d33d2c4ec",
+          "sizeBytes": 1804
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_POLICY0.g.cs",
+          "sha256": "913384d92ffc307c29f6a71e5ea7c1b6cc367621b4b93413d09f939709517b2b",
+          "sizeBytes": 3889
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_POLICY_FLAG.g.cs",
+          "sha256": "c73448d7c87cf2746fa8c78e803b9faa149e5e2532883196173d2269e81eb5dd",
+          "sizeBytes": 1240
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_PRESHARED_KEY_AUTHENTICATION0.g.cs",
+          "sha256": "000a222f45aef2102ba9062282a02ed1e27d09ddcd70602357c4a8a568263347",
+          "sizeBytes": 1592
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IKEEXT_PROPOSAL0.g.cs",
+          "sha256": "0d8165f72e469e653667dbb57e1dbc2c225ff21adc2177e7ac0127e8d82fb499",
+          "sizeBytes": 3002
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.InlineArrayIndexerExtensions.g.cs",
+          "sha256": "9eaa36ccbd781a34997419d9fb412d63796cc5036fb8ab9f321a0d497b56165e",
+          "sizeBytes": 1394
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_AUTH_AND_CIPHER_TRANSFORM0.g.cs",
+          "sha256": "4498678cc7a7425264ad210617696538efc037dac572d5aad0bccbbd1e43c285",
+          "sizeBytes": 2062
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_AUTH_TRANSFORM0.g.cs",
+          "sha256": "8f5adfe96afb4bb820389212ed2b8bf1663f04931c8e041f42e2bffa069f0c8c",
+          "sizeBytes": 2108
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_AUTH_TRANSFORM_ID0.g.cs",
+          "sha256": "de1f804abbd390eff485558bd27532be0796d36e8856341551aff4363aabc5f3",
+          "sizeBytes": 2180
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_AUTH_TYPE.g.cs",
+          "sha256": "76a9fddfbe69bde2b85cf230d19d23fc4ffe44de68a748588cc6a7044279be30",
+          "sizeBytes": 3825
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_CIPHER_TRANSFORM0.g.cs",
+          "sha256": "2f95b68c3c6b81fc0f7fc80f54a01bef1ddf83e29a8aac330eef3c8e3545baa7",
+          "sizeBytes": 2173
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_CIPHER_TRANSFORM_ID0.g.cs",
+          "sha256": "a08550fbb937e166f11602a5f12059e8ea9d1cfaa4e2794e027e06e8258b268d",
+          "sizeBytes": 2203
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_CIPHER_TYPE.g.cs",
+          "sha256": "012ede578cf1c5daf1ece0a4309672898b06665e6f3fabee5730dbc3d66ee347",
+          "sizeBytes": 1828
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_KEYING_POLICY0.g.cs",
+          "sha256": "59fa18b3cba2ea42d889ea1c36c488921bc2caf580888ca4ddba91d999090ac7",
+          "sizeBytes": 1668
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_PFS_GROUP.g.cs",
+          "sha256": "a0555c9050bd83a761545f11fdde90c421a2e102b054e3cec11443ba4d14242c",
+          "sizeBytes": 3000
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_POLICY_FLAG.g.cs",
+          "sha256": "0f4f2ab9f817b98a108b91aa29fd99894800c011749f6bbd6e353ad30d5c8f29",
+          "sizeBytes": 1816
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_PROPOSAL0.g.cs",
+          "sha256": "3c48437f3a807114c62446ffa5c74df3caf3dbccf01217593af375293b1883c4",
+          "sizeBytes": 2698
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_SA_IDLE_TIMEOUT0.g.cs",
+          "sha256": "ebdf3d07be4d904f263ec1900ac9efe077ff0e1b53dca6f02006d90b0f31e635",
+          "sizeBytes": 1770
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_SA_LIFETIME0.g.cs",
+          "sha256": "e6f5c170c5d1bc439aa036054185603d3fcc406d000058ac8df4438b4adcb19d",
+          "sizeBytes": 1706
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_SA_TRANSFORM0.g.cs",
+          "sha256": "a5559cca0291ec3a5400f0e3d9412c46165f296a3c28ebd23b89edcbfb9e3ccb",
+          "sizeBytes": 6545
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_TRANSFORM_TYPE.g.cs",
+          "sha256": "1f9f700eef289806242193ae83128c0806a214f1a422817c0cec0eb18ae92e8e",
+          "sizeBytes": 2571
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_TRANSPORT_POLICY0.g.cs",
+          "sha256": "317258b6d989d475cac48bac55b1198245828bc1e9a05b77b85c877f197448af",
+          "sizeBytes": 3242
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_TUNNEL_ENDPOINTS0.g.cs",
+          "sha256": "e6598365a6bfc74b80165d04c9af90effc065dd4c6b2cec3050e6ef112b57c1c",
+          "sizeBytes": 3290
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.IPSEC_TUNNEL_POLICY0.g.cs",
+          "sha256": "bcd25cf545b55b555b004571b8ef4de31200183140c9b36fd37d45e4c02c3951",
+          "sizeBytes": 3338
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PCWSTR.g.cs",
+          "sha256": "d0af9be4f781c929fd080fd79ed389dcaf77b74b2edbdc582828a3e7617123b2",
+          "sizeBytes": 2774
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PInvoke.ADVAPI32.dll.g.cs",
+          "sha256": "2fcad0895840e34b9a7b9a5ed6b3eabd106487a793d8788fc05fdca018c10e38",
+          "sizeBytes": 2826
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PInvoke.fwpuclnt.dll.g.cs",
+          "sha256": "0de9f2e2056e1784a15f7401256b3ff53ea2f98dc2a25e7b728aef949e5aba6e",
+          "sizeBytes": 140792
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PInvoke.g.cs",
+          "sha256": "3312fc59ba7f21e7e1eed23e87d9080700e511323372941875989cb7ca0d59f1",
+          "sizeBytes": 987
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PSECURITY_DESCRIPTOR.g.cs",
+          "sha256": "deaa1869e567721abe5a96fe2e4e3a38fa8ee9f9e88e56583f19d531363cf976",
+          "sizeBytes": 2445
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PSID.g.cs",
+          "sha256": "1408b3f8bf54fa02db44d82b4be4d3cabbce8cdc77aeb0ddc3d9bfbcb9b70b6b",
+          "sizeBytes": 2141
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.PWSTR.g.cs",
+          "sha256": "043efaa08989c9e42621d92c2b6d2350bd9160d242abe24b9f6d1e698a232d9b",
+          "sizeBytes": 2397
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SEC_WINNT_AUTH_IDENTITY.g.cs",
+          "sha256": "fc1bd0a9384c41ec8260bd6207ee8a72d5a323e4e6ea36abedbf3b3239aa6863",
+          "sizeBytes": 1613
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SEC_WINNT_AUTH_IDENTITY_W.g.cs",
+          "sha256": "60d20b9ea63523250cd2c468aa96eba6ab7d99f5a9c5bc78b1271415d03b71d8",
+          "sizeBytes": 3090
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID.g.cs",
+          "sha256": "13c7ea9ee7bc8ab49cce8b301230337d73b2235df26f03298b74a5b43e213f93",
+          "sizeBytes": 1861
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID_AND_ATTRIBUTES.g.cs",
+          "sha256": "8dd9dad220d86b651a8877e80fdbe9bddeaf05564921bd259e5986055367451a",
+          "sizeBytes": 1900
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.SID_IDENTIFIER_AUTHORITY.g.cs",
+          "sha256": "b47edec6e558e5692dd6f9fdedd973928c0ce361283a178d5b910a81ad41abfa",
+          "sizeBytes": 1274
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/obj/x64/Release/net10.0-windows/win-x64/generated/Microsoft.Windows.CsWin32/Microsoft.Windows.CsWin32.SourceGenerator/Windows.Win32.VariableLengthInlineArray.g.cs",
+          "sha256": "5d2f77596432659ec82ac61661858963480aa436a3c91611159447a970151547",
+          "sizeBytes": 1206
+        }
+      ],
+      "globalJson": {
+        "path": "native/windows/wfp-policy-native-readback/global.json",
+        "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+        "sizeBytes": 109
+      },
+      "harnessCommand": "dotnet run --project <native readback harness> --configuration Release -p:Platform=x64 --no-build --no-restore",
+      "limitations": [
+        "fixture harness uses an in-memory fake API and does not call BFE/WFP or prove a live native snapshot",
+        "snapshots remain incomplete because object ACL policy comparison and read-ACL enumeration coverage are unproven; IPsec provider-context payloads remain unnormalized",
+        "does not prove policy equivalence, enforcement, CaptureService integration, or readiness-gate behavior"
+      ],
+      "nugetLocks": [
+        {
+          "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
+          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
+          "sizeBytes": 1460
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/packages.lock.json",
+          "sha256": "02dd7b95a61b674bb4b04565ce6b2e7ec641ae4d7892dd9aa6ee665475149655",
+          "sizeBytes": 186
+        }
+      ],
+      "nugetPackages": [
+        {
+          "id": "Microsoft.Windows.CsWin32",
+          "lockContentHash": "hz2kh3RP3CaQWSfOYx8Oy5fyZQvQtjR7DERp0cH6YO/CKoV8tuFhVaWWHA51OHDqIFmas65uJuas1zHSaWZojw==",
+          "version": "0.3.360"
+        },
+        {
+          "id": "Microsoft.Windows.SDK.Win32Docs",
+          "lockContentHash": "Z/9po23gUA9aoukirh2ItMU2ZS9++Js9Gdds9fu5yuMojDrmArvY2y+tq9985tR3cxFxpZO1O35Wjfo0khj5HA==",
+          "version": "0.1.42-alpha"
+        },
+        {
+          "id": "Microsoft.Windows.SDK.Win32Metadata",
+          "lockContentHash": "h/FD+SrIlxgr+HD/WrJnLvpTdyWFAX7F0FCMPRxPJFTt4Qz70wGXKEBZvvIDX7om4hP0Tb7O0s1ND3aUvigL8g==",
+          "version": "71.0.30-preview"
+        },
+        {
+          "id": "Microsoft.Windows.WDK.Win32Metadata",
+          "lockContentHash": "IM50tb/+UIwBr9FMr6ZKcZjCMW+Axo6NjGqKxgjUfyCY8dRnYUfrJEXxAaXoWtYP4X8EmASmC1Jtwh4XucseZg==",
+          "version": "0.13.25-experimental"
+        }
+      ],
+      "projects": [
+        "native/windows/wfp-policy-native-readback/WfpPolicy.NativeReadback.csproj",
+        "native/windows/wfp-policy-native-readback/tests/WfpPolicy.NativeReadback.Harness.csproj"
+      ],
+      "purpose": "read-only native BFE/WFP snapshot prototype and unmanaged fake-API fixture harness; not connected to policy activation",
+      "runtimeIdentifier": "win-x64",
+      "sourceInputs": [
+        {
+          "path": "native/windows/wfp-policy-native-readback/AssemblyInfo.cs",
+          "sha256": "e3ed73591f04f9fb54fd36d2c3ae81715ad934a8cde68e9e36e59c5c493d286d",
+          "sizeBytes": 167
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/global.json",
+          "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+          "sizeBytes": 109
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/NativeMethods.txt",
+          "sha256": "b0105ae89eb50b780ea3a4a4a872f7a98bd0d0fc8b26067251b79ebaa530524c",
+          "sizeBytes": 4448
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/NativeObjectDecoder.cs",
+          "sha256": "42e756c1c103b920d3eacd49438e64c2b65b7e5f843b453dfc6d9d79caeb56ea",
+          "sizeBytes": 25074
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
+          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
+          "sizeBytes": 1460
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/SecurityDescriptorNormalizer.cs",
+          "sha256": "dd7b9c7f6d46f18f6169b225f5340a8dded1cf266d3f64f9383e5eb9e9e51189",
+          "sizeBytes": 2393
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/SnapshotModels.cs",
+          "sha256": "1516e1297f14ab878d4402d383b7576d1c310a2228fe49a169a958fb80671343",
+          "sizeBytes": 12209
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/packages.lock.json",
+          "sha256": "02dd7b95a61b674bb4b04565ce6b2e7ec641ae4d7892dd9aa6ee665475149655",
+          "sizeBytes": 186
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/Program.cs",
+          "sha256": "6d11de290779da9ab3a4d40b1a10c9d22819665cfe2ed8946fb55515a53e9a1e",
+          "sizeBytes": 77359
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/tests/WfpPolicy.NativeReadback.Harness.csproj",
+          "sha256": "0e65fbf26787dde60d4aa1c8ed235cc9fd13fe599615f2a5dafe82ca6a5ef296",
+          "sizeBytes": 683
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/WfpNativeReadbackReader.cs",
+          "sha256": "b25b85604bc941e73ebe6c2479d099221df05e2d65228eb6206b4e330494f886",
+          "sizeBytes": 46744
+        },
+        {
+          "path": "native/windows/wfp-policy-native-readback/WfpPolicy.NativeReadback.csproj",
+          "sha256": "f378f46f7d7874f4ee9a695f0860622d769e2af2e2d0f298de9670e7e58d8f28",
+          "sizeBytes": 814
+        }
+      ],
+      "targetFramework": "net10.0-windows"
+    }
+  ],
+  "schemaVersion": "1.1",
+  "scope": {
+    "limitations": [
+      "does not determine license applicability or redistribution obligations",
+      "does not prove runtime linking or deployed service behavior",
+      "does not prove that generated WFP filters were applied"
+    ],
+    "project": "native/windows/wfp-policy-plan",
+    "purpose": "build-time WFP policy-plan prototype; not application runtime SBOM",
+    "runtimeIdentifier": "win-x64",
+    "targetFramework": "net10.0"
+  },
+  "sourceInputs": [
+    {
+      "path": "native/windows/shared/PublicUnicastAddressPolicy.cs",
+      "sha256": "e4d5ccb210a752e514a10fdc15d951a795c29468d064f57747092a0a6c4556d6",
+      "sizeBytes": 3084
+    },
+    {
+      "path": "native/windows/wfp-policy-core/AssemblyInfo.cs",
+      "sha256": "25ee4b787d1ad936efe2ed60be37165c46eafed051cfeac01a71533adc807b07",
+      "sizeBytes": 200
+    },
+    {
+      "path": "native/windows/wfp-policy-core/global.json",
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+      "sizeBytes": 109
+    },
+    {
+      "path": "native/windows/wfp-policy-core/LeasePolicyCompiler.cs",
+      "sha256": "a05b2af6ea04ef87a4aad8db2c5c795c1e6301e0e659a66ab03ceaafd15b3400",
+      "sizeBytes": 34710
+    },
+    {
+      "path": "native/windows/wfp-policy-core/packages.lock.json",
+      "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
+      "sizeBytes": 66
+    },
+    {
+      "path": "native/windows/wfp-policy-core/WfpPolicy.Core.csproj",
+      "sha256": "80fc928ad755a22453fd1d0fd3a29106c140a4c0f22ed646c3cd05576df0754e",
+      "sizeBytes": 504
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/global.json",
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+      "sizeBytes": 109
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/ManagedLayoutReport.cs",
+      "sha256": "c710f5dcdacee8bd2ce21753f5baccafbfb06381aaedbeeae0d5bee7b056758c",
+      "sizeBytes": 3306
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/NativeFilterPlan.cs",
+      "sha256": "806baa12a7b843e7f50da5114e66ce7d2f041333e76ce685b6f197fe8bd2bd4e",
+      "sizeBytes": 16074
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/NativeMethods.txt",
+      "sha256": "72f14aa6646cd3a97e130dbdf4db7bc47f5ce5ba2deedc0a094acf1f5db0ddc7",
+      "sizeBytes": 2178
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/packages.lock.json",
+      "sha256": "07d11b1b03db7621602ac37b65cf8f7c4ae92329d08d9e0a1fcb3a75b1ea22ad",
+      "sizeBytes": 1502
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/PolicyPlan.cs",
+      "sha256": "a79449d9179e2111946b11412321d2b84963b658b67f5897601ad0b57d705ada",
+      "sizeBytes": 14968
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/Program.cs",
+      "sha256": "00eaf19d5abeb69421d5e1ba52e4d2926f0ce959adbc26e69b7e586119e6cb44",
+      "sizeBytes": 1566
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/WfpFilterMaterializer.cs",
+      "sha256": "077d5a60ab7998a525f103cf76a22b3d7fa48ba52c118ca593a8f9ddd74d1bd8",
+      "sizeBytes": 37318
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/WfpPolicyPlan.csproj",
+      "sha256": "50630f71586987aa561a9196dc165ba4da58d13664ebe959d955c2bef6693026",
+      "sizeBytes": 847
+    }
+  ],
+  "toolchain": {
+    "buildCommand": "dotnet build <project> --configuration Release --runtime win-x64 --no-restore --nologo --verbosity quiet",
+    "globalJson": {
+      "path": "native/windows/wfp-policy-plan/global.json",
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974",
+      "sizeBytes": 109
+    },
+    "packageSignatureCommand": "dotnet nuget verify --all <nupkg>",
+    "sdkVersion": "10.0.401"
+  }
+}

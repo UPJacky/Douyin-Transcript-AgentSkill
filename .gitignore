@@ -5,6 +5,10 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+bin/
+obj/
+/toolchain-smoke.obj
+/MEMORY.md
 
 # Test and tool caches
 .pytest_cache/
@@ -62,3 +66,10 @@ douyin-transcripts/
 /Douyin-Transcript-AgentSkill-项目执行资料包.zip
 /给执行Agent的启动指令.md
 /.audit-clean-skill-temp/
+# Machine-local Windows Sandbox profiles embed host-specific folder mappings.
+/native/windows/wfp-policy-plan/sandbox/*.wsb
+# Local validation harness output and native probe object.
+/sandbox-results/
+/b2-event-ps51-*/
+/b2-ps51-*/
+/native_desktop_probe.obj

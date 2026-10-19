@@ -3,6 +3,9 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+import subprocess
+import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -10,8 +13,10 @@ from threading import Barrier, Event
 
 import douyin_transcript.tasks as task_module
 import pytest
-from douyin_transcript.corrections import CorrectionRule, apply_terminology_dictionary
-from douyin_transcript.markdown import render_transcript_markdown
+from douyin_transcript.markdown import (
+    render_transcript_markdown,
+    write_reviewed_transcript_markdown,
+)
 from douyin_transcript.tasks import TaskStore
 
 
@@ -39,6 +44,7 @@ def _to_writing(
 ):
     current = store.get_task(task_id)
     assert current is not None
+
     def worker_options() -> dict[str, object]:
         if worker is None:
             return {}
@@ -73,7 +79,9 @@ def test_task_store_rejects_symlink_database_alias(tmp_path):
     try:
         alias.symlink_to(target)
     except (OSError, NotImplementedError) as exc:
-        pytest.skip(f"filesystem does not permit symlink creation: {type(exc).__name__}")
+        pytest.skip(
+            f"filesystem does not permit symlink creation: {type(exc).__name__}"
+        )
 
     with pytest.raises(PermissionError, match="重解析点|符号链接|普通文件"):
         TaskStore(alias)
@@ -146,8 +154,14 @@ def test_schema_migration_adds_claim_and_local_identity_columns(tmp_path):
         indexes = {
             row[1] for row in store._connection.execute("PRAGMA index_list(tasks)")
         }
+        review_tables = {
+            row[0]
+            for row in store._connection.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            )
+        }
 
-    assert version == 8
+    assert version == 9
     assert {"idx_tasks_local_path", "idx_tasks_video_id"} <= indexes
     assert {
         "claimed_by",
@@ -162,6 +176,72 @@ def test_schema_migration_adds_claim_and_local_identity_columns(tmp_path):
         "timeline_required",
         "claim_generation",
     } <= columns
+    assert "task_review_sidecars" in review_tables
+
+
+def test_reviewed_sidecar_binding_is_hash_pinned_to_completed_raw_task(tmp_path):
+    media = tmp_path / "media.bin"
+    media.write_bytes(b"media")
+    raw = tmp_path / "review-source.md"
+    with TaskStore(tmp_path / "tasks.sqlite3") as store:
+        task = store.create_remote_task(
+            "https://www.douyin.com/video/review-binding", "review-binding"
+        )
+        task = _to_writing(store, task.task_id, media)
+        raw.write_text(
+            render_transcript_markdown(
+                "review source",
+                "原始正文需要校对。",
+                {"video_id": "review-binding"},
+            ),
+            encoding="utf-8",
+        )
+        store.set_writing_output_path(task.task_id, raw)
+        store.record_output_integrity(
+            task.task_id,
+            raw,
+            hashlib.sha256(raw.read_bytes()).hexdigest(),
+        )
+        store.complete_task(task.task_id, raw)
+
+        reviewed = write_reviewed_transcript_markdown(raw, "原始正文已经校对。")
+        record = store.register_reviewed_sidecar(raw, reviewed)
+        repeated = store.register_reviewed_sidecar(raw, reviewed)
+
+        assert record is not None
+        assert record == repeated
+        assert record.task_id == task.task_id
+        assert (
+            record.source_output_sha256 == hashlib.sha256(raw.read_bytes()).hexdigest()
+        )
+        assert (
+            record.reviewed_sha256 == hashlib.sha256(reviewed.read_bytes()).hexdigest()
+        )
+        assert record.review_scope == "model_text_review_unheard"
+        assert store.list_reviewed_sidecars(task.task_id) == [record]
+        assert "原始正文已经校对" not in str(
+            dict(
+                store._connection.execute(
+                    "SELECT * FROM task_review_sidecars WHERE review_id = ?",
+                    (record.review_id,),
+                ).fetchone()
+            )
+        )
+
+
+def test_reviewed_sidecar_binding_rejects_unmatched_or_misnamed_files(tmp_path):
+    raw = tmp_path / "untracked.md"
+    raw.write_text(
+        render_transcript_markdown("untracked", "原始文本。", {}), encoding="utf-8"
+    )
+    reviewed = write_reviewed_transcript_markdown(raw, "校对文本。")
+    misnamed = tmp_path / "other.reviewed.md"
+    misnamed.write_bytes(reviewed.read_bytes())
+
+    with TaskStore(tmp_path / "tasks.sqlite3") as store:
+        assert store.register_reviewed_sidecar(raw, reviewed) is None
+        with pytest.raises(ValueError, match="sibling sidecar"):
+            store.register_reviewed_sidecar(raw, misnamed)
 
 
 def test_schema_v2_migration_adds_empty_processing_options_snapshot(tmp_path):
@@ -191,7 +271,7 @@ def test_schema_v2_migration_adds_empty_processing_options_snapshot(tmp_path):
         legacy = store.get_task("legacy")
         version = store._connection.execute("PRAGMA user_version").fetchone()[0]
 
-    assert version == 8
+    assert version == 9
     assert legacy is not None
     assert legacy.processing_options_json == "{}"
     assert legacy.source_duration_seconds is None
@@ -227,14 +307,16 @@ def test_schema_v3_migration_preserves_task_and_adds_unknown_source_duration(tmp
         legacy = store.get_task("legacy-v3")
         version = store._connection.execute("PRAGMA user_version").fetchone()[0]
 
-    assert version == 8
+    assert version == 9
     assert legacy is not None
     assert legacy.title == "saved title"
     assert legacy.processing_options_json == '{"language":"auto"}'
     assert legacy.source_duration_seconds is None
 
 
-def test_v5_migration_fails_closed_for_completed_tasks_without_timeline_manifest(tmp_path):
+def test_v5_migration_fails_closed_for_completed_tasks_without_timeline_manifest(
+    tmp_path,
+):
     database = tmp_path / "v5.sqlite3"
     with TaskStore(database) as store:
         pass
@@ -345,7 +427,9 @@ def test_remote_creation_is_immediately_durable_and_strips_url_secrets(tmp_path)
     assert b"fragment" not in raw_database
 
 
-def test_processing_options_are_optional_bounded_json_and_never_default_to_body(tmp_path):
+def test_processing_options_are_optional_bounded_json_and_never_default_to_body(
+    tmp_path,
+):
     database = tmp_path / "tasks-options.sqlite3"
     with TaskStore(database) as store:
         legacy = store.create_remote_task("https://www.douyin.com/video/1", "1")
@@ -426,7 +510,9 @@ def test_transition_graph_persists_each_stage_and_rejects_skips(tmp_path):
 )
 def test_transition_rejects_invalid_source_duration(tmp_path, duration):
     with TaskStore(tmp_path / "tasks.sqlite3") as store:
-        task = store.create_remote_task("https://www.douyin.com/video/invalid", "invalid")
+        task = store.create_remote_task(
+            "https://www.douyin.com/video/invalid", "invalid"
+        )
         store.transition(task.task_id, "resolving")
 
         with pytest.raises(ValueError, match="positive finite number"):
@@ -489,20 +575,12 @@ def test_output_integrity_accepts_frontmatter_larger_than_legacy_read_limit(tmp_
     media = tmp_path / "media.bin"
     media.write_bytes(b"media")
     output = tmp_path / "large-metadata.md"
-    correction = apply_terminology_dictionary(
-        "term",
-        [CorrectionRule("rule-1", "term", "fixed", note="\x01" * 20_000)],
-        enabled=True,
-    )
-    archive = json.dumps(
-        correction.archive_record(), ensure_ascii=False, separators=(",", ":")
-    )
     content = render_transcript_markdown(
         "title",
         "transcript",
         {
             "video_id": "123",
-            "terminology_corrections": archive,
+            "test_padding": "x" * (150 * 1024),
         },
     )
     assert len(content.split("\n---\n", maxsplit=1)[0]) > 128 * 1024
@@ -522,6 +600,74 @@ def test_output_integrity_accepts_frontmatter_larger_than_legacy_read_limit(tmp_
         assert recorded.output_sha256 == expected_sha256
 
 
+def test_bounded_file_hash_rejects_oversize_before_reading(tmp_path, monkeypatch):
+    path = tmp_path / "oversized.md"
+    path.write_bytes(b"bounded content")
+    read_calls = []
+    original_read = task_module.os.read
+
+    def track_read(descriptor, count):
+        read_calls.append(count)
+        return original_read(descriptor, count)
+
+    monkeypatch.setattr(task_module.os, "read", track_read)
+    with pytest.raises(OSError, match="size limit"):
+        task_module._sha256_file(path, max_bytes=1)
+    assert read_calls == []
+
+
+def test_completed_output_and_timeline_hashes_use_separate_caps(tmp_path, monkeypatch):
+    media = tmp_path / "media.bin"
+    media.write_bytes(b"media")
+    output = tmp_path / "transcript.md"
+    timeline = tmp_path / "transcript_timeline.md"
+    expected_timeline = b"# transcript -- timeline\n"
+
+    with TaskStore(tmp_path / "tasks.sqlite3") as store:
+        task = store.create_remote_task(
+            "https://www.douyin.com/video/bounded-output",
+            "bounded-output",
+            processing_options={"timestamps": True},
+        )
+        task = _to_writing(store, task.task_id, media, timeline_required=True)
+        _markdown(output, video_id="bounded-output")
+        store.set_writing_output_path(task.task_id, output)
+        store.record_output_integrity(
+            task.task_id, output, hashlib.sha256(output.read_bytes()).hexdigest()
+        )
+        store.prepare_timeline_integrity(
+            task.task_id, timeline, hashlib.sha256(expected_timeline).hexdigest()
+        )
+        timeline.write_bytes(expected_timeline)
+        store.complete_task(task.task_id, output)
+
+        original_output = output.read_bytes()
+        output.write_bytes(original_output + b"oversized")
+        monkeypatch.setattr(
+            task_module, "MAX_TRANSCRIPT_OUTPUT_BYTES", len(original_output)
+        )
+        read_sizes = []
+        original_read = task_module.os.read
+
+        def track_read_sizes(descriptor, count):
+            read_sizes.append(task_module.os.fstat(descriptor).st_size)
+            return original_read(descriptor, count)
+
+        monkeypatch.setattr(task_module.os, "read", track_read_sizes)
+        assert not store.is_completed_valid(task.task_id)
+        assert read_sizes == []
+
+        output.write_bytes(original_output)
+        timeline.write_bytes(expected_timeline + b"oversized")
+        monkeypatch.setattr(
+            task_module, "MAX_TIMELINE_OUTPUT_BYTES", len(expected_timeline)
+        )
+        read_sizes.clear()
+        assert not store.is_completed_valid(task.task_id)
+        assert read_sizes
+        assert set(read_sizes) == {len(original_output)}
+
+
 def test_completion_requires_bound_timeline_and_detects_sidecar_mutation(tmp_path):
     media = tmp_path / "media.bin"
     media.write_bytes(b"media")
@@ -533,9 +679,7 @@ def test_completion_requires_bound_timeline_and_detects_sidecar_mutation(tmp_pat
             "timeline-integrity",
             processing_options={"timestamps": True},
         )
-        task = _to_writing(
-            store, task.task_id, media, timeline_required=True
-        )
+        task = _to_writing(store, task.task_id, media, timeline_required=True)
         _markdown(output, video_id="timeline-integrity")
         store.set_writing_output_path(task.task_id, output)
         store.record_output_integrity(
@@ -558,7 +702,9 @@ def test_completion_requires_bound_timeline_and_detects_sidecar_mutation(tmp_pat
         timeline.write_bytes(expected_timeline)
         completed = store.complete_task(task.task_id, output)
         assert completed.timeline_path == str(timeline.resolve())
-        assert completed.timeline_sha256 == hashlib.sha256(expected_timeline).hexdigest()
+        assert (
+            completed.timeline_sha256 == hashlib.sha256(expected_timeline).hexdigest()
+        )
         assert store.is_completed_valid(task.task_id)
 
         timeline.write_bytes(b"changed timeline")
@@ -723,9 +869,12 @@ def test_failures_are_durable_redacted_and_login_required_is_not_retried(tmp_pat
         failed = store.fail_task(
             failed.task_id,
             "NETWORK_ERROR",
-            "GET https://media.test/file?X-Amz-Signature=private failed\nCookie: session-secret",
+            "GET https://media.test/private/path-token?X-Amz-Signature=query-secret failed\n"
+            "Cookie: session-secret",
         )
-        assert "private" not in failed.error_message
+        assert "[REDACTED_URL]" in failed.error_message
+        assert "path-token" not in failed.error_message
+        assert "query-secret" not in failed.error_message
         assert "session-secret" not in failed.error_message
 
     with TaskStore(database) as reopened:
@@ -754,15 +903,22 @@ def test_recovery_reuses_valid_media_and_never_promotes_part_files(tmp_path):
         claimed = store.claim_task(cached.task_id, "worker-a")
         assert claimed.state == "resolving"
         store.transition(
-            cached.task_id, "downloading", worker_id="worker-a",
+            cached.task_id,
+            "downloading",
+            worker_id="worker-a",
             claim_generation=claimed.claim_generation,
         )
         store.transition(
-            cached.task_id, "downloaded", worker_id="worker-a",
-            claim_generation=claimed.claim_generation, media_path=media
+            cached.task_id,
+            "downloaded",
+            worker_id="worker-a",
+            claim_generation=claimed.claim_generation,
+            media_path=media,
         )
         store.transition(
-            cached.task_id, "transcribing", worker_id="worker-a",
+            cached.task_id,
+            "transcribing",
+            worker_id="worker-a",
             claim_generation=claimed.claim_generation,
         )
 
@@ -788,7 +944,9 @@ def test_recovery_validates_media_without_holding_the_write_lock(tmp_path):
     media = tmp_path / "cached.wav"
     media.write_bytes(b"media")
     with TaskStore(database) as setup:
-        task = setup.create_remote_task("https://www.douyin.com/video/recovery-lock", "lock")
+        task = setup.create_remote_task(
+            "https://www.douyin.com/video/recovery-lock", "lock"
+        )
         setup.transition(task.task_id, "resolving")
         setup.transition(task.task_id, "downloading")
         setup.transition(task.task_id, "downloaded", media_path=media)
@@ -829,6 +987,86 @@ def test_recovery_validates_media_without_holding_the_write_lock(tmp_path):
     ]
 
 
+def test_separate_processes_claim_one_database_task_only_once(tmp_path):
+    database = tmp_path / "tasks.sqlite3"
+    with TaskStore(database) as store:
+        created = store.create_remote_task(
+            "https://www.douyin.com/video/multiprocess-claim", "multiprocess-claim"
+        )
+
+    script = """
+import json
+import sys
+import time
+from pathlib import Path
+from douyin_transcript.tasks import TaskStore
+
+database, task_id, worker_id, ready_path, release_path = sys.argv[1:]
+Path(ready_path).write_text("ready", encoding="ascii")
+deadline = time.monotonic() + 10
+while not Path(release_path).exists():
+    if time.monotonic() >= deadline:
+        raise SystemExit("parent did not release the worker barrier")
+    time.sleep(0.005)
+with TaskStore(Path(database)) as store:
+    claim = store.claim_task(task_id, worker_id)
+print(json.dumps({"worker": worker_id, "claimed": claim is not None}))
+"""
+    release_path = tmp_path / "release-workers"
+    processes = []
+    worker_ids = ("worker-a", "worker-b")
+    ready_paths = [tmp_path / f"{worker_id}.ready" for worker_id in worker_ids]
+    try:
+        for worker_id, ready_path in zip(worker_ids, ready_paths, strict=True):
+            processes.append(
+                subprocess.Popen(
+                    [
+                        sys.executable,
+                        "-c",
+                        script,
+                        str(database),
+                        created.task_id,
+                        worker_id,
+                        str(ready_path),
+                        str(release_path),
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+            )
+
+        deadline = time.monotonic() + 10
+        while not all(path.exists() for path in ready_paths):
+            if time.monotonic() >= deadline:
+                pytest.fail("child processes did not reach the claim barrier")
+            if any(process.poll() is not None for process in processes):
+                pytest.fail("a child process exited before the claim barrier")
+            time.sleep(0.005)
+        release_path.touch()
+
+        outcomes = []
+        for process in processes:
+            stdout, stderr = process.communicate(timeout=10)
+            assert process.returncode == 0, stderr
+            outcomes.append(json.loads(stdout.strip()))
+    finally:
+        release_path.touch(exist_ok=True)
+        for process in processes:
+            if process.poll() is None:
+                process.kill()
+            process.communicate()
+
+    assert sum(outcome["claimed"] for outcome in outcomes) == 1
+    winner = next(outcome["worker"] for outcome in outcomes if outcome["claimed"])
+    with TaskStore(database) as store:
+        current = store.get_task(created.task_id)
+    assert current is not None
+    assert current.claimed_by == winner
+    assert current.claim_generation == 1
+    assert current.attempt_count == 1
+
+
 def test_recovery_does_not_clear_a_claim_refreshed_during_media_validation(tmp_path):
     database = tmp_path / "tasks.sqlite3"
     media = tmp_path / "claimed.wav"
@@ -844,7 +1082,11 @@ def test_recovery_does_not_clear_a_claim_refreshed_during_media_validation(tmp_p
         assert claimed is not None
         setup._connection.execute(
             "UPDATE tasks SET claimed_at = ?, updated_at = ? WHERE task_id = ?",
-            ("2000-01-01T00:00:00.000+00:00", "2000-01-01T00:00:00.000+00:00", task.task_id),
+            (
+                "2000-01-01T00:00:00.000+00:00",
+                "2000-01-01T00:00:00.000+00:00",
+                task.task_id,
+            ),
         )
 
     entered = Event()
@@ -897,7 +1139,9 @@ def test_recovery_fences_old_worker_mutations_even_when_worker_id_is_reused(tmp_
         assert claimed is not None
         old_generation = claimed.claim_generation
         store.transition(
-            created.task_id, "downloading", worker_id="worker-a",
+            created.task_id,
+            "downloading",
+            worker_id="worker-a",
             claim_generation=claimed.claim_generation,
         )
         store.transition(
@@ -908,7 +1152,9 @@ def test_recovery_fences_old_worker_mutations_even_when_worker_id_is_reused(tmp_
             media_path=media,
         )
         store.transition(
-            created.task_id, "transcribing", worker_id="worker-a",
+            created.task_id,
+            "transcribing",
+            worker_id="worker-a",
             claim_generation=claimed.claim_generation,
         )
         stale_claim = (datetime.now(UTC) - timedelta(seconds=600)).isoformat(
@@ -979,9 +1225,7 @@ def test_worker_writes_and_heartbeats_require_claim_generation(tmp_path):
         assert current_claim.claim_generation > first_claim.claim_generation
 
         with pytest.raises(ValueError, match="claim_generation is required"):
-            store.transition(
-                created.task_id, "downloading", worker_id="reused-worker"
-            )
+            store.transition(created.task_id, "downloading", worker_id="reused-worker")
         with pytest.raises(ValueError, match="claim_generation is required"):
             store.heartbeat_claim(created.task_id, "reused-worker")
 
@@ -1025,6 +1269,7 @@ def test_recovery_requires_the_expected_timeline_sidecar(tmp_path):
     media = tmp_path / "media.wav"
     media.write_bytes(b"media")
     with TaskStore(tmp_path / "tasks.sqlite3") as store:
+
         def writing_task(task_id: str):
             task = store.create_remote_task(
                 f"https://www.douyin.com/video/{task_id}",

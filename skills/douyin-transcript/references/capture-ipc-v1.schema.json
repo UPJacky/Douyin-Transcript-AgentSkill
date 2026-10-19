@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://douyin-transcript.invalid/schemas/capture-ipc-v1.schema.json",
+  "title": "Douyin Transcript capture IPC v1 frame",
+  "description": "Protocol-only JSON contract. The strict Python codec additionally enforces UTF-8 byte limits, duplicate-key rejection, URL parsing, and Unicode control-character rules.",
+  "oneOf": [
+    { "$ref": "#/$defs/captureRequest" },
+    { "$ref": "#/$defs/captureSuccess" },
+    { "$ref": "#/$defs/captureFailure" },
+    { "$ref": "#/$defs/captureResolveRequest" },
+    { "$ref": "#/$defs/captureResolveSuccess" },
+    { "$ref": "#/$defs/captureResolveFailure" }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "header": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "type": "string" }
+      },
+      "required": ["protocol_version", "message_type"]
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "max_media_bytes": { "type": "integer", "minimum": 1, "maximum": 536870912 },
+        "max_media_duration_seconds": { "type": "number", "minimum": 0, "maximum": 14400 },
+        "max_short_link_redirects": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "max_media_redirects": { "type": "integer", "minimum": 0, "maximum": 3 }
+      },
+      "required": [
+        "max_media_bytes",
+        "max_media_duration_seconds",
+        "max_short_link_redirects",
+        "max_media_redirects"
+      ],
+      "additionalProperties": false
+    },
+    "captureRequest": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_request" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "original_url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[Hh][Tt][Tt][Pp][Ss]://",
+          "x-maxUtf8Bytes": 8192,
+          "x-allowedHosts": ["douyin.com", "www.douyin.com", "v.douyin.com"],
+          "x-portPolicy": "default or 443",
+          "x-rejectFragment": true,
+          "description": "Sensitive source URL. The service owns DNS resolution, redirects, browser capture, candidate validation, and media download."
+        },
+        "limits": { "$ref": "#/$defs/limits" }
+      },
+      "required": ["protocol_version", "message_type", "request_id", "original_url", "limits"],
+      "additionalProperties": false
+    },
+    "captureResolveRequest": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_resolve_request" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "original_url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[Hh][Tt][Tt][Pp][Ss]://",
+          "x-maxUtf8Bytes": 8192,
+          "x-allowedHosts": ["douyin.com", "www.douyin.com", "v.douyin.com"],
+          "x-portPolicy": "default or 443",
+          "x-rejectFragment": true,
+          "description": "Sensitive source URL. The worker resolves redirects and returns only a validated video ID."
+        },
+        "max_short_link_redirects": { "type": "integer", "minimum": 0, "maximum": 5 }
+      },
+      "required": ["protocol_version", "message_type", "request_id", "original_url", "max_short_link_redirects"],
+      "additionalProperties": false
+    },
+    "captureResolveSuccess": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_resolve_result" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "status": { "const": "resolved" },
+        "video_id": { "type": "string", "pattern": "^[0-9]{1,32}$" }
+      },
+      "required": ["protocol_version", "message_type", "request_id", "status", "video_id"],
+      "additionalProperties": false
+    },
+    "captureResolveFailure": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_resolve_result" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "status": { "const": "failed" },
+        "error": {
+          "type": "object",
+          "oneOf": [
+            { "properties": { "code": { "enum": ["NETWORK_ERROR", "BROWSER_ISOLATION_LOST", "CAPTURE_TIMEOUT", "DOWNLOAD_FAILED", "SERVICE_BUSY"] }, "retryable": { "const": true } }, "required": ["code", "retryable"], "additionalProperties": false },
+            { "properties": { "code": { "enum": ["INVALID_URL", "UNSUPPORTED_URL", "BROWSER_ISOLATION_UNAVAILABLE", "LOGIN_REQUIRED", "CAPTURE_NO_MEDIA", "MEDIA_INVALID", "RESOURCE_LIMIT", "CANCELLED", "INTERNAL_ERROR"] }, "retryable": { "const": false } }, "required": ["code", "retryable"], "additionalProperties": false }
+          ]
+        }
+      },
+      "required": ["protocol_version", "message_type", "request_id", "status", "error"],
+      "additionalProperties": false
+    },
+    "videoMetadata": {
+      "type": "object",
+      "properties": {
+        "video_id": { "type": "string", "pattern": "^[0-9]{1,32}$" },
+        "title": {
+          "type": ["string", "null"],
+          "maxLength": 160,
+          "x-rejectUnicodeControlsAndBidiOverrides": true
+        },
+        "author": {
+          "type": ["string", "null"],
+          "maxLength": 256,
+          "x-rejectUnicodeControlsAndBidiOverrides": true
+        },
+        "publish_date": {
+          "type": ["string", "null"],
+          "maxLength": 128,
+          "x-rejectUnicodeControlsAndBidiOverrides": true
+        },
+        "duration_seconds": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "number", "exclusiveMinimum": 0, "maximum": 14400 }
+          ]
+        }
+      },
+      "required": ["video_id", "title", "author", "publish_date", "duration_seconds"],
+      "additionalProperties": false
+    },
+    "mediaArtifact": {
+      "type": "object",
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/uuid" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 1, "maximum": 536870912 },
+        "media_type": {
+          "enum": [
+            "audio/aac",
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/ogg",
+            "audio/wav",
+            "audio/webm",
+            "audio/x-m4a",
+            "audio/x-wav",
+            "video/mp4",
+            "video/webm",
+            "video/quicktime",
+            "video/x-matroska"
+          ]
+        },
+        "duration_seconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 14400 }
+      },
+      "required": ["artifact_id", "sha256", "size_bytes", "media_type", "duration_seconds"],
+      "additionalProperties": false,
+      "description": "Opaque worker-owned artifact metadata. No path or download capability is returned; a future authenticated transport must transfer bytes through a separately bounded stream or handle owned by the worker."
+    },
+    "captureSuccess": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_result" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "status": { "const": "succeeded" },
+        "video": { "$ref": "#/$defs/videoMetadata" },
+        "media_artifact": { "$ref": "#/$defs/mediaArtifact" }
+      },
+      "required": [
+        "protocol_version",
+        "message_type",
+        "request_id",
+        "status",
+        "video",
+        "media_artifact"
+      ],
+      "additionalProperties": false
+    },
+    "captureFailure": {
+      "type": "object",
+      "properties": {
+        "protocol_version": { "const": 1 },
+        "message_type": { "const": "capture_result" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "status": { "const": "failed" },
+        "error": {
+          "type": "object",
+          "oneOf": [
+            { "properties": { "code": { "enum": ["NETWORK_ERROR", "BROWSER_ISOLATION_LOST", "CAPTURE_TIMEOUT", "DOWNLOAD_FAILED", "SERVICE_BUSY"] }, "retryable": { "const": true } }, "required": ["code", "retryable"], "additionalProperties": false },
+            { "properties": { "code": { "enum": ["INVALID_URL", "UNSUPPORTED_URL", "BROWSER_ISOLATION_UNAVAILABLE", "LOGIN_REQUIRED", "CAPTURE_NO_MEDIA", "MEDIA_INVALID", "RESOURCE_LIMIT", "CANCELLED", "INTERNAL_ERROR"] }, "retryable": { "const": false } }, "required": ["code", "retryable"], "additionalProperties": false }
+          ]
+        }
+      },
+      "required": ["protocol_version", "message_type", "request_id", "status", "error"],
+      "additionalProperties": false
+    }
+  }
+}

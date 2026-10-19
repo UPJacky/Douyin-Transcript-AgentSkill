@@ -1,6 +1,7 @@
-# Copy this file to config.toml in the application data directory, then edit
-# only the settings you want to override. Paths are examples; use paths valid
-# on your operating system. Keep application data in a private local directory.
+# Copy this file to config.toml in the config anchor selected by --data-dir,
+# DOUYIN_TRANSCRIPT_HOME, or the platform default, then edit only settings to
+# override. [paths].data_dir does not move this config file. Keep application
+# data in a private local directory.
 
 [paths]
 # data_dir = "D:\\douyin-transcript-data"

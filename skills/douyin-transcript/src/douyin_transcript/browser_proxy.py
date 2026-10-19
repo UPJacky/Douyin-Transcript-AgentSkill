@@ -1,4 +1,9 @@
-"""Loopback-only HTTPS CONNECT proxy that pins Chromium to validated DNS IPs."""
+"""Standalone HTTPS CONNECT relay for diagnostics; not an isolation service.
+
+This module is not used by ``BrowserCapture``. Its listener and upstream
+connections run in the calling process, so it must not be treated as the
+service-owned proxy or as proof of process-level egress isolation.
+"""
 
 from __future__ import annotations
 
@@ -18,10 +23,14 @@ from .urls import (
     validate_https_url,
 )
 
-_NAVIGATION_HOSTS = DOUYIN_WEB_HOSTS | DOUYIN_SHORT_HOSTS | {
-    "passport.douyin.com",
-    "www.iesdouyin.com",
-}
+_NAVIGATION_HOSTS = (
+    DOUYIN_WEB_HOSTS
+    | DOUYIN_SHORT_HOSTS
+    | {
+        "passport.douyin.com",
+        "www.iesdouyin.com",
+    }
+)
 _RESOURCE_SUFFIXES = MEDIA_HOST_SUFFIXES | {".douyin.com", ".iesdouyin.com"}
 _CONNECT_TIMEOUT_SECONDS = 10.0
 _IDLE_TIMEOUT_SECONDS = 60.0
@@ -37,8 +46,7 @@ def resolve_browser_destination(host: str, *, deadline: float) -> str:
     """Return one validated public IP for an allowlisted HTTPS host."""
     normalized = host.lower().rstrip(".")
     if normalized not in _NAVIGATION_HOSTS and not any(
-        normalized == suffix[1:] or normalized.endswith(suffix)
-        for suffix in _RESOURCE_SUFFIXES
+        normalized == suffix[1:] or normalized.endswith(suffix) for suffix in _RESOURCE_SUFFIXES
     ):
         raise ValueError("destination is not allowlisted")
     formatted_host = f"[{normalized}]" if ":" in normalized else normalized
@@ -94,9 +102,7 @@ class _ConnectHandler(socketserver.StreamRequestHandler):
     def handle(self) -> None:
         client = self.request
         deadline = time.monotonic() + _CONNECT_TIMEOUT_SECONDS
-        timer = threading.Timer(
-            _CONNECT_TIMEOUT_SECONDS, _shutdown_socket, args=(client,)
-        )
+        timer = threading.Timer(_CONNECT_TIMEOUT_SECONDS, _shutdown_socket, args=(client,))
         timer.daemon = True
         timer.start()
         upstream: socket.socket | None = None
@@ -146,10 +152,7 @@ class _ConnectHandler(socketserver.StreamRequestHandler):
         except OSError:
             pass
         except Exception as exc:
-            if (
-                getattr(exc, "code", None) == "TIMEOUT"
-                or time.monotonic() >= deadline
-            ):
+            if getattr(exc, "code", None) == "TIMEOUT" or time.monotonic() >= deadline:
                 self._respond(504, "Gateway Timeout")
             else:
                 self._respond(403, "Forbidden")
@@ -271,11 +274,20 @@ class _ProxyServer(socketserver.ThreadingTCPServer):
         server_address: tuple[str, int],
         resolve_address: Callable[..., str],
         connector: Callable[[str, int, float], socket.socket],
+        *,
+        listener_socket: socket.socket | None = None,
     ) -> None:
         self.resolve_address = resolve_address
         self.connector = connector
         self._client_slots = threading.BoundedSemaphore(_MAX_CLIENTS)
-        super().__init__(server_address, _ConnectHandler, bind_and_activate=True)
+        super().__init__(server_address, _ConnectHandler, bind_and_activate=listener_socket is None)
+        if listener_socket is not None:
+            # TCPServer creates an unbound socket even when activation is
+            # deferred. Replace it with the broker-duplicated listener; the
+            # broker retains its own handle until the lease is released.
+            self.socket.close()
+            self.socket = listener_socket
+            self.server_address = listener_socket.getsockname()
 
     def process_request(self, request: socket.socket, client_address: tuple[str, int]) -> None:
         if not self._client_slots.acquire(blocking=False):
@@ -301,7 +313,7 @@ class _ProxyServer(socketserver.ThreadingTCPServer):
 
 
 class PinnedHttpsConnectProxy:
-    """Ephemeral loopback proxy; only approved public HTTPS hosts are tunneled."""
+    """Standalone loopback test/diagnostic proxy, outside the capture path."""
 
     def __init__(
         self,
@@ -332,11 +344,25 @@ class PinnedHttpsConnectProxy:
         # so its allowlist and public-address checks remain the network boundary.
         return {"server": self.server_url, "bypass": "<-loopback>"}
 
-    def start(self) -> PinnedHttpsConnectProxy:
+    def start(
+        self,
+        *,
+        listener_socket: socket.socket | None = None,
+        expected_endpoint: tuple[str, int] | None = None,
+    ) -> PinnedHttpsConnectProxy:
         if self._server is not None:
             return self
+        if listener_socket is not None:
+            if expected_endpoint is None or not _is_expected_loopback_listener(
+                listener_socket, expected_endpoint
+            ):
+                raise ValueError("broker proxy socket does not match its loopback lease")
+            listener_socket.setblocking(True)
         server = _ProxyServer(
-            ("127.0.0.1", 0), self._resolve_address, self._connector
+            ("127.0.0.1", 0),
+            self._resolve_address,
+            self._connector,
+            listener_socket=listener_socket,
         )
         thread = threading.Thread(
             target=server.serve_forever,
@@ -361,6 +387,29 @@ class PinnedHttpsConnectProxy:
             server.server_close()
         if thread is not None:
             thread.join(timeout=2)
+
+
+def _is_expected_loopback_listener(
+    listener: socket.socket, expected_endpoint: tuple[str, int]
+) -> bool:
+    expected_host, expected_port = expected_endpoint
+    if (
+        expected_host != "127.0.0.1"
+        or type(expected_port) is not int
+        or not 1 <= expected_port <= 65535
+    ):
+        return False
+    try:
+        actual = listener.getsockname()
+        return (
+            listener.family == socket.AF_INET
+            and listener.getsockopt(socket.SOL_SOCKET, socket.SO_TYPE) == socket.SOCK_STREAM
+            and listener.getsockopt(socket.SOL_SOCKET, socket.SO_ACCEPTCONN) == 1
+            and actual[0] == expected_host
+            and actual[1] == expected_port
+        )
+    except (OSError, AttributeError):
+        return False
 
 
 def _remaining(deadline: float) -> float:

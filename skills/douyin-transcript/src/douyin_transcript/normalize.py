@@ -8,6 +8,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
+from .limits import HARD_MAX_MEDIA_DURATION_SECONDS
+
 _SENTENCE_END = tuple("。！？!?；;.")
 _WHITESPACE = re.compile(r"\s+")
 _ASCII_WORD_SUFFIX = re.compile(r"[A-Za-z0-9][A-Za-z0-9_'-]*[,.!?;:'\")\]]*\Z")
@@ -36,9 +38,9 @@ def _value(segment: Any, name: str, default: Any = None) -> Any:
 def _time(segment: Any, name: str) -> float | None:
     try:
         value = float(_value(segment, name))
-    except (TypeError, ValueError):
+    except (OverflowError, TypeError, ValueError):
         return None
-    return value if math.isfinite(value) and value >= 0 else None
+    return value if math.isfinite(value) and 0 <= value <= HARD_MAX_MEDIA_DURATION_SECONDS else None
 
 
 def _clean_text(value: Any) -> str:
@@ -48,8 +50,14 @@ def _clean_text(value: Any) -> str:
 
 
 def format_timestamp(seconds: float) -> str:
-    """Format nonnegative seconds as a stable ``[mm:ss]`` timestamp."""
-    whole_seconds = max(0, int(seconds))
+    """Format bounded seconds as a stable ``[mm:ss]`` timestamp."""
+    try:
+        value = float(seconds)
+    except (OverflowError, TypeError, ValueError) as exc:
+        raise ValueError("timestamp must be a finite number") from exc
+    if not math.isfinite(value) or value < 0 or value > HARD_MAX_MEDIA_DURATION_SECONDS:
+        raise ValueError("timestamp is outside the supported media duration")
+    whole_seconds = int(value)
     minutes, remainder = divmod(whole_seconds, 60)
     return f"[{minutes:02d}:{remainder:02d}]"
 
@@ -121,9 +129,7 @@ def normalize_segments(
     if current:
         paragraphs.append(current)
     timeline.sort(key=lambda item: (item[0], item[1]))
-    return NormalizedTranscript(
-        tuple(paragraphs), tuple(line for _start, _index, line in timeline)
-    )
+    return NormalizedTranscript(tuple(paragraphs), tuple(line for _start, _index, line in timeline))
 
 
 def _join_segments(

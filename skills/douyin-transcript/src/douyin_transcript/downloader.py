@@ -191,9 +191,7 @@ def validate_media_file(
         raise MediaInvalidError("EMPTY_MEDIA", "媒体文件为空")
     try:
         validation = _coerce_validation(
-            _validate_with_pyav(
-                media_path, max_duration_seconds=max_duration_seconds
-            )
+            _validate_with_pyav(media_path, max_duration_seconds=max_duration_seconds)
         )
     except DecoderUnavailableError:
         raise
@@ -271,9 +269,7 @@ def download_media(
     except PrivateStorageError as exc:
         raise DownloadError("PRIVATE_STORAGE_UNSAFE", str(exc)) from None
     validate = decoder or (
-        lambda path: _validate_with_pyav(
-            path, max_duration_seconds=max_duration_seconds
-        )
+        lambda path: _validate_with_pyav(path, max_duration_seconds=max_duration_seconds)
     )
     deadline = time.monotonic() + total_timeout
     if absolute_deadline is not None:
@@ -331,14 +327,14 @@ def download_media(
             if detail not in failure_details and len(failure_details) < _MAX_FAILURE_DETAILS:
                 failure_details.append(detail)
             continue
-    detail_text = "；候选错误：" + ", ".join(
-        f"{kind}={code}" for kind, code in failure_details
-    ) if failure_details else ""
+    detail_text = (
+        "；候选错误：" + ", ".join(f"{kind}={code}" for kind, code in failure_details)
+        if failure_details
+        else ""
+    )
     raise DownloadError(
         "ALL_MEDIA_CANDIDATES_FAILED",
-        "所有音视频候选均下载或校验失败"
-        + detail_text
-        + "；可改用本地媒体文件",
+        "所有音视频候选均下载或校验失败" + detail_text + "；可改用本地媒体文件",
     )
 
 
@@ -436,9 +432,7 @@ def _download_candidate(
                                 if time.monotonic() >= deadline or (
                                     deadline_limited_read and isinstance(exc, TimeoutError)
                                 ):
-                                    raise DownloadError(
-                                        "TIMEOUT", "媒体下载超过总时限"
-                                    ) from None
+                                    raise DownloadError("TIMEOUT", "媒体下载超过总时限") from None
                                 raise DownloadError(
                                     "READ_FAILED", f"读取媒体失败（{type(exc).__name__}）"
                                 ) from None
@@ -801,9 +795,11 @@ def _validate_open_container(
         except StopIteration:
             break
         except av.error.InvalidDataError:
-            # Match faster-whisper's decoder: recoverable corrupt packets do
-            # not make later valid audio unreachable.
-            continue
+            # PyAV's container.decode() iterator closes after this exception,
+            # so retrying next() cannot reach later packets. Reject the media
+            # instead of trusting its declared duration and accepting a
+            # partial decode as complete.
+            raise MediaInvalidError("MEDIA_DECODE_FAILED", "媒体包含解码器无法恢复的数据") from None
         frame_count += 1
         samples = getattr(frame, "samples", None)
         sample_rate = getattr(frame, "sample_rate", None)
@@ -829,16 +825,10 @@ def _validate_open_container(
             if not math.isfinite(frame_start):
                 require_media_duration(None, max_duration_seconds)
             first_frame_time = (
-                frame_start
-                if first_frame_time is None
-                else min(first_frame_time, frame_start)
+                frame_start if first_frame_time is None else min(first_frame_time, frame_start)
             )
             frame_end = frame_start + frame_duration
-            last_frame_end = (
-                frame_end
-                if last_frame_end is None
-                else max(last_frame_end, frame_end)
-            )
+            last_frame_end = frame_end if last_frame_end is None else max(last_frame_end, frame_end)
 
         observed_duration = observed_samples_seconds
         if first_frame_time is not None and last_frame_end is not None:
@@ -851,8 +841,7 @@ def _validate_open_container(
     if first_frame_time is not None and last_frame_end is not None:
         duration = max(duration, last_frame_end - first_frame_time)
     duration = max(
-        [duration]
-        + [value for value in declared_durations if math.isfinite(value) and value > 0]
+        [duration] + [value for value in declared_durations if math.isfinite(value) and value > 0]
     )
     require_media_duration(duration, max_duration_seconds)
     return _Validation(container.format.name, duration)
@@ -869,9 +858,12 @@ def _find_valid_cache(
     expected_duration_seconds: float | None,
     cancellation: DownloadCancellation | None = None,
 ) -> MediaFile | None:
-    for path in sorted(cache.glob(f"{video_id}-{kind}-*")):
+    cache_prefix = f"{video_id}-{kind}-"
+    for path in cache.iterdir():
         _raise_if_cancelled(cancellation)
         _require_time_remaining(deadline)
+        if not path.name.startswith(cache_prefix):
+            continue
         if path.suffix == ".part":
             continue
         try:
@@ -881,12 +873,13 @@ def _find_valid_cache(
             size = info.st_size
             if size <= 0 or size > max_bytes:
                 continue
+            # Path metadata checks can consume the remaining budget. Recheck
+            # before invoking a potentially full-media decode on the cache.
+            _require_time_remaining(deadline)
             validation = _coerce_validation(decoder(path))
             _raise_if_cancelled(cancellation)
             _require_time_remaining(deadline)
-            require_expected_media_duration(
-                validation.duration_seconds, expected_duration_seconds
-            )
+            require_expected_media_duration(validation.duration_seconds, expected_duration_seconds)
             return MediaFile(
                 path,
                 validation.format,

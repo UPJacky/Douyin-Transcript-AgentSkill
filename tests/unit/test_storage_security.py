@@ -31,7 +31,9 @@ def test_new_directory_and_file_receive_private_posix_modes(tmp_path):
     assert inspect_private_path(path).status == "private"
 
 
-@pytest.mark.skipif(os.name == "nt", reason="POSIX directory-handle identity regression")
+@pytest.mark.skipif(
+    os.name == "nt", reason="POSIX directory-handle identity regression"
+)
 def test_posix_pinned_directory_chain_detects_replaced_component(tmp_path):
     target = ensure_private_directory(tmp_path / "parent" / "leaf")
     descriptors = storage_security._open_posix_directory_chain(
@@ -91,12 +93,16 @@ def test_task_database_and_live_sqlite_sidecars_are_private(tmp_path):
                 assert inspect_private_path(sidecar).status == "private"
 
 
-def test_canonical_storage_path_rejects_traversal_before_normalization(monkeypatch, tmp_path):
+def test_canonical_storage_path_rejects_traversal_before_normalization(
+    monkeypatch, tmp_path
+):
     target = tmp_path / "alias" / "nested" / ".." / "private"
     monkeypatch.setattr(
         storage_security.Path,
         "resolve",
-        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not resolve")),
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            AssertionError("must not resolve")
+        ),
     )
 
     with pytest.raises(ValueError, match=r"\.\."):
@@ -178,7 +184,9 @@ def test_inspector_rejects_symlink_path_without_resolving_target(tmp_path):
     assert "符号链接" in report.detail
 
 
-@pytest.mark.skipif(os.name == "nt", reason="POSIX pinned descriptor replacement regression")
+@pytest.mark.skipif(
+    os.name == "nt", reason="POSIX pinned descriptor replacement regression"
+)
 def test_private_config_reader_keeps_the_checked_file_open(tmp_path):
     path = tmp_path / "config.toml"
     replacement = tmp_path / "replacement.toml"
@@ -241,7 +249,9 @@ def test_missing_sensitive_path_checks_existing_ancestor_policy(monkeypatch, tmp
         monkeypatch.setattr(
             storage_security,
             "_inspect_posix_ancestor",
-            lambda path, _info: storage_security.PermissionReport("shared", "unsafe ancestor")
+            lambda path, _info: storage_security.PermissionReport(
+                "shared", "unsafe ancestor"
+            )
             if path == tmp_path
             else storage_security.PermissionReport("private", "trusted ancestor"),
         )
@@ -332,11 +342,15 @@ def test_posix_inspector_checks_owner_for_files_and_parent_directories(
         "os",
         SimpleNamespace(name="posix", path=os.path, geteuid=lambda: 1000),
     )
-    monkeypatch.setattr(storage_security, "_canonical_storage_path", lambda _path: target)
+    monkeypatch.setattr(
+        storage_security, "_canonical_storage_path", lambda _path: target
+    )
     monkeypatch.setattr(
         storage_security,
         "_inspect_posix_ancestor",
-        lambda _path, _info: storage_security.PermissionReport("private", "test ancestor"),
+        lambda _path, _info: storage_security.PermissionReport(
+            "private", "test ancestor"
+        ),
     )
     monkeypatch.setattr(
         storage_security.Path,
@@ -462,7 +476,9 @@ def test_windows_temp_directory_with_owner_rights_is_private(tmp_path):
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows DACL test")
-def test_windows_new_storage_is_protected_and_unknown_is_rejected(monkeypatch, tmp_path):
+def test_windows_new_storage_is_protected_and_unknown_is_rejected(
+    monkeypatch, tmp_path
+):
     directory = ensure_private_directory(tmp_path / "private")
     assert inspect_private_path(directory).status == "private"
 

@@ -38,9 +38,7 @@ class CorrectionWorkBudget:
             or not isinstance(max_steps, int)
             or not 0 < max_steps <= MAX_TERMINOLOGY_MATCH_STEPS
         ):
-            raise ValueError(
-                f"max_steps must be between 1 and {MAX_TERMINOLOGY_MATCH_STEPS}"
-            )
+            raise ValueError(f"max_steps must be between 1 and {MAX_TERMINOLOGY_MATCH_STEPS}")
         self._remaining_steps = max_steps
 
     @property
@@ -84,22 +82,13 @@ class CorrectionRule:
 
 @dataclass(frozen=True)
 class AppliedCorrection:
-    """Archivable metadata for one rule and the number of replacements made."""
+    """Internal metadata for one matched rule and its replacement count."""
 
     rule_id: str
     source: str
     replacement: str
     occurrences: int
     note: str
-
-    def to_dict(self) -> dict[str, str | int]:
-        return {
-            "rule_id": self.rule_id,
-            "source": self.source,
-            "replacement": self.replacement,
-            "occurrences": self.occurrences,
-            "note": self.note,
-        }
 
 
 @dataclass(frozen=True)
@@ -113,13 +102,12 @@ class CorrectionResult:
     applied: tuple[AppliedCorrection, ...]
 
     def archive_record(self) -> dict[str, object]:
-        """Return JSON-serializable comparison metadata without transcript text."""
+        """Return minimal comparison metadata without transcript or rule values."""
         return {
-            "schema_version": 1,
-            "enabled": self.enabled,
+            "schema_version": 2,
             "ruleset_sha256": self.ruleset_sha256,
-            "rule_count": self.rule_count,
-            "applied_rules": [item.to_dict() for item in self.applied],
+            "applied_rule_count": len(self.applied),
+            "replacement_count": sum(item.occurrences for item in self.applied),
         }
 
 
@@ -184,9 +172,7 @@ def apply_terminology_dictionary(
             if node is None:
                 break
             probe += 1
-            if node.rule is not None and _has_safe_boundaries(
-                text, cursor, node.rule.source
-            ):
+            if node.rule is not None and _has_safe_boundaries(text, cursor, node.rule.source):
                 # Trie depth increases with each source character, so the last
                 # valid terminal is the longest valid match at this position.
                 matched = node.rule

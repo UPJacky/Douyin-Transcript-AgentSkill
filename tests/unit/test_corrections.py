@@ -24,8 +24,9 @@ def test_dictionary_is_off_by_default_and_archive_does_not_contain_transcript():
     assert result.enabled is False
     assert result.applied == ()
     record = result.archive_record()
-    assert record["enabled"] is False
-    assert record["rule_count"] == 1
+    assert record["schema_version"] == 2
+    assert record["applied_rule_count"] == 0
+    assert record["replacement_count"] == 0
     assert original not in json.dumps(record, ensure_ascii=False)
 
 
@@ -89,9 +90,7 @@ def test_large_dictionary_workload_uses_one_trie_step_per_nonmatching_character(
     text = "z" * 200_000
     budget = CorrectionWorkBudget()
 
-    result = apply_terminology_dictionary(
-        text, rules, enabled=True, work_budget=budget
-    )
+    result = apply_terminology_dictionary(text, rules, enabled=True, work_budget=budget)
 
     assert result.text == text
     assert result.applied == ()
@@ -122,9 +121,7 @@ def test_dictionary_rule_count_and_trie_node_limits_fail_closed():
     with pytest.raises(ResourceLimitError) as rule_error:
         apply_terminology_dictionary("", too_many_rules)
 
-    too_many_nodes = [
-        CorrectionRule("long", "a" * MAX_TERMINOLOGY_TRIE_NODES, "b")
-    ]
+    too_many_nodes = [CorrectionRule("long", "a" * MAX_TERMINOLOGY_TRIE_NODES, "b")]
     with pytest.raises(ResourceLimitError) as trie_error:
         apply_terminology_dictionary("a", too_many_nodes, enabled=True)
 
@@ -136,12 +133,8 @@ def test_two_text_fields_can_share_one_total_match_budget():
     budget = CorrectionWorkBudget(max_steps=4)
     rule = [CorrectionRule("term", "term", "TERM")]
 
-    first = apply_terminology_dictionary(
-        "x", rule, enabled=True, work_budget=budget
-    )
-    second = apply_terminology_dictionary(
-        "y", rule, enabled=True, work_budget=budget
-    )
+    first = apply_terminology_dictionary("x", rule, enabled=True, work_budget=budget)
+    second = apply_terminology_dictionary("y", rule, enabled=True, work_budget=budget)
 
     assert first.text == "x"
     assert second.text == "y"
@@ -159,22 +152,24 @@ def test_archive_record_is_stable_and_changes_with_dictionary():
     assert a.archive_record() == b.archive_record()
     assert a.ruleset_sha256 == b.ruleset_sha256
     assert a.ruleset_sha256 != c.ruleset_sha256
-    assert a.archive_record()["applied_rules"] == [
-        {
-            "rule_id": "r1",
-            "source": "插屏",
-            "replacement": "插屏广告",
-            "occurrences": 1,
-            "note": "人工审核",
-        },
-        {
-            "rule_id": "r2",
-            "source": "FBA",
-            "replacement": "FBA 物流",
-            "occurrences": 1,
-            "note": "",
-        },
-    ]
+    record = a.archive_record()
+    assert record == {
+        "schema_version": 2,
+        "ruleset_sha256": a.ruleset_sha256,
+        "applied_rule_count": 2,
+        "replacement_count": 2,
+    }
+    serialized = json.dumps(record, ensure_ascii=False)
+    for private_value in (
+        "r1",
+        "r2",
+        "插屏",
+        "插屏广告",
+        "FBA",
+        "FBA 物流",
+        "人工审核",
+    ):
+        assert private_value not in serialized
 
 
 @pytest.mark.parametrize(
@@ -187,7 +182,9 @@ def test_archive_record_is_stable_and_changes_with_dictionary():
 )
 def test_invalid_rule_is_rejected(rule_fields: tuple[str, str, str], message: str):
     with pytest.raises(ValueError, match=message):
-        apply_terminology_dictionary("text", [CorrectionRule(*rule_fields)], enabled=True)
+        apply_terminology_dictionary(
+            "text", [CorrectionRule(*rule_fields)], enabled=True
+        )
 
 
 def test_duplicate_rule_ids_and_sources_are_rejected():
@@ -223,7 +220,8 @@ def test_expansion_is_rejected_before_output_is_built_past_character_budget():
 
 def test_corrected_output_at_character_budget_is_allowed():
     result = apply_terminology_dictionary(
-        "x!", [CorrectionRule("replace", "x", "123")],
+        "x!",
+        [CorrectionRule("replace", "x", "123")],
         enabled=True,
         max_output_characters=4,
     )

@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
 import shutil
+import sqlite3
 import stat
 import subprocess
 import sys
@@ -18,6 +20,7 @@ from urllib.parse import urlsplit
 
 from . import __version__
 from .cache import cleanup_media_cache, inspect_media_cache
+from .capture_client import CaptureClientError
 from .config import ConfigurationError, RuntimePaths, resolve_paths
 from .corrections import (
     MAX_TERMINOLOGY_DICTIONARY_BYTES,
@@ -31,9 +34,15 @@ from .limits import (
     DEFAULT_MAX_OUTPUT_SEGMENTS,
     validate_resource_limits,
 )
-from .markdown import strip_control_characters
+from .markdown import (
+    MAX_REVIEWED_TRANSCRIPT_BYTES,
+    MAX_REVIEWED_TRANSCRIPT_CHARACTERS,
+    strip_control_characters,
+    write_reviewed_transcript_markdown,
+)
 from .models import model_spec
 from .output import ItemResult, exit_code_for_summary, make_summary
+from .personal_capture import PersonalCaptureClient
 from .pipeline import (
     DEFAULT_MAX_PROCESSING_SECONDS,
     HARD_MAX_PROCESSING_SECONDS,
@@ -42,15 +51,34 @@ from .pipeline import (
     TranscriptionPipeline,
     validate_url_batch,
 )
-from .storage_security import PrivateStorageError, ensure_private_directory
-from .tasks import Task, TaskStore
-from .urls import UnsupportedUrlError, resolve_input
+from .storage_security import (
+    PrivateStorageError,
+    ensure_private_directory,
+    open_private_regular_file,
+)
+from .tasks import MAX_TRANSCRIPT_OUTPUT_BYTES, Task, TaskStore
+from .text_safety import sanitize_error_message, strip_display_controls
+from .urls import (
+    DOUYIN_SHORT_HOSTS,
+    UnsupportedUrlError,
+    extract_url,
+    resolve_direct_input,
+    validate_https_url,
+)
 
 MODEL_SETUP_MIN_FREE_BYTES = 2 * 1024**3
+MAX_REVIEW_SIDECAR_INPUT_BYTES = 12 * MAX_REVIEWED_TRANSCRIPT_CHARACTERS + 1024
+
+
+class _DisplaySafeArgumentParser(argparse.ArgumentParser):
+    """Remove terminal controls from parser diagnostics and help text."""
+
+    def _print_message(self, message: str, file=None) -> None:
+        super()._print_message(strip_display_controls(message), file)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+    parser = _DisplaySafeArgumentParser(
         prog="douyin-transcript",
         description="本地优先的抖音口播转写工具；逐字稿只写入本地 Markdown 文件。",
     )
@@ -68,6 +96,10 @@ def build_parser() -> argparse.ArgumentParser:
     setup.add_argument("--browser", action="store_true", help="安装 Playwright Chromium")
     setup.add_argument("--data-dir", help="模型、任务数据库和浏览器 profile 的根目录")
     setup.add_argument("--yes", action="store_true", help="确认本次显示的安装和下载操作")
+
+    login = commands.add_parser("login", help="打开专用浏览器，手动登录抖音")
+    login.add_argument("--data-dir", help="用户数据和专用浏览器资料目录")
+    login.add_argument("--json", action="store_true", help="输出不含登录信息的状态")
 
     transcribe = commands.add_parser("transcribe", help="转写抖音链接、URL 清单或本地媒体")
     transcribe.add_argument("urls", nargs="*", help="一个或多个 HTTPS 抖音链接")
@@ -112,11 +144,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run", action="store_true", help="解析输入并检查路径，不下载或转写"
     )
     transcribe.add_argument(
-        "--max-downloads", type=int, choices=(1, 2), default=2,
-        help="媒体下载并发数（1–2，默认 2；ASR 仍串行）",
+        "--max-downloads",
+        type=int,
+        choices=(1,),
+        default=1,
+        help="个人版按顺序采集和下载（固定为 1）",
     )
     transcribe.add_argument(
-        "--retry", type=int, choices=(0, 1, 2), default=2,
+        "--retry",
+        type=int,
+        choices=(0, 1, 2),
+        default=2,
         help="下载或页面临时失败的重试次数（0–2，默认 2）",
     )
     transcribe.add_argument(
@@ -129,12 +167,28 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     transcribe.add_argument(
-        "--terminology-dictionary", help="显式启用 JSON 白名单术语词典",
+        "--terminology-dictionary",
+        help="显式启用 JSON 白名单术语词典",
     )
     transcribe.add_argument("--json", action="store_true", help="只输出不含正文的 JSON 摘要")
     transcribe.add_argument(
         "--quiet", action="store_true", help="简化结果输出；输出目录隐私警告仍会显示"
     )
+
+    review = commands.add_parser(
+        "review-sidecar",
+        help="保存 Agent 已校对的正文为独立侧车；正文通过 stdin 输入且不会回显",
+    )
+    review.add_argument("--raw-file", required=True, help="原始逐字稿 Markdown 文件")
+    review.add_argument("--data-dir", help="用户数据目录；用于把新侧车绑定到原始任务")
+
+    bind_review = commands.add_parser(
+        "bind-review-sidecar",
+        help="将已有模型校对侧车绑定到精确的原始转写任务",
+    )
+    bind_review.add_argument("--raw-file", required=True, help="任务库中的原始逐字稿")
+    bind_review.add_argument("--reviewed-file", required=True, help="已有 reviewed 侧车")
+    bind_review.add_argument("--data-dir", help="用户数据目录")
 
     status = commands.add_parser("status", help="查看持久化任务状态；不读取逐字稿正文")
     status.add_argument("--json", action="store_true", help="以 JSON 输出任务状态")
@@ -188,8 +242,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _run_doctor(args)
         if args.command == "setup":
             return _run_setup(args, parser)
+        if args.command == "login":
+            return _run_login(args)
         if args.command == "transcribe":
             return _run_transcribe(args)
+        if args.command == "review-sidecar":
+            return _run_review_sidecar(args)
+        if args.command == "bind-review-sidecar":
+            return _run_bind_review_sidecar(args)
         if args.command == "status":
             return _run_status(args)
         if args.command == "retry-failed":
@@ -199,14 +259,122 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.print_help()
         return 0
     except ConfigurationError as exc:
-        print(f"CONFIG_INVALID: {exc}", file=sys.stderr)
+        print(f"CONFIG_INVALID: {strip_display_controls(str(exc))}", file=sys.stderr)
         return 2
     except (OSError, ValueError) as exc:
-        print(f"INVALID_INPUT: {exc}", file=sys.stderr)
+        print(
+            f"INVALID_INPUT: {sanitize_error_message(str(exc)) or '输入无效'}",
+            file=sys.stderr,
+        )
         return 2
     except KeyboardInterrupt:
         print("CANCELLED: 操作已取消。", file=sys.stderr)
         return 130
+
+
+def _run_review_sidecar(args: argparse.Namespace) -> int:
+    isatty = getattr(sys.stdin, "isatty", None)
+    if callable(isatty) and isatty():
+        raise ValueError(
+            "interactive terminal input is not supported for review-sidecar; "
+            "provide one JSON object on stdin"
+        )
+    stdin_buffer = getattr(sys.stdin, "buffer", None)
+    if stdin_buffer is not None:
+        payload_bytes = stdin_buffer.read(MAX_REVIEW_SIDECAR_INPUT_BYTES + 1)
+        if len(payload_bytes) > MAX_REVIEW_SIDECAR_INPUT_BYTES:
+            raise ValueError("review-sidecar input exceeds the allowed size")
+        payload_text = payload_bytes.decode("utf-8", errors="strict")
+    else:
+        # StringIO and other text-only streams are useful for in-process callers
+        # and tests; encode them to enforce the same UTF-8 byte budget.
+        payload_text = sys.stdin.read(MAX_REVIEW_SIDECAR_INPUT_BYTES + 1)
+        try:
+            payload_bytes = payload_text.encode("utf-8", errors="strict")
+        except UnicodeEncodeError:
+            raise ValueError("review-sidecar input must be valid UTF-8") from None
+        if len(payload_bytes) > MAX_REVIEW_SIDECAR_INPUT_BYTES:
+            raise ValueError("review-sidecar input exceeds the allowed size")
+    try:
+        payload = json.loads(payload_text, object_pairs_hook=_unique_json_object)
+    except (json.JSONDecodeError, _DuplicateJsonKey, RecursionError):
+        raise ValueError("review-sidecar input must be one JSON object") from None
+    if (
+        not isinstance(payload, dict)
+        or set(payload) != {"reviewed_body"}
+        or not isinstance(payload["reviewed_body"], str)
+    ):
+        raise ValueError("review-sidecar input must contain only a string reviewed_body")
+
+    raw_path = Path(args.raw_file)
+    destination = write_reviewed_transcript_markdown(raw_path, payload["reviewed_body"])
+    task_binding = "not_registered"
+    try:
+        paths = resolve_paths(data_dir=getattr(args, "data_dir", None))
+        database = paths.data_dir / "tasks.sqlite3"
+        if database.is_file():
+            with TaskStore(database) as store:
+                record = store.register_reviewed_sidecar(raw_path, destination)
+            task_binding = "registered" if record is not None else "no_matching_task"
+        else:
+            task_binding = "no_task_database"
+    except (ConfigurationError, OSError, ValueError, RuntimeError, sqlite3.Error):
+        # Saving remains successful; the explicit binding command can retry
+        # after the task database or storage configuration is corrected.
+        task_binding = "registration_failed"
+    print(
+        json.dumps(
+            {
+                "status": "sidecar_saved",
+                "output_path": str(destination),
+                "task_binding": task_binding,
+            },
+            ensure_ascii=True,
+            separators=(",", ":"),
+        )
+    )
+    return 0
+
+
+def _run_bind_review_sidecar(args: argparse.Namespace) -> int:
+    paths = resolve_paths(data_dir=getattr(args, "data_dir", None))
+    database = paths.data_dir / "tasks.sqlite3"
+    if not database.is_file():
+        binding = "no_task_database"
+        raw_digest = None
+        reviewed_digest = None
+    else:
+        with TaskStore(database) as store:
+            record = store.register_reviewed_sidecar(args.raw_file, args.reviewed_file)
+        binding = "registered" if record is not None else "no_matching_task"
+        raw_digest = record.source_output_sha256 if record is not None else None
+        reviewed_digest = record.reviewed_sha256 if record is not None else None
+    print(
+        json.dumps(
+            {
+                "status": "review_sidecar_binding_checked",
+                "task_binding": binding,
+                "source_sha256": raw_digest,
+                "reviewed_sha256": reviewed_digest,
+            },
+            ensure_ascii=True,
+            separators=(",", ":"),
+        )
+    )
+    return 0
+
+
+class _DuplicateJsonKey(ValueError):
+    """Reject ambiguous JSON objects instead of silently taking the last value."""
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise _DuplicateJsonKey
+        result[key] = value
+    return result
 
 
 def _run_doctor(args: argparse.Namespace) -> int:
@@ -220,9 +388,28 @@ def _run_doctor(args: argparse.Namespace) -> int:
     else:
         print(f"douyin-transcript doctor — {report['overall']}")
         for name, item in report["checks"].items():
-            print(f"- {name}: {item['status']} — {item['detail']}")
-        print(f"- data_dir: {report['data_dir']}")
+            print(
+                f"- {strip_display_controls(str(name))}: "
+                f"{strip_display_controls(str(item['status']))} — "
+                f"{strip_display_controls(str(item['detail']))}"
+            )
+        print(f"- data_dir: {strip_display_controls(str(report['data_dir']))}")
     return 0 if report["overall"] == "ready" else 1
+
+
+def _run_login(args: argparse.Namespace) -> int:
+    paths = resolve_paths(data_dir=args.data_dir)
+    print("请在打开的浏览器中手动登录，完成后关闭窗口（最多等待 5 分钟）。", file=sys.stderr)
+    try:
+        PersonalCaptureClient(paths.data_dir).login()
+    except CaptureClientError as exc:
+        print(f"{exc.code}: {sanitize_error_message(str(exc))}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps({"status": "browser_closed"}, separators=(",", ":")))
+    else:
+        print("浏览器已关闭，可以重新执行链接转写。")
+    return 0
 
 
 def _run_transcribe(args: argparse.Namespace) -> int:
@@ -261,6 +448,11 @@ def _run_transcribe(args: argparse.Namespace) -> int:
         max_processing_seconds=args.processing_timeout_seconds,
         correction_rules=correction_rules,
         corrections_enabled=bool(args.terminology_dictionary),
+        **(
+            {"capture_service_client": PersonalCaptureClient(paths.data_dir)}
+            if not args.input_file
+            else {}
+        ),
     )
     try:
         if args.input_file:
@@ -282,6 +474,7 @@ def _run_transcribe(args: argparse.Namespace) -> int:
 
 def _run_dry_run(args: argparse.Namespace, paths, *, url_values: list[str] | None = None) -> int:
     """Resolve and validate inputs without creating dirs or opening media."""
+    url_capture_required = not args.input_file and bool(url_values)
     if args.input_file:
         media_path = Path(args.input_file).expanduser().resolve(strict=False)
         input_status = "ready" if media_path.is_file() else "missing"
@@ -292,38 +485,72 @@ def _run_dry_run(args: argparse.Namespace, paths, *, url_values: list[str] | Non
         seen: set[str] = set()
         for value in values:
             try:
-                resolved = resolve_input(value)
+                resolved = resolve_direct_input(value)
                 duplicate = resolved.video_id in seen
                 seen.add(resolved.video_id)
-                rows.append({
-                    "video_id": resolved.video_id,
-                    "url": resolved.canonical_url,
-                    "status": "duplicate" if duplicate else "ready",
-                })
+                rows.append(
+                    {
+                        "video_id": resolved.video_id,
+                        "url": resolved.canonical_url,
+                        "input_status": "duplicate" if duplicate else "valid",
+                        "status": "valid",
+                    }
+                )
             except UnsupportedUrlError as exc:
-                rows.append({"status": "invalid", "error_code": exc.code, "hint": str(exc)})
+                if exc.code == "BROWSER_ISOLATION_UNAVAILABLE":
+                    try:
+                        validate_https_url(
+                            extract_url(value),
+                            allowed_hosts=DOUYIN_SHORT_HOSTS,
+                            resolve_dns=False,
+                        )
+                    except UnsupportedUrlError as short_exc:
+                        rows.append({"status": "invalid", "error_code": short_exc.code})
+                    else:
+                        rows.append({"status": "resolution_required", "input_status": "short_link"})
+                else:
+                    rows.append({"status": "invalid", "error_code": exc.code, "hint": str(exc)})
     path_checks = {
         "data_dir": _path_writable_without_create(paths.data_dir),
         "output_dir": _path_writable_without_create(paths.output_dir),
     }
     output_permissions = _output_permissions_summary([paths.output_dir])
+    url_capture = (
+        {
+            "status": "not_checked",
+            "mode": "personal",
+            "detail": "实际采集使用当前账号的 Chromium；dry-run 不启动浏览器",
+        }
+        if url_capture_required
+        else {"status": "not_required"}
+    )
     result = {
-        "status": "ready" if all(row["status"] != "invalid" for row in rows)
+        "status": "ready"
+        if all(row["status"] != "invalid" for row in rows)
         and all(value["status"] == "writable" for value in path_checks.values())
-        and all(row["status"] != "missing" for row in rows) else "needs_attention",
+        and all(row["status"] != "missing" for row in rows)
+        else "needs_attention",
         "items": rows,
+        "url_capture": url_capture,
         "paths": path_checks,
         "output_dir_permissions": output_permissions,
-        "note": "dry-run 不会创建目录、下载媒体或启动 ASR；短链接解析可能访问抖音 HTTPS 跳转页。",
+        "note": (
+            "dry-run 不会创建目录、访问网络、下载媒体或启动 ASR；"
+            "URL 语法有效不代表页面可访问，短链留待实际采集时解析。"
+        ),
     }
     if args.json:
         print(json.dumps(result, ensure_ascii=True, separators=(",", ":")))
     else:
         for row in rows:
             identity = row.get("video_id") or row.get("input") or row.get("error_code")
-            print(f"{row['status']}: {identity}")
+            print(f"{row['status']}: {strip_display_controls(str(identity or ''))}")
         for name, check in path_checks.items():
-            print(f"{name}: {check['status']} — {check['path']}")
+            print(
+                f"{strip_display_controls(str(name))}: "
+                f"{strip_display_controls(str(check['status']))} — "
+                f"{strip_display_controls(str(check['path']))}"
+            )
         _warn_output_permissions(output_permissions, as_json=False)
         print(result["status"])
     return 0 if result["status"] == "ready" else 2
@@ -376,16 +603,16 @@ def _aggregate_output_permissions(
     return {"status": status, "directories": entries}
 
 
-def _warn_output_permissions(
-    report: dict[str, Any], *, as_json: bool
-) -> None:
+def _warn_output_permissions(report: dict[str, Any], *, as_json: bool) -> None:
     if as_json:
         return
     for directory in report["directories"]:
         if directory["status"] != "ok":
             print(
                 "OUTPUT_DIR_PERMISSIONS: "
-                f"{directory['status']} — {directory['path']} — {directory['detail']}",
+                f"{strip_display_controls(str(directory['status']))} — "
+                f"{strip_display_controls(str(directory['path']))} — "
+                f"{strip_display_controls(str(directory['detail']))}",
                 file=sys.stderr,
             )
 
@@ -395,9 +622,7 @@ def _read_correction_dictionary(path: str | None) -> tuple[CorrectionRule, ...]:
         return ()
     dictionary_path = Path(path).expanduser()
     try:
-        raw = _read_bounded_regular_file(
-            dictionary_path, MAX_TERMINOLOGY_DICTIONARY_BYTES
-        )
+        raw = _read_bounded_regular_file(dictionary_path, MAX_TERMINOLOGY_DICTIONARY_BYTES)
     except (OSError, ValueError) as exc:
         raise ValueError(f"无法读取 JSON 术语词典：{dictionary_path}") from exc
     if len(raw) > MAX_TERMINOLOGY_DICTIONARY_BYTES:
@@ -407,9 +632,7 @@ def _read_correction_dictionary(path: str | None) -> tuple[CorrectionRule, ...]:
     except (UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"无法读取 JSON 术语词典：{dictionary_path}") from exc
     if not isinstance(payload, list) or len(payload) > MAX_TERMINOLOGY_RULES:
-        raise ValueError(
-            f"术语词典必须是最多 {MAX_TERMINOLOGY_RULES} 条规则的 JSON 数组"
-        )
+        raise ValueError(f"术语词典必须是最多 {MAX_TERMINOLOGY_RULES} 条规则的 JSON 数组")
     rules: list[CorrectionRule] = []
     allowed = {"id", "source", "replacement", "note"}
     for index, item in enumerate(payload, start=1):
@@ -417,19 +640,13 @@ def _read_correction_dictionary(path: str | None) -> tuple[CorrectionRule, ...]:
         if not isinstance(item, dict) or set(item) - allowed or not required <= set(item):
             raise ValueError(f"术语词典第 {index} 条规则字段无效")
         rules.append(
-            CorrectionRule(
-                item["id"], item["source"], item["replacement"], item.get("note", "")
-            )
+            CorrectionRule(item["id"], item["source"], item["replacement"], item.get("note", ""))
         )
     return tuple(rules)
 
 
 def _cache_task_protection(tasks):
-    protected = [
-        task.media_path
-        for task in tasks
-        if task.media_path and task.state != "completed"
-    ]
+    protected = [task.media_path for task in tasks if task.media_path and task.state != "completed"]
     protected.extend(task.local_path for task in tasks if task.local_path)
     protected_video_ids = {
         task.video_id
@@ -447,7 +664,7 @@ def _run_cache(args: argparse.Namespace) -> int:
         if args.json:
             print(json.dumps(result, ensure_ascii=True, separators=(",", ":")))
         else:
-            print(f"媒体缓存目录尚不存在：{cache_dir}")
+            print(f"媒体缓存目录尚不存在：{strip_display_controls(str(cache_dir))}")
         return 0
     database = paths.data_dir / "tasks.sqlite3"
     if args.cache_command == "inspect":
@@ -466,8 +683,13 @@ def _run_cache(args: argparse.Namespace) -> int:
             "media_bytes": snapshot.media_bytes,
             "protected_media_bytes": snapshot.protected_media_bytes,
             "entries": [
-                {"path": str(entry.path), "kind": entry.kind, "size_bytes": entry.size_bytes,
-                 "age_seconds": int(entry.age_seconds), "protected": entry.protected}
+                {
+                    "path": str(entry.path),
+                    "kind": entry.kind,
+                    "size_bytes": entry.size_bytes,
+                    "age_seconds": int(entry.age_seconds),
+                    "protected": entry.protected,
+                }
                 for entry in snapshot.entries
             ],
         }
@@ -477,16 +699,11 @@ def _run_cache(args: argparse.Namespace) -> int:
             print(f"media_bytes={snapshot.media_bytes} protected={snapshot.protected_media_bytes}")
             for entry in snapshot.entries:
                 protected_label = "protected" if entry.protected else ""
-                print(
-                    f"{entry.kind}: {entry.size_bytes} bytes "
-                    f"{protected_label} {entry.path.name}"
-                )
+                print(f"{entry.kind}: {entry.size_bytes} bytes {protected_label} {entry.path.name}")
         return 0
     cleanup_options = {
         "max_bytes": args.max_bytes,
-        "max_age_seconds": (
-            args.max_age_hours * 3600 if args.max_age_hours is not None else None
-        ),
+        "max_age_seconds": (args.max_age_hours * 3600 if args.max_age_hours is not None else None),
         "dry_run": not args.apply,
     }
     if args.apply:
@@ -546,21 +763,24 @@ def _run_status(args: argparse.Namespace) -> int:
     database = paths.data_dir / "tasks.sqlite3"
     if not database.is_file():
         tasks = []
+        reviews_by_task = {}
     else:
         with TaskStore(database) as store:
             tasks = store.list_tasks()
+            reviews_by_task = {
+                task.task_id: store.list_reviewed_sidecars(task.task_id) for task in tasks
+            }
     rows = [
         {
             "task_id": task.task_id,
             "video_id": task.video_id,
-            "title": (
-                strip_control_characters(task.title) if task.title is not None else None
-            ),
+            "title": (strip_control_characters(task.title) if task.title is not None else None),
             "state": task.state,
             "profile": task.profile,
             "output_path": task.output_path,
             "error_code": task.error_code,
-            "error_message": task.error_message,
+            "error_message": sanitize_error_message(task.error_message),
+            **_status_review_fields(task, reviews_by_task.get(task.task_id, [])),
         }
         for task in tasks
     ]
@@ -573,15 +793,132 @@ def _run_status(args: argparse.Namespace) -> int:
         for row in rows:
             identity = row["video_id"] or row["task_id"][:20]
             safe_title = strip_control_characters(row["title"] or "(无标题)")
-            print(f"{row['state']}: {identity} — {safe_title}")
+            raw_state = "原稿完成" if row["state"] == "completed" else f"原稿状态 {row['state']}"
+            review_state = {
+                "not_reviewed": "未校对",
+                "valid": _review_scope_text(row["review_scope"]),
+                "missing": "校对稿缺失",
+                "changed": "原稿或校对稿内容已变化",
+                "unverifiable": "校对稿无法核验",
+            }[row["review_status"]]
+            detail = f"；{review_state}"
+            if row["reviewed_output_path"]:
+                detail += f"：{strip_display_controls(row['reviewed_output_path'])}"
+            print(f"{raw_state}: {identity} — {safe_title}{detail}")
     return 0
+
+
+def _review_scope_text(scope: str | None) -> str:
+    if scope == "model_text_review_unheard":
+        return "校对稿已关联（文本校对，未听审）"
+    if scope:
+        return f"校对稿已关联（范围：{strip_display_controls(scope)}）"
+    return "校对稿已关联"
+
+
+def _status_review_fields(task: Task, records) -> dict[str, str | None]:
+    """Check only the latest registered review and return its safe summary."""
+    if not records:
+        return {
+            "review_status": "not_reviewed",
+            "reviewed_output_path": None,
+            "review_scope": None,
+        }
+
+    candidate = records[-1]
+    scope = strip_display_controls(candidate.review_scope) if candidate.review_scope else None
+    result = {
+        "review_status": "unverifiable",
+        "reviewed_output_path": None,
+        "review_scope": scope,
+    }
+    if not task.output_path or not task.output_sha256:
+        return result
+    if not candidate.source_output_path or not candidate.source_output_sha256:
+        return result
+    try:
+        task_path = os.path.normcase(str(Path(task.output_path).expanduser().resolve(strict=False)))
+        source_path = os.path.normcase(
+            str(Path(candidate.source_output_path).expanduser().resolve(strict=False))
+        )
+    except (OSError, RuntimeError, ValueError):
+        return result
+    if (
+        task_path != source_path
+        or candidate.source_output_sha256 != task.output_sha256
+        or not candidate.reviewed_path
+        or not candidate.reviewed_sha256
+    ):
+        result["review_status"] = "changed"
+        return result
+
+    raw_state, raw_digest = _hash_status_file(Path(task.output_path), MAX_TRANSCRIPT_OUTPUT_BYTES)
+    if raw_state == "missing":
+        result["review_status"] = "missing"
+        return result
+    if raw_state != "ok":
+        return result
+    if raw_digest != task.output_sha256 or raw_digest != candidate.source_output_sha256:
+        result["review_status"] = "changed"
+        return result
+
+    reviewed_path = Path(candidate.reviewed_path)
+    reviewed_state, reviewed_digest = _hash_status_file(
+        reviewed_path, MAX_REVIEWED_TRANSCRIPT_BYTES
+    )
+    if reviewed_state == "missing":
+        result["review_status"] = "missing"
+        return result
+    if reviewed_state != "ok":
+        return result
+    if reviewed_digest != candidate.reviewed_sha256:
+        result["review_status"] = "changed"
+        return result
+
+    result["review_status"] = "valid"
+    result["reviewed_output_path"] = strip_display_controls(str(reviewed_path))
+    return result
+
+
+def _hash_status_file(path: Path, max_bytes: int) -> tuple[str, str | None]:
+    """Hash a pinned private file within its format limit without retaining body text."""
+    try:
+        with open_private_regular_file(path) as stream:
+            before = os.fstat(stream.fileno())
+            if not stat.S_ISREG(before.st_mode) or before.st_size > max_bytes:
+                return "unverifiable", None
+            digest = hashlib.sha256()
+            size = 0
+            while size <= max_bytes:
+                block = stream.read(min(1024 * 1024, max_bytes + 1 - size))
+                if not block:
+                    break
+                size += len(block)
+                if size > max_bytes:
+                    return "unverifiable", None
+                digest.update(block)
+            after = os.fstat(stream.fileno())
+            if (
+                size != before.st_size
+                or after.st_size != before.st_size
+                or after.st_mtime_ns != before.st_mtime_ns
+                or after.st_ctime_ns != before.st_ctime_ns
+            ):
+                return "unverifiable", None
+            return "ok", digest.hexdigest()
+    except FileNotFoundError:
+        return "missing", None
+    except (OSError, RuntimeError, ValueError, PrivateStorageError):
+        return "unverifiable", None
 
 
 def _run_retry(args: argparse.Namespace) -> int:
     paths = resolve_paths(data_dir=args.data_dir, output_dir=args.output_dir)
-    retried: list[Task] = []
+    retried: list[tuple[Task, dict[str, Any], bool]] = []
     legacy_skipped: list[Task] = []
+    unsafe_output_skipped: list[Task] = []
     legacy_opted_in = 0
+    permission_entries: dict[str, dict[str, str]] = {}
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         candidates = store.list_tasks(states=("failed",))
         queued_count = 0
@@ -589,13 +926,17 @@ def _run_retry(args: argparse.Namespace) -> int:
             for candidate in candidates:
                 if candidate.error_code == "LOGIN_REQUIRED":
                     continue
-                options = _retry_processing_options(candidate.processing_options_json)
+                options = _retry_processing_options(
+                    candidate.processing_options_json,
+                    output_dir_override=(paths.output_dir if args.output_dir is not None else None),
+                )
+                has_valid_snapshot = options is not None
                 if options is None and not args.use_current_defaults:
                     legacy_skipped.append(candidate)
                     continue
-                snapshot = None
+                uses_current_defaults = options is None
                 if options is None:
-                    snapshot = _current_retry_snapshot(
+                    options = _current_retry_options(
                         paths,
                         max_processing_seconds=(
                             args.processing_timeout_seconds
@@ -603,31 +944,60 @@ def _run_retry(args: argparse.Namespace) -> int:
                             else DEFAULT_MAX_PROCESSING_SECONDS
                         ),
                     )
-                    legacy_opted_in += 1
-                elif (
-                    args.processing_timeout_seconds is not None
-                    or args.output_dir is not None
-                ):
+                elif args.processing_timeout_seconds is not None:
+                    options["max_processing_seconds"] = args.processing_timeout_seconds
+                if has_valid_snapshot and args.output_dir is None:
+                    # _retry_processing_options already resolved this path. Using
+                    # the validated value also avoids a second, racy resolution.
+                    saved_output = Path(options["output_dir"])
+                    try:
+                        permission_entry = _output_directory_permission_entry(saved_output)
+                    except RuntimeError:
+                        # A filesystem change between snapshot parsing and ACL
+                        # inspection makes the saved destination untrustworthy.
+                        permission_entry = {
+                            "path": str(saved_output),
+                            "status": "unknown",
+                            "detail": "保存的输出目录无法解析",
+                        }
+                    permission_key = os.path.normcase(permission_entry["path"])
+                    if permission_key not in permission_entries:
+                        permission_entries[permission_key] = permission_entry
+                        _warn_output_permissions(
+                            {"directories": [permission_entry]}, as_json=args.json
+                        )
+                    if permission_entry["status"] != "ok":
+                        unsafe_output_skipped.append(candidate)
+                        continue
+                snapshot = None
+                if uses_current_defaults:
                     snapshot = {"schema_version": 2, **options}
-                    if args.processing_timeout_seconds is not None:
-                        snapshot["max_processing_seconds"] = (
-                            args.processing_timeout_seconds
-                        )
-                    if args.output_dir is not None:
-                        snapshot["output_dir"] = str(
-                            paths.output_dir.expanduser().resolve(strict=False)
-                        )
+                    legacy_opted_in += 1
+                elif args.processing_timeout_seconds is not None or args.output_dir is not None:
+                    snapshot = {"schema_version": 2, **options}
                 queued = store.retry_failed(
                     task_id=candidate.task_id,
                     limit=1,
                     processing_options=snapshot,
                 )
                 if queued:
-                    retried.extend(queued)
+                    retried.extend((task, options, uses_current_defaults) for task in queued)
                     queued_count += 1
                     if args.limit is not None and queued_count >= args.limit:
                         break
     all_results: list[ItemResult] = [
+        ItemResult(
+            "failed",
+            title=task.title,
+            video_id=task.video_id,
+            error_code="OUTPUT_PATH_UNSAFE",
+            hint=(
+                "OUTPUT_PATH_UNSAFE: 保存的输出目录权限不安全或无法确认；"
+                "请显式传入 --output-dir 后重试。"
+            ),
+        )
+        for task in unsafe_output_skipped
+    ] + [
         ItemResult(
             "skipped",
             title=task.title,
@@ -639,6 +1009,12 @@ def _run_retry(args: argparse.Namespace) -> int:
         )
         for task in legacy_skipped
     ]
+    if unsafe_output_skipped:
+        print(
+            f"OUTPUT_PATH_UNSAFE: {len(unsafe_output_skipped)} 个失败任务未重试；"
+            "请显式传入 --output-dir 指定新的目标目录。",
+            file=sys.stderr,
+        )
     if legacy_skipped:
         print(
             f"LEGACY_CONFIG_SKIPPED: {len(legacy_skipped)} 个旧任务未重试；"
@@ -652,46 +1028,27 @@ def _run_retry(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
     pipelines: dict[str, tuple[TranscriptionPipeline, Any]] = {}
-    permission_entries: dict[str, dict[str, str]] = {}
-    result_output_dir = paths.output_dir
-    for task in retried:
-        options = _retry_processing_options(task.processing_options_json)
-        if options is None:
-            print(
-                "LEGACY_CONFIG: 配置快照仍无效；"
-                "因显式 --use-current-defaults 使用当前默认配置。",
-                file=sys.stderr,
-            )
-            options = _current_retry_options(
-                paths,
-                max_processing_seconds=(
-                    args.processing_timeout_seconds
-                    if args.processing_timeout_seconds is not None
-                    else DEFAULT_MAX_PROCESSING_SECONDS
-                ),
-            )
+    for task, options, uses_current_defaults in retried:
         output_dir = (
-            paths.output_dir
-            if args.output_dir is not None
-            else Path(options["output_dir"]).expanduser().resolve(strict=False)
+            paths.output_dir if args.output_dir is not None else Path(options["output_dir"])
         )
         permission_entry = _output_directory_permission_entry(output_dir)
         permission_key = os.path.normcase(permission_entry["path"])
         if permission_key not in permission_entries:
             permission_entries[permission_key] = permission_entry
-            _warn_output_permissions(
-                {"directories": [permission_entry]}, as_json=args.json
-            )
+            _warn_output_permissions({"directories": [permission_entry]}, as_json=args.json)
         task_paths = replace(
             paths,
             output_dir=output_dir,
+            output_dir_is_default=(
+                uses_current_defaults and paths.output_dir_is_default and args.output_dir is None
+            ),
             max_media_duration_seconds=options["max_media_duration_seconds"],
             max_output_segments=options["max_output_segments"],
             max_output_characters=options["max_output_characters"],
         )
-        result_output_dir = output_dir
         key = json.dumps(
-            {"profile": task.profile, **options},
+            {"profile": task.profile, "local": bool(task.local_path), **options},
             ensure_ascii=False,
             sort_keys=True,
             separators=(",", ":"),
@@ -706,11 +1063,16 @@ def _run_retry(args: argparse.Namespace) -> int:
                 max_media_duration_seconds=options["max_media_duration_seconds"],
                 max_output_segments=options["max_output_segments"],
                 max_output_characters=options["max_output_characters"],
-                max_downloads=options["max_downloads"],
+                max_downloads=options["max_downloads"] if task.local_path else 1,
                 retries=options["retries"],
                 max_processing_seconds=options["max_processing_seconds"],
                 correction_rules=rules,
                 corrections_enabled=options["correction_rules_enabled"],
+                **(
+                    {"capture_service_client": PersonalCaptureClient(task_paths.data_dir)}
+                    if not task.local_path
+                    else {}
+                ),
             )
             pipelines[key] = (pipeline, task_paths.output_dir)
         pipeline = pipelines[key][0]
@@ -744,14 +1106,18 @@ def _run_retry(args: argparse.Namespace) -> int:
         close = getattr(pipeline, "close", None)
         if callable(close):
             close()
+    if len(permission_entries) > 1:
+        result_output_dir = None
+    elif permission_entries:
+        result_output_dir = Path(next(iter(permission_entries.values()))["path"])
+    else:
+        result_output_dir = paths.output_dir
     summary = make_summary(all_results, result_output_dir)
     _print_summary(
         summary,
         as_json=args.json,
         quiet=False,
-        output_dir_permissions=_aggregate_output_permissions(
-            list(permission_entries.values())
-        ),
+        output_dir_permissions=_aggregate_output_permissions(list(permission_entries.values())),
         warn_output_permissions=False,
     )
     return exit_code_for_summary(summary)
@@ -784,13 +1150,15 @@ def _current_retry_snapshot(
 ) -> dict[str, Any]:
     return {
         "schema_version": 2,
-        **_current_retry_options(
-            paths, max_processing_seconds=max_processing_seconds
-        ),
+        **_current_retry_options(paths, max_processing_seconds=max_processing_seconds),
     }
 
 
-def _retry_processing_options(raw: str) -> dict[str, Any] | None:
+def _retry_processing_options(
+    raw: str,
+    *,
+    output_dir_override: Path | str | None = None,
+) -> dict[str, Any] | None:
     """Validate a stored non-transcript snapshot; None denotes legacy/invalid data."""
     try:
         options = json.loads(raw)
@@ -835,9 +1203,7 @@ def _retry_processing_options(raw: str) -> dict[str, Any] | None:
             options["max_output_characters"],
         )
         max_processing_seconds = (
-            DEFAULT_MAX_PROCESSING_SECONDS
-            if version == 1
-            else options["max_processing_seconds"]
+            DEFAULT_MAX_PROCESSING_SECONDS if version == 1 else options["max_processing_seconds"]
         )
         if (
             isinstance(max_processing_seconds, bool)
@@ -851,7 +1217,10 @@ def _retry_processing_options(raw: str) -> dict[str, Any] | None:
         normalized_rules = []
         for rule in rules:
             if not isinstance(rule, dict) or set(rule) != {
-                "rule_id", "source", "replacement", "note"
+                "rule_id",
+                "source",
+                "replacement",
+                "note",
             }:
                 return None
             CorrectionRule(**rule)
@@ -859,6 +1228,7 @@ def _retry_processing_options(raw: str) -> dict[str, Any] | None:
         output_dir = options["output_dir"]
         if not isinstance(output_dir, str) or not output_dir.strip():
             return None
+        output_path = Path(output_dir if output_dir_override is None else output_dir_override)
         return {
             "language": options["language"],
             "timestamps": options["timestamps"],
@@ -870,9 +1240,9 @@ def _retry_processing_options(raw: str) -> dict[str, Any] | None:
             "retries": options["retries"],
             "correction_rules_enabled": options["correction_rules_enabled"],
             "correction_rules": normalized_rules,
-            "output_dir": str(Path(output_dir).expanduser().resolve(strict=False)),
+            "output_dir": str(output_path.expanduser().resolve(strict=False)),
         }
-    except (KeyError, TypeError, ValueError, OSError, json.JSONDecodeError):
+    except (KeyError, TypeError, ValueError, OSError, RuntimeError, json.JSONDecodeError):
         return None
 
 
@@ -896,14 +1266,17 @@ def _run_setup(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int
         actions.append("安装 Playwright 依赖及 Chromium 浏览器")
     print("本次 setup 将执行：")
     for action in actions:
-        print(f"- {action}")
+        print(f"- {strip_display_controls(action)}")
     if requested_extras:
-        print(f"uv executable：{uv or '未找到'}")
-        print(f"Python 依赖安装器：uv（锁文件：{project_dir / 'uv.lock'}）")
-        print(f"Python 环境目标：{_uv_environment_target(project_dir)}")
-        print(f"uv 缓存位置：{_uv_cache_path()}")
+        print(f"uv executable：{strip_display_controls(uv or '未找到')}")
+        print(
+            "Python 依赖安装器：uv（锁文件："
+            f"{strip_display_controls(str(project_dir / 'uv.lock'))}）"
+        )
+        print(f"Python 环境目标：{strip_display_controls(_uv_environment_target(project_dir))}")
+        print(f"uv 缓存位置：{strip_display_controls(str(_uv_cache_path()))}")
         for source in _locked_registry_sources(project_dir):
-            print(f"uv.lock 软件包源：{source}")
+            print(f"uv.lock 软件包源：{strip_display_controls(source)}")
         for variable in ("UV_DEFAULT_INDEX", "UV_INDEX_URL", "UV_INDEX"):
             value = os.environ.get(variable)
             if value:
@@ -920,14 +1293,14 @@ def _run_setup(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int
             + (_safe_endpoint(hf_endpoint) if hf_endpoint else "https://huggingface.co")
             + ("（HF_ENDPOINT 覆盖）" if hf_endpoint else "（默认；可由 HF_ENDPOINT 覆盖）")
         )
-        print(f"模型保存位置：{paths.data_dir / 'models' / spec.size}")
+        print(f"模型保存位置：{strip_display_controls(str(paths.data_dir / 'models' / spec.size))}")
     if args.browser:
         print("Chromium 来源：Playwright 下载服务（可由 PLAYWRIGHT_DOWNLOAD_HOST 等环境变量覆盖）")
         for variable in ("PLAYWRIGHT_DOWNLOAD_HOST", "PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST"):
             value = os.environ.get(variable)
             if value:
                 print(f"Playwright 自定义下载源 {variable}：{_safe_endpoint(value)}")
-        print(f"Chromium 保存位置：{_playwright_browser_target()}")
+        print(f"Chromium 保存位置：{strip_display_controls(_playwright_browser_target())}")
     disk_targets: list[tuple[str, Path, int | None]] = []
     if requested_extras:
         disk_targets.extend(
@@ -973,7 +1346,8 @@ def _run_setup(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int
             ensure_private_directory(paths.data_dir)
             ensure_private_directory(paths.data_dir / "models" / spec.size)
         except PrivateStorageError as exc:
-            print(f"PRIVATE_STORAGE_UNSAFE: {exc}", file=sys.stderr)
+            detail = sanitize_error_message(str(exc)) or "敏感存储路径不安全"
+            print(f"PRIVATE_STORAGE_UNSAFE: {detail}", file=sys.stderr)
             return 2
 
     # A user may run setup in separate steps (model, then browser).  Keep the
@@ -999,9 +1373,7 @@ def _run_setup(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int
         destination = paths.data_dir / "models" / spec.size
         if not _preflight_setup_disk_space(
             [("模型目录（依赖安装后）", destination, MODEL_SETUP_MIN_FREE_BYTES)],
-            failure_message=(
-                "模型下载前可用空间不足或无法验证；依赖已安装，模型未下载。"
-            ),
+            failure_message=("模型下载前可用空间不足或无法验证；依赖已安装，模型未下载。"),
         ):
             return 2
         try:
@@ -1035,7 +1407,7 @@ def _safe_endpoint(value: str) -> str:
             if ":" in hostname:
                 hostname = f"[{hostname}]"
             port = f":{parsed.port}" if parsed.port else ""
-            return f"{parsed.scheme}://{hostname}{port}"
+            return strip_display_controls(f"{parsed.scheme}://{hostname}{port}")
     except ValueError:
         pass
     return "已配置自定义地址（为保护凭据不回显）"
@@ -1047,10 +1419,7 @@ def _locked_registry_sources(project_dir: Path) -> list[str]:
     except OSError:
         return ["无法读取 uv.lock 中的 registry；安装仍会由 uv 按配置处理"]
     sources = sorted(
-        {
-            _safe_endpoint(value)
-            for value in re.findall(r'registry = "([^\"]+)"', lock_text)
-        }
+        {_safe_endpoint(value) for value in re.findall(r'registry = "([^\"]+)"', lock_text)}
     )
     return sources or ["uv.lock 未声明 registry；安装仍会由 uv 按配置处理"]
 
@@ -1123,8 +1492,10 @@ def _preflight_setup_disk_space(
             free_bytes = shutil.disk_usage(probe).free
         except OSError as exc:
             print(
-                f"磁盘预检失败：{label} {target} 无法检查 "
-                f"（{type(exc).__name__}），setup 已停止。",
+                strip_display_controls(
+                    f"磁盘预检失败：{label} {target} 无法检查 "
+                    f"（{type(exc).__name__}），setup 已停止。"
+                ),
                 file=sys.stderr,
             )
             failed = True
@@ -1137,9 +1508,9 @@ def _preflight_setup_disk_space(
             if free_bytes < minimum_free:
                 line += "；空间不足"
                 failed = True
-        print(line)
+        print(strip_display_controls(line))
     if failed:
-        print(failure_message, file=sys.stderr)
+        print(strip_display_controls(failure_message), file=sys.stderr)
     return not failed
 
 
@@ -1158,9 +1529,7 @@ def _read_url_file(path: Path) -> list[str]:
     values: list[str] = []
     for line_number, line in enumerate(lines, start=1):
         if len(line) > MAX_URL_LENGTH:
-            raise ValueError(
-                f"URL 清单第 {line_number} 行超过 {MAX_URL_LENGTH} 个字符"
-            )
+            raise ValueError(f"URL 清单第 {line_number} 行超过 {MAX_URL_LENGTH} 个字符")
         stripped = line.strip()
         if stripped and not stripped.startswith("#"):
             values.append(stripped)
@@ -1215,27 +1584,38 @@ def _print_summary(
     for item in summary.items:
         if quiet:
             if item.status == "success" and item.output_path:
-                print(item.output_path)
+                print(strip_display_controls(item.output_path))
             elif item.status == "failed":
-                print(f"{item.error_code or 'FAILED'}: {item.hint or '处理失败'}", file=sys.stderr)
+                hint = sanitize_error_message(item.hint) or "处理失败"
+                print(f"{item.error_code or 'FAILED'}: {hint}", file=sys.stderr)
             continue
         if item.status == "success":
             identity = strip_control_characters(item.title or item.video_id or "本地媒体")
-            print(f"SUCCESS: {identity} -> {item.output_path}")
+            output_path = strip_display_controls(item.output_path or "")
+            print(f"RAW_ASR_READY: {identity} -> {output_path}")
         elif item.status == "skipped":
             identity = strip_control_characters(item.title or item.video_id or "任务")
-            print(f"SKIPPED: {identity} -> {item.output_path}")
+            output_path = strip_display_controls(item.output_path or "")
+            print(f"SKIPPED: {identity} -> {output_path}")
         else:
-            print(f"FAILED: {item.error_code or 'FAILED'}: {item.hint or '处理失败'}")
+            hint = sanitize_error_message(item.hint) or "处理失败"
+            print(f"FAILED: {item.error_code or 'FAILED'}: {hint}")
     if quiet:
         counts = summary.to_dict()
+        output_dir = strip_display_controls(summary.output_dir or "多个目录")
         print(
             f"{summary.status}: total={counts['total']} success={counts['success']} "
             f"skipped={counts['skipped']} failed={counts['failed']} "
-            f"output_dir={summary.output_dir}"
+            "result_scope=raw_asr_only llm_review_status=not_performed_by_cli "
+            f"output_dir={output_dir}"
         )
     else:
-        print(f"{summary.status}: total={len(summary.items)} output_dir={summary.output_dir}")
+        output_dir = strip_display_controls(summary.output_dir or "多个目录")
+        print(
+            f"{summary.status}: total={len(summary.items)} "
+            "result_scope=raw_asr_only llm_review_status=not_performed_by_cli "
+            f"output_dir={output_dir}"
+        )
 
 
 def _confirm(prompt: str) -> bool:
@@ -1266,9 +1646,7 @@ def _positive_int(value: str) -> int:
 def _processing_timeout_seconds(value: str) -> int:
     result = _positive_int(value)
     if result > HARD_MAX_PROCESSING_SECONDS:
-        raise argparse.ArgumentTypeError(
-            f"不得超过 {HARD_MAX_PROCESSING_SECONDS} 秒"
-        )
+        raise argparse.ArgumentTypeError(f"不得超过 {HARD_MAX_PROCESSING_SECONDS} 秒")
     return result
 
 

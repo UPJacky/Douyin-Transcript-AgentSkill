@@ -35,7 +35,9 @@ def clear_hf_env(monkeypatch):
 def allow_cache_path_in_windows_unit_test(monkeypatch):
     """Separate resolver behavior from this host's inherited Windows ACLs."""
     if os.name == "nt":
-        monkeypatch.setattr(models_module, "_cache_path_is_trusted", lambda *_a, **_k: True)
+        monkeypatch.setattr(
+            models_module, "_cache_path_is_trusted", lambda *_a, **_k: True
+        )
 
 
 def mark_local_model(path, profile):
@@ -59,7 +61,9 @@ def make_hub_snapshot(cache_root, profile="balanced"):
         if name == "model.bin":
             digest = hashlib.sha256(content).hexdigest()
         else:
-            digest = hashlib.sha1(f"blob {len(content)}\0".encode() + content).hexdigest()
+            digest = hashlib.sha1(
+                f"blob {len(content)}\0".encode() + content
+            ).hexdigest()
         blob = blobs / digest
         blob.write_bytes(content)
         (snapshot / name).write_bytes(content)
@@ -204,6 +208,7 @@ def test_resolver_rejects_writable_shared_hub_cache(monkeypatch, tmp_path):
     data_dir = tmp_path / "data"
     original_trust_check = models_module._cache_path_is_trusted
     if os.name == "nt":
+
         def trust_except_shared_cache(path, *, is_directory=True):
             try:
                 Path(path).relative_to(cache)
@@ -211,7 +216,9 @@ def test_resolver_rejects_writable_shared_hub_cache(monkeypatch, tmp_path):
                 return original_trust_check(path, is_directory=is_directory)
             return False
 
-        monkeypatch.setattr(models_module, "_cache_path_is_trusted", trust_except_shared_cache)
+        monkeypatch.setattr(
+            models_module, "_cache_path_is_trusted", trust_except_shared_cache
+        )
     else:
         cache.chmod(stat.S_IMODE(cache.stat().st_mode) | 0o022)
 

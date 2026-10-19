@@ -38,8 +38,12 @@ def test_fallback_is_sanitized_as_a_single_filename_component(tmp_path, fallback
     output_dir = tmp_path / "output"
     paths = list(islice(candidate_output_paths(output_dir, "", fallback), 3))
 
-    assert all(path.resolve(strict=False).parent == output_dir.resolve() for path in paths)
-    assert all(not any(separator in path.name for separator in ("/", "\\")) for path in paths)
+    assert all(
+        path.resolve(strict=False).parent == output_dir.resolve() for path in paths
+    )
+    assert all(
+        not any(separator in path.name for separator in ("/", "\\")) for path in paths
+    )
 
 
 @pytest.mark.parametrize(

@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
-from douyin_transcript import doctor
+from douyin_transcript import config, doctor
 
 
 def test_default_data_dir_uses_platform_location(monkeypatch, tmp_path):
@@ -48,7 +48,9 @@ def test_windows_default_falls_back_when_local_appdata_ancestors_are_unsafe(
         doctor,
         "inspect_private_path",
         lambda path: SimpleNamespace(
-            status="shared" if Path(path) == local_app_data / "douyin-transcript" else "missing"
+            status="shared"
+            if Path(path) == local_app_data / "douyin-transcript"
+            else "missing"
         ),
     )
 
@@ -63,7 +65,9 @@ def test_windows_default_does_not_hide_existing_unsafe_localappdata(
     monkeypatch.setattr(
         doctor,
         "os",
-        SimpleNamespace(name="nt", environ={"LOCALAPPDATA": str(local_app_data.parent)}),
+        SimpleNamespace(
+            name="nt", environ={"LOCALAPPDATA": str(local_app_data.parent)}
+        ),
     )
     monkeypatch.setattr(Path, "home", lambda: tmp_path / "profile")
     monkeypatch.setattr(
@@ -144,14 +148,170 @@ def test_doctor_checks_explicit_output_dir_without_creating_it(monkeypatch, tmp_
         or {"status": "unsafe", "detail": "shared parent"},
     )
 
-    report = doctor.collect_report(
-        str(data_dir), output_dir_override=str(output_dir)
-    )
+    report = doctor.collect_report(str(data_dir), output_dir_override=str(output_dir))
 
     assert report["output_dir"] == str(output_dir.resolve())
     assert report["checks"]["output_dir_permissions"]["status"] == "unsafe"
     assert seen == [output_dir.resolve()]
     assert not output_dir.exists()
+
+
+def test_doctor_does_not_check_current_directory_for_empty_output_override(
+    monkeypatch, tmp_path
+):
+    data_dir = tmp_path / "data"
+    checked_directories = []
+    checked_output_permissions = []
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(doctor, "default_data_dir", lambda: data_dir)
+    monkeypatch.setattr(
+        doctor,
+        "_module_status",
+        lambda _name: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_model_status",
+        lambda _path, _profile: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_chromium_status",
+        lambda _status: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_directory_status",
+        lambda path: checked_directories.append(Path(path))
+        or {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "output_directory_permission_status",
+        lambda path: checked_output_permissions.append(Path(path))
+        or {"status": "ok", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_permission_status",
+        lambda _path: {"status": "ok", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_disk_status",
+        lambda _path: {"status": "ok", "detail": "test"},
+    )
+
+    report = doctor.collect_report(output_dir_override="")
+
+    assert report["output_dir"] == ""
+    assert report["checks"]["config"]["status"] == "invalid"
+    assert report["checks"]["output_dir"]["status"] == "unknown"
+    assert report["checks"]["output_dir_permissions"]["status"] == "unknown"
+    assert checked_directories == [data_dir]
+    assert checked_output_permissions == []
+    assert tmp_path.resolve() not in checked_directories
+    assert not data_dir.exists()
+
+
+def _stub_doctor_probes(monkeypatch, checked_directories, checked_output_permissions):
+    monkeypatch.setattr(
+        doctor,
+        "_module_status",
+        lambda _name: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_model_status",
+        lambda _path, _profile: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_chromium_status",
+        lambda _status: {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_directory_status",
+        lambda path: checked_directories.append(Path(path))
+        or {"status": "missing", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "output_directory_permission_status",
+        lambda path: checked_output_permissions.append(Path(path))
+        or {"status": "ok", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_permission_status",
+        lambda _path: {"status": "ok", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_disk_status",
+        lambda _path: {"status": "ok", "detail": "test"},
+    )
+
+
+def test_doctor_uses_explicit_output_environment_override_on_config_error(
+    monkeypatch, tmp_path
+):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "configured-output"
+    checked_directories = []
+    checked_output_permissions = []
+
+    def fail_resolve_paths(**_kwargs):
+        raise config.ConfigurationError("config.toml [limits] 配置无效：错误值")
+
+    monkeypatch.setattr(config, "resolve_paths", fail_resolve_paths)
+    monkeypatch.setattr(doctor, "default_data_dir", lambda: data_dir)
+    monkeypatch.setenv("DOUYIN_TRANSCRIPT_OUTPUT", str(output_dir))
+    _stub_doctor_probes(monkeypatch, checked_directories, checked_output_permissions)
+
+    report = doctor.collect_report()
+
+    assert report["output_dir"] == str(output_dir.resolve())
+    assert report["checks"]["config"] == {
+        "status": "invalid",
+        "detail": "config.toml [limits] 配置无效：错误值",
+    }
+    assert checked_directories == [data_dir, output_dir.resolve()]
+    assert checked_output_permissions == [output_dir.resolve()]
+    assert not output_dir.exists()
+
+
+def test_doctor_does_not_guess_output_path_for_other_config_errors(
+    monkeypatch, tmp_path
+):
+    data_dir = tmp_path / "data"
+    guessed_output = data_dir / "output"
+    checked_directories = []
+    checked_output_permissions = []
+
+    def fail_resolve_paths(**_kwargs):
+        raise config.ConfigurationError("config.toml 格式无效：配置语法错误")
+
+    monkeypatch.setattr(config, "resolve_paths", fail_resolve_paths)
+    monkeypatch.setattr(doctor, "default_data_dir", lambda: data_dir)
+    monkeypatch.delenv("DOUYIN_TRANSCRIPT_OUTPUT", raising=False)
+    monkeypatch.chdir(tmp_path)
+    _stub_doctor_probes(monkeypatch, checked_directories, checked_output_permissions)
+
+    report = doctor.collect_report()
+
+    assert report["output_dir"] == ""
+    assert report["checks"]["config"] == {
+        "status": "invalid",
+        "detail": "config.toml 格式无效：配置语法错误",
+    }
+    assert report["checks"]["output_dir"]["status"] == "unknown"
+    assert report["checks"]["output_dir_permissions"]["status"] == "unknown"
+    assert checked_directories == [data_dir]
+    assert checked_output_permissions == []
+    assert guessed_output not in checked_directories
+    assert not guessed_output.exists()
 
 
 def test_module_check_reports_import_error_as_broken(monkeypatch, tmp_path):
@@ -218,9 +378,9 @@ def test_cli_outputs_utf8_when_windows_default_is_legacy(monkeypatch):
     doctor_text = doctor_result.stdout.decode("utf-8")
     report = json.loads(doctor_text)
     assert help_result.returncode == 0
-    assert "doctor" in help_text
-    assert doctor_result.returncode == 1
-    assert report["overall"] == "setup_required"
+    assert "检查运行环境" in help_text
+    assert report["overall"] in {"ready", "setup_required"}
+    assert doctor_result.returncode == (0 if report["overall"] == "ready" else 1)
 
 
 def test_doctor_separates_local_and_url_capabilities(monkeypatch, tmp_path):
@@ -259,6 +419,50 @@ def test_doctor_separates_local_and_url_capabilities(monkeypatch, tmp_path):
     assert report["checks"]["model"]["detail"] == "fast"
 
 
+def test_doctor_personal_url_capability_uses_installed_browser(
+    monkeypatch, tmp_path
+):
+    monkeypatch.setattr(
+        doctor, "_module_status", lambda _name: {"status": "ok", "detail": "test"}
+    )
+    monkeypatch.setattr(
+        doctor,
+        "_model_status",
+        lambda _path, profile: {"status": "ok", "detail": profile},
+    )
+    monkeypatch.setattr(
+        doctor, "_chromium_status", lambda _status: {"status": "ok", "detail": "test"}
+    )
+    monkeypatch.setattr(
+        doctor, "_directory_status", lambda _path: {"status": "ok", "detail": "test"}
+    )
+    monkeypatch.setattr(
+        doctor, "_permission_status", lambda _path: {"status": "ok", "detail": "test"}
+    )
+    monkeypatch.setattr(
+        doctor,
+        "output_directory_permission_status",
+        lambda _path: {"status": "ok", "detail": "test"},
+    )
+    monkeypatch.setattr(
+        doctor, "_disk_status", lambda _path: {"status": "ok", "detail": "test"}
+    )
+
+    report = doctor.collect_report(
+        str(tmp_path / "data"),
+        profile="fast",
+        output_dir_override=str(tmp_path / "output"),
+    )
+
+    assert report["capabilities"]["local_transcription"] == "ready"
+    assert report["capabilities"]["douyin_urls"] == "ready"
+    assert report["capture_mode"] == "personal"
+    assert report["checks"]["browser_isolation"] == {
+        "status": "not_used",
+        "detail": "个人模式使用当前账号的 Chromium；不使用管理员 WFP 服务",
+    }
+
+
 def test_doctor_marks_bad_config_without_creating_paths(monkeypatch, tmp_path):
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -284,7 +488,9 @@ def test_doctor_marks_bad_config_without_creating_paths(monkeypatch, tmp_path):
     assert not (data_dir / "tasks.sqlite3").exists()
 
 
-def test_doctor_reports_shared_data_directory_without_changing_it(monkeypatch, tmp_path):
+def test_doctor_reports_shared_data_directory_without_changing_it(
+    monkeypatch, tmp_path
+):
     if os.name == "nt":
         return
     data_dir = tmp_path / "shared-data"
@@ -295,7 +501,9 @@ def test_doctor_reports_shared_data_directory_without_changing_it(monkeypatch, t
         doctor, "_module_status", lambda name: {"status": "ok", "detail": "test"}
     )
     monkeypatch.setattr(
-        doctor, "_model_status", lambda path, profile: {"status": "ok", "detail": "test"}
+        doctor,
+        "_model_status",
+        lambda path, profile: {"status": "ok", "detail": "test"},
     )
     monkeypatch.setattr(
         doctor, "_chromium_status", lambda status: {"status": "ok", "detail": "test"}
@@ -316,7 +524,9 @@ def test_doctor_reports_shared_data_directory_without_changing_it(monkeypatch, t
     assert not (data_dir / "tasks.sqlite3").exists()
 
 
-def test_output_directory_permission_check_is_advisory_for_shared_folder(monkeypatch, tmp_path):
+def test_output_directory_permission_check_is_advisory_for_shared_folder(
+    monkeypatch, tmp_path
+):
     output_dir = tmp_path / "shared-output"
     output_dir.mkdir()
     output_dir.chmod(0o755)

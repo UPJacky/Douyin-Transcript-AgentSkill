@@ -17,20 +17,21 @@ from pathlib import Path
 from typing import Any
 
 from .asr import ASRUnavailableError, LocalASR
-from .capture import BrowserCapture, CaptureError, VideoMetadata
-from .config import RuntimePaths
+from .capture_client import CaptureClientError
+from .capture_ipc import CaptureVideoMetadata
+from .config import ConfigurationError, RuntimePaths
 from .corrections import (
     CorrectionRule,
     CorrectionWorkBudget,
     apply_terminology_dictionary,
 )
+from .doctor import output_directory_permission_status
 from .downloader import (
     DecoderUnavailableError,
     DownloadCancellation,
     DownloadError,
     MediaFile,
     MediaInvalidError,
-    download_media,
     require_expected_media_duration,
     validate_media_file,
 )
@@ -60,7 +61,13 @@ from .processing import (
     SupervisedProcessingWorker,
 )
 from .tasks import DEFAULT_STALE_AFTER_SECONDS, Task, TaskStore
-from .urls import ResolvedInput, UnsupportedUrlError, resolve_input
+from .urls import (
+    ResolvedInput,
+    UnsupportedUrlError,
+    extract_url,
+    resolve_direct_input,
+    resolved_short_link,
+)
 
 MAX_URL_BATCH_ITEMS = 100
 MAX_URL_LENGTH = 8192
@@ -81,11 +88,10 @@ def validate_url_batch(values: Iterable[str]) -> list[str]:
 
 
 @dataclass(frozen=True, slots=True)
-class _DownloadJob:
+class _CaptureJob:
     index: int
     task: Task
     resolved: ResolvedInput
-    metadata: VideoMetadata
     title: str
     future: Future[Any]
     processing_deadline: float
@@ -103,11 +109,9 @@ class TranscriptionPipeline:
         timestamps: bool = False,
         force: bool = False,
         task_store_factory: Callable[[Path], TaskStore] = TaskStore,
-        capture_factory: Callable[[Path], Any] = BrowserCapture,
+        capture_service_client: Any | None = None,
         asr_factory: Callable[..., Any] = LocalASR,
-        downloader: Callable[..., Any] = download_media,
         media_validator: Callable[[Path], Any] = validate_media_file,
-        url_resolver: Callable[[str], ResolvedInput] = resolve_input,
         markdown_writer: Callable[..., Path] = write_transcript_markdown,
         stale_after_seconds: float = DEFAULT_STALE_AFTER_SECONDS,
         heartbeat_interval_seconds: float = 30,
@@ -120,6 +124,12 @@ class TranscriptionPipeline:
         corrections_enabled: bool = False,
         max_processing_seconds: int = DEFAULT_MAX_PROCESSING_SECONDS,
     ) -> None:
+        if getattr(paths, "output_dir_is_default", False):
+            output_permissions = output_directory_permission_status(paths.output_dir)
+            if output_permissions["status"] != "ok":
+                raise ConfigurationError(
+                    "默认输出目录权限不安全或无法确认；请指定 --output-dir 或修复应用数据目录权限"
+                )
         self.paths = paths
         self.profile = model_spec(profile).profile
         if language not in {"zh", "auto"}:
@@ -143,9 +153,8 @@ class TranscriptionPipeline:
             else getattr(paths, "max_output_characters", DEFAULT_MAX_OUTPUT_CHARACTERS),
         )
         self._store_factory = task_store_factory
-        self._capture_factory = capture_factory
+        self._capture_service_client = capture_service_client
         self._asr_factory = asr_factory
-        self._downloader = downloader
         self._use_supervised_processing = (
             asr_factory is LocalASR and media_validator is validate_media_file
         )
@@ -158,7 +167,6 @@ class TranscriptionPipeline:
             if media_validator is validate_media_file
             else media_validator
         )
-        self._url_resolver = url_resolver
         self._markdown_writer = markdown_writer
         self._stale_after_seconds = stale_after_seconds
         self._heartbeat_interval_seconds = heartbeat_interval_seconds
@@ -209,19 +217,27 @@ class TranscriptionPipeline:
                         title=title,
                         processing_options=self._processing_options_snapshot(),
                     )
+                    if task.state == "failed" and self.force:
+                        task = store.prepare_local_retry(
+                            task.task_id,
+                            source,
+                            worker_id=self._worker_id,
+                            profile=self.profile,
+                            processing_options=self._processing_options_snapshot(),
+                        )
+                        outcome = None
+                    else:
+                        task, outcome = self._prepare_task(
+                            store,
+                            task,
+                            initial_state="downloaded",
+                            title=title or source.stem,
+                        )
                 else:
                     task = store.prepare_local_retry(
                         retry_task_id, source, worker_id=self._worker_id
                     )
-                if retry_task_id is not None and task.claimed_by == self._worker_id:
                     outcome = None
-                else:
-                    task, outcome = self._prepare_task(
-                        store,
-                        task,
-                        initial_state="downloaded",
-                        title=title or source.stem,
-                    )
                 if outcome is not None:
                     return outcome
                 assert task.claimed_by == self._worker_id
@@ -291,36 +307,75 @@ class TranscriptionPipeline:
             pass
 
     def run_urls(self, values: Iterable[str], *, title: str | None = None) -> list[ItemResult]:
-        """Resolve and capture serially, prefetch bounded downloads, then ASR serially."""
+        """Resolve URLs, run bounded isolated captures, and transcribe serially."""
         raw_values = validate_url_batch(values)
+        if raw_values and self._capture_service_client is None:
+            unavailable = CaptureClientError(
+                "BROWSER_ISOLATION_UNAVAILABLE",
+                "完整作业隔离采集服务不可用；调用方进程内 URL 捕获已禁用",
+            )
+            return [self._failure(None, unavailable) for _ in raw_values]
+        if not raw_values:
+            return []
+        capture_client = self._capture_service_client
+        cancellation = DownloadCancellation()
+
         results: list[ItemResult | None] = [None] * len(raw_values)
-        resolved_jobs: list[tuple[int, ResolvedInput]] = []
+        resolved_jobs: list[tuple[int, ResolvedInput, str]] = []
         duplicate_of: dict[int, int] = {}
         first_index_by_video_id: dict[str, int] = {}
         for index, value in enumerate(raw_values):
             try:
-                resolved = self._url_resolver(value)
+                # This resolver is deliberately limited to parsing direct URLs;
+                # short-link network resolution belongs to the isolated client.
+                try:
+                    resolved = resolve_direct_input(value)
+                except UnsupportedUrlError as exc:
+                    if exc.code != "BROWSER_ISOLATION_UNAVAILABLE":
+                        raise
+                    capture_url = extract_url(value)
+                    try:
+                        video_id = self._resolve_service_source_with_retries(
+                            capture_client,
+                            capture_url,
+                            deadline_monotonic=time.monotonic() + self.max_processing_seconds,
+                            cancellation=cancellation,
+                        )
+                    except KeyboardInterrupt:
+                        cancellation.cancel()
+                        try:
+                            self.close()
+                        except Exception:
+                            pass
+                        raise
+                    resolved = resolved_short_link(value, video_id)
+                else:
+                    capture_url = (
+                        extract_url(value)
+                        if resolved.source_type == "short_link"
+                        else resolved.canonical_url
+                    )
             except Exception as exc:
                 results[index] = self._failure(None, exc)
                 continue
+            # For short links capture_url can carry a temporary share token;
+            # only the query-free source URL is written to TaskStore.
             previous = first_index_by_video_id.get(resolved.video_id)
             if previous is not None:
                 duplicate_of[index] = previous
                 continue
             first_index_by_video_id[resolved.video_id] = index
-            resolved_jobs.append((index, resolved))
+            resolved_jobs.append((index, resolved, capture_url))
 
-        capture: Any | None = None
         self._recover_stale_tasks()
-        pending: list[_DownloadJob] = []
+        pending: list[_CaptureJob] = []
         active_task_generations: dict[str, int] = {}
-        cancellation = DownloadCancellation()
 
         @contextmanager
-        def download_executor() -> Iterator[ThreadPoolExecutor]:
+        def capture_executor() -> Iterator[ThreadPoolExecutor]:
             executor = ThreadPoolExecutor(
                 max_workers=self.max_downloads,
-                thread_name_prefix="transcript-download",
+                thread_name_prefix="transcript-capture",
             )
             try:
                 yield executor
@@ -334,12 +389,8 @@ class TranscriptionPipeline:
                 except Exception:
                     pass
                 try:
-                    with self._store_factory(
-                        self.paths.data_dir / "tasks.sqlite3"
-                    ) as store:
-                        for task_id, claim_generation in tuple(
-                            active_task_generations.items()
-                        ):
+                    with self._store_factory(self.paths.data_dir / "tasks.sqlite3") as store:
+                        for task_id, claim_generation in tuple(active_task_generations.items()):
                             try:
                                 store.fail_task(
                                     task_id,
@@ -358,7 +409,7 @@ class TranscriptionPipeline:
             else:
                 executor.shutdown(wait=True)
 
-        def wait_for_download(future: Future[Any]) -> Any:
+        def wait_for_capture(future: Future[Any]) -> Any:
             # Poll so console interrupts are observed even on platforms where
             # a long Condition wait is not interrupted immediately by SIGINT.
             while True:
@@ -368,11 +419,12 @@ class TranscriptionPipeline:
                     if future.done():
                         raise
 
-        def flush_downloads() -> None:
+        def flush_captures() -> None:
             nonlocal pending
             for job in pending:
                 try:
-                    _task, validated_media = wait_for_download(job.future)
+                    capture_result = wait_for_capture(job.future)
+                    _task, validated_media, captured_metadata = capture_result
                 except Exception as exc:
                     results[job.index] = self._failure(job.resolved.video_id, exc)
                     active_task_generations.pop(job.task.task_id, None)
@@ -380,8 +432,12 @@ class TranscriptionPipeline:
                 results[job.index] = self._transcribe_remote_downloaded(
                     job.task.task_id,
                     job.resolved,
-                    title=job.title,
-                    metadata=job.metadata,
+                    title=(
+                        captured_metadata.title or job.title
+                        if captured_metadata is not None and job.title == job.resolved.video_id
+                        else job.title
+                    ),
+                    metadata=captured_metadata,
                     validated_media=validated_media,
                     processing_deadline=job.processing_deadline,
                     cancellation=cancellation,
@@ -389,168 +445,138 @@ class TranscriptionPipeline:
                 active_task_generations.pop(job.task.task_id, None)
             pending = []
 
-        try:
-            with download_executor() as executor:
-                for index, resolved in resolved_jobs:
-                    task: Task | None = None
-                    try:
-                        with self._store_factory(
-                            self.paths.data_dir / "tasks.sqlite3"
-                        ) as store:
-                            task = store.create_remote_task(
-                                resolved.canonical_url,
-                                resolved.video_id,
-                                profile=self.profile,
-                                title=title,
-                                processing_options=self._processing_options_snapshot(),
-                            )
-                            cached_validated_media: MediaFile | None = None
-                            cached_processing_deadline: float | None = None
-                            task, outcome = self._prepare_task(
-                                store, task, initial_state="pending", title=title
-                            )
-                            if outcome is not None:
-                                results[index] = outcome
-                                continue
-                            active_task_generations[task.task_id] = task.claim_generation
-                            if task.state == "downloaded":
-                                cached_task_id = task.task_id
-                            else:
-                                cached_task_id = None
-                                display_title = title or task.title or resolved.video_id
-                                with self._keep_claim_alive(
-                                    store,
-                                    task.task_id,
-                                    claim_generation=task.claim_generation,
-                                ) as task_cancellation:
-                                    if task.media_path:
-                                        cache_deadline = (
-                                            time.monotonic() + self.max_processing_seconds
+        with capture_executor() as executor:
+            for index, resolved, capture_url in resolved_jobs:
+                task: Task | None = None
+                try:
+                    with self._store_factory(self.paths.data_dir / "tasks.sqlite3") as store:
+                        task = store.create_remote_task(
+                            resolved.canonical_url,
+                            resolved.video_id,
+                            profile=self.profile,
+                            title=title,
+                            processing_options=self._processing_options_snapshot(),
+                        )
+                        cached_validated_media: MediaFile | None = None
+                        cached_processing_deadline: float | None = None
+                        task, outcome = self._prepare_task(
+                            store, task, initial_state="pending", title=title
+                        )
+                        if outcome is not None:
+                            results[index] = outcome
+                            continue
+                        active_task_generations[task.task_id] = task.claim_generation
+                        if task.state == "downloaded":
+                            cached_task_id = task.task_id
+                        else:
+                            cached_task_id = None
+                            display_title = title or task.title or resolved.video_id
+                            with self._keep_claim_alive(
+                                store,
+                                task.task_id,
+                                claim_generation=task.claim_generation,
+                            ) as task_cancellation:
+                                if task.media_path:
+                                    cache_deadline = time.monotonic() + self.max_processing_seconds
+                                    try:
+                                        candidate_media = self._validate_media(
+                                            Path(task.media_path),
+                                            deadline=cache_deadline,
+                                            cancellation=task_cancellation,
                                         )
-                                        try:
-                                            candidate_media = self._validate_media(
-                                                Path(task.media_path),
-                                                deadline=cache_deadline,
-                                                cancellation=task_cancellation,
-                                            )
-                                        except MediaInvalidError:
-                                            candidate_media = None
-                                        if candidate_media is not None:
-                                            require_media_duration(
-                                                candidate_media.duration_seconds,
-                                                self.max_media_duration_seconds,
-                                            )
-                                            require_expected_media_duration(
-                                                candidate_media.duration_seconds,
-                                                task.source_duration_seconds,
-                                            )
-                                            task = store.transition(
-                                                task.task_id,
-                                                "downloaded",
-                                                worker_id=self._worker_id,
-                                                claim_generation=task.claim_generation,
-                                                media_path=task.media_path,
-                                                title=display_title,
-                                            )
-                                            cached_task_id = task.task_id
-                                            cached_validated_media = candidate_media
-                                            cached_processing_deadline = cache_deadline
-
-                                    if cached_task_id is None:
-                                        if capture is None:
-                                            capture = self._capture_factory(
-                                                self.paths.data_dir / "browser-profile"
-                                            )
-                                            started_capture = capture.start()
-                                            if started_capture is not None:
-                                                capture = started_capture
-                                        metadata = self._capture_with_retries(capture, resolved)
-                                        if metadata.duration_seconds is not None:
-                                            require_media_duration(
-                                                metadata.duration_seconds,
-                                                self.max_media_duration_seconds,
-                                            )
-                                        display_title = (
-                                            title or metadata.title or resolved.video_id
+                                    except MediaInvalidError:
+                                        candidate_media = None
+                                    if candidate_media is not None:
+                                        require_media_duration(
+                                            candidate_media.duration_seconds,
+                                            self.max_media_duration_seconds,
                                         )
-                                        processing_deadline = (
-                                            time.monotonic() + self.max_processing_seconds
+                                        require_expected_media_duration(
+                                            candidate_media.duration_seconds,
+                                            task.source_duration_seconds,
                                         )
-                                        transition_options: dict[str, Any] = {
-                                            "worker_id": self._worker_id,
-                                            "claim_generation": task.claim_generation,
-                                            "title": display_title,
-                                            "media_path": None,
-                                        }
-                                        if metadata.duration_seconds is not None:
-                                            transition_options["source_duration_seconds"] = (
-                                                metadata.duration_seconds
-                                            )
                                         task = store.transition(
                                             task.task_id,
-                                            "downloading",
-                                            **transition_options,
+                                            "downloaded",
+                                            worker_id=self._worker_id,
+                                            claim_generation=task.claim_generation,
+                                            media_path=task.media_path,
+                                            title=display_title,
                                         )
+                                        cached_task_id = task.task_id
+                                        cached_validated_media = candidate_media
+                                        cached_processing_deadline = cache_deadline
+
                                 if cached_task_id is None:
-                                    future = executor.submit(
-                                        self._download_remote_claimed,
+                                    processing_deadline = (
+                                        time.monotonic() + self.max_processing_seconds
+                                    )
+                                    display_title = title or resolved.video_id
+                                    transition_options: dict[str, Any] = {
+                                        "worker_id": self._worker_id,
+                                        "claim_generation": task.claim_generation,
+                                        "title": display_title,
+                                        "media_path": None,
+                                    }
+                                    task = store.transition(
+                                        task.task_id,
+                                        "downloading",
+                                        **transition_options,
+                                    )
+                            if cached_task_id is None:
+                                future = executor.submit(
+                                    self._capture_remote_claimed,
+                                    task,
+                                    resolved,
+                                    capture_url,
+                                    capture_client,
+                                    title,
+                                    processing_deadline,
+                                    cancellation,
+                                )
+                                pending.append(
+                                    _CaptureJob(
+                                        index,
                                         task,
                                         resolved,
-                                        metadata,
                                         display_title,
+                                        future,
                                         processing_deadline,
-                                        cancellation,
                                     )
-                                    pending.append(
-                                        _DownloadJob(
-                                            index,
-                                            task,
-                                            resolved,
-                                            metadata,
-                                            display_title,
-                                            future,
-                                            processing_deadline,
-                                        )
-                                    )
-                                    if len(pending) >= self.max_downloads:
-                                        flush_downloads()
-                        if cached_task_id is not None and task is not None:
-                            results[index] = self._transcribe_remote_downloaded(
-                                cached_task_id,
-                                resolved,
-                                title=title or task.title or resolved.video_id,
-                                validated_media=cached_validated_media,
-                                processing_deadline=cached_processing_deadline
-                                or time.monotonic() + self.max_processing_seconds,
-                                cancellation=cancellation,
-                            )
-                            active_task_generations.pop(task.task_id, None)
-                    except Exception as exc:
-                        if task is not None and task.claimed_by == self._worker_id:
-                            code, message, _hint = _error_details(exc)
-                            try:
-                                with self._store_factory(
-                                    self.paths.data_dir / "tasks.sqlite3"
-                                ) as failed_store:
-                                    failed_store.fail_task(
-                                        task.task_id,
-                                        code,
-                                        message,
-                                        worker_id=self._worker_id,
-                                        claim_generation=task.claim_generation,
-                                    )
-                            except Exception:
-                                pass
-                        results[index] = self._failure(resolved.video_id, exc)
-                        if task is not None:
-                            active_task_generations.pop(task.task_id, None)
-                flush_downloads()
-        finally:
-            if capture is not None:
-                try:
-                    capture.close()
-                except Exception:
-                    pass
+                                )
+                                if len(pending) >= self.max_downloads:
+                                    flush_captures()
+                    if cached_task_id is not None and task is not None:
+                        results[index] = self._transcribe_remote_downloaded(
+                            cached_task_id,
+                            resolved,
+                            title=title or task.title or resolved.video_id,
+                            validated_media=cached_validated_media,
+                            processing_deadline=cached_processing_deadline
+                            or time.monotonic() + self.max_processing_seconds,
+                            cancellation=cancellation,
+                        )
+                        active_task_generations.pop(task.task_id, None)
+                except Exception as exc:
+                    if task is not None and task.claimed_by == self._worker_id:
+                        code, message, _hint = _error_details(exc)
+                        try:
+                            with self._store_factory(
+                                self.paths.data_dir / "tasks.sqlite3"
+                            ) as failed_store:
+                                failed_store.fail_task(
+                                    task.task_id,
+                                    code,
+                                    message,
+                                    worker_id=self._worker_id,
+                                    claim_generation=task.claim_generation,
+                                )
+                        except Exception:
+                            pass
+                    results[index] = self._failure(resolved.video_id, exc)
+                    if task is not None:
+                        active_task_generations.pop(task.task_id, None)
+            flush_captures()
         for index, first_index in duplicate_of.items():
             first = results[first_index]
             if first is None:
@@ -600,15 +626,70 @@ class TranscriptionPipeline:
             "output_dir": str(self.paths.output_dir.expanduser().resolve(strict=False)),
         }
 
-    def _download_remote_claimed(
+    def _resolve_service_source_with_retries(
+        self,
+        client: Any,
+        original_url: str,
+        *,
+        deadline_monotonic: float,
+        cancellation: DownloadCancellation | None = None,
+    ) -> str:
+        cancellation = cancellation or DownloadCancellation()
+        for attempt in range(self.retries + 1):
+            if cancellation.is_set():
+                raise CaptureClientError("CANCELLED", "隔离采集已取消")
+            try:
+                return client.resolve_source(
+                    original_url,
+                    deadline_monotonic=deadline_monotonic,
+                    is_cancelled=cancellation.is_set,
+                )
+            except CaptureClientError as exc:
+                remaining = deadline_monotonic - time.monotonic()
+                if not exc.retryable or attempt >= self.retries or remaining <= 0:
+                    raise
+                if cancellation.wait(min(0.25 * (2**attempt), remaining)):
+                    raise CaptureClientError("CANCELLED", "隔离采集已取消") from None
+        raise RuntimeError("capture source resolution retry loop ended unexpectedly")
+
+    def _capture_service_with_retries(
+        self,
+        client: Any,
+        original_url: str,
+        *,
+        deadline_monotonic: float,
+        cancellation: DownloadCancellation,
+    ) -> Any:
+        for attempt in range(self.retries + 1):
+            if cancellation.is_set():
+                raise CaptureClientError("CANCELLED", "隔离采集已取消")
+            try:
+                return client.capture(
+                    original_url,
+                    deadline_monotonic=deadline_monotonic,
+                    is_cancelled=cancellation.is_set,
+                )
+            except CaptureClientError as exc:
+                remaining = deadline_monotonic - time.monotonic()
+                if not exc.retryable or attempt >= self.retries or remaining <= 0:
+                    raise
+                if cancellation.wait(min(0.25 * (2**attempt), remaining)):
+                    raise CaptureClientError("CANCELLED", "隔离采集已取消") from None
+        raise RuntimeError("capture retry loop ended unexpectedly")
+
+    def _capture_remote_claimed(
         self,
         task: Task,
         resolved: ResolvedInput,
-        metadata: VideoMetadata,
-        display_title: str,
+        original_url: str,
+        client: Any,
+        requested_title: str | None,
         processing_deadline: float,
         cancellation: DownloadCancellation,
-    ) -> tuple[Task, MediaFile]:
+    ) -> tuple[Task, MediaFile, CaptureVideoMetadata]:
+        captured: Any | None = None
+        media_path: Path | None = None
+        transitioned_to_downloaded = False
         with self._store_factory(self.paths.data_dir / "tasks.sqlite3") as store:
             try:
                 with self._keep_claim_alive(
@@ -616,55 +697,66 @@ class TranscriptionPipeline:
                     task.task_id,
                     claim_generation=task.claim_generation,
                     parent_cancellation=cancellation,
-                ) as cancellation:
-                    download_options: dict[str, Any] = {
-                        "max_duration_seconds": self.max_media_duration_seconds,
-                        "expected_duration_seconds": task.source_duration_seconds,
-                        "retries": self.retries,
-                    }
-                    if self._downloader is download_media:
-                        download_options["absolute_deadline"] = processing_deadline
-                        download_options["cancellation"] = cancellation
-                        download_options["decoder"] = lambda path: self._validate_media(
-                            path,
-                            deadline=processing_deadline,
-                            cancellation=cancellation,
-                        )
-                    media = self._downloader(
-                        resolved.video_id,
-                        metadata.media_candidates,
-                        self.paths.data_dir / "media-cache",
-                        **download_options,
+                ) as task_cancellation:
+                    captured = self._capture_service_with_retries(
+                        client,
+                        original_url,
+                        deadline_monotonic=processing_deadline,
+                        cancellation=task_cancellation,
                     )
-                    validated = (
-                        media
-                        if self._downloader is download_media
-                        else self._validate_media(
-                            media.path,
-                            deadline=processing_deadline,
-                            cancellation=cancellation,
+                    media_path = Path(captured.path)
+                    if captured.video.video_id != resolved.video_id:
+                        raise CaptureClientError(
+                            "INVALID_RESULT", "隔离服务返回的内容与原视频 ID 不匹配"
                         )
+                    cache_root = (self.paths.data_dir / "media-cache").resolve(strict=True)
+                    resolved_media_path = media_path.resolve(strict=True)
+                    if (
+                        media_path.is_symlink()
+                        or not resolved_media_path.is_relative_to(cache_root)
+                        or resolved_media_path == cache_root
+                        or not resolved_media_path.is_file()
+                    ):
+                        raise CaptureClientError("MEDIA_INVALID", "隔离服务返回的媒体文件路径无效")
+                    validated = self._validate_media(
+                        resolved_media_path,
+                        deadline=processing_deadline,
+                        cancellation=task_cancellation,
                     )
                     require_media_duration(
                         validated.duration_seconds, self.max_media_duration_seconds
                     )
                     require_expected_media_duration(
-                        validated.duration_seconds, task.source_duration_seconds
+                        validated.duration_seconds, captured.duration_seconds
                     )
+                    require_expected_media_duration(
+                        validated.duration_seconds, captured.video.duration_seconds
+                    )
+                    display_title = requested_title or captured.video.title or resolved.video_id
                     downloaded_task = store.transition(
                         task.task_id,
                         "downloaded",
                         worker_id=self._worker_id,
                         claim_generation=task.claim_generation,
-                        media_path=media.path,
+                        media_path=resolved_media_path,
                         title=display_title,
+                        source_duration_seconds=validated.duration_seconds,
                     )
-                    return downloaded_task, validated
+                    transitioned_to_downloaded = True
+                    return downloaded_task, validated, captured.video
             except Exception as exc:
+                if media_path is not None and not transitioned_to_downloaded:
+                    try:
+                        cache_root = (self.paths.data_dir / "media-cache").resolve(strict=True)
+                        resolved_media_path = media_path.resolve(strict=True)
+                        if resolved_media_path.is_relative_to(cache_root):
+                            resolved_media_path.unlink(missing_ok=True)
+                    except OSError:
+                        pass
                 normalized_exc = exc
                 if (
-                    isinstance(exc, DownloadError)
-                    and exc.code == "TIMEOUT"
+                    isinstance(exc, CaptureClientError)
+                    and exc.code == "CAPTURE_TIMEOUT"
                     and time.monotonic() >= processing_deadline
                 ):
                     normalized_exc = ProcessingTimeoutError()
@@ -683,24 +775,13 @@ class TranscriptionPipeline:
                     raise normalized_exc from None
                 raise
 
-    def _capture_with_retries(self, capture: Any, resolved: ResolvedInput) -> VideoMetadata:
-        for attempt in range(self.retries + 1):
-            try:
-                return capture.capture(resolved)
-            except CaptureError as exc:
-                retryable = exc.code in {"CAPTURE_FAILED", "CAPTURE_NO_MEDIA"}
-                if not retryable or attempt >= self.retries:
-                    raise
-                time.sleep(min(0.25 * (2**attempt), 1.0))
-        raise RuntimeError("capture retry loop ended unexpectedly")
-
     def _transcribe_remote_downloaded(
         self,
         task_id: str,
         resolved: ResolvedInput,
         *,
         title: str,
-        metadata: VideoMetadata | None = None,
+        metadata: CaptureVideoMetadata | None = None,
         validated_media: MediaFile | None = None,
         processing_deadline: float | None = None,
         cancellation: DownloadCancellation | None = None,
@@ -754,9 +835,12 @@ class TranscriptionPipeline:
         if not database.is_file():
             return
         with self._store_factory(database) as store:
+            # Recovery only needs to decide whether a cache candidate exists.
+            # Full decoding here would block every later task at startup; the
+            # claimed processing path performs strict validation under its deadline.
             store.recover_interrupted(
                 stale_after_seconds=self._stale_after_seconds,
-                media_validator=self._validate_media,
+                defer_media_validation=True,
             )
 
     def _validate_media(
@@ -851,13 +935,29 @@ class TranscriptionPipeline:
                 title=title,
                 processing_options=self._processing_options_snapshot(),
             )
+        elif task.state == "failed" and self.force and not task.local_path:
+            queued = store.retry_failed(
+                task_id=task.task_id,
+                include_login_required=True,
+                processing_options=self._processing_options_snapshot(),
+            )
+            if not queued:
+                return task, ItemResult(
+                    "failed", video_id=task.video_id, error_code="TASK_LOCKED",
+                    hint="任务状态已改变，请稍后重试。",
+                )
+            task = queued[0]
         elif task.state == "failed":
             return task, ItemResult(
                 "failed",
                 title=task.title,
                 video_id=task.video_id,
                 error_code=task.error_code or "PREVIOUS_FAILURE",
-                hint="此任务上次失败；先运行 retry-failed，或检查后使用 --force。",
+                hint=(
+                    "此本地任务上次失败；检查输入后可使用 --force 重跑，或运行 retry-failed。"
+                    if task.local_path
+                    else "此任务上次失败；使用 --force 重跑，或运行 retry-failed。"
+                ),
             )
 
         if task.claimed_by and task.claimed_by != self._worker_id:
@@ -942,9 +1042,11 @@ class TranscriptionPipeline:
                     )
                 else:
                     result = self._asr.transcribe(media_path, language=self.language)
-            if len(result.segments) > self.max_output_segments or sum(
-                len(segment.text) for segment in result.segments
-            ) > self.max_output_characters:
+            if (
+                len(result.segments) > self.max_output_segments
+                or sum(len(segment.text) for segment in result.segments)
+                > self.max_output_characters
+            ):
                 raise ResourceLimitError(
                     "ASR_OUTPUT_LIMIT",
                     "识别结果超过设置的分段数或字符数上限；可通过 limits 配置或命令行调整。",
@@ -1002,12 +1104,8 @@ class TranscriptionPipeline:
                     {key: value for key, value in metadata.items() if value is not None}
                 )
 
-            expected_content = render_transcript_markdown(
-                title, correction.text, output_metadata
-            )
-            expected_sha256 = hashlib.sha256(
-                expected_content.encode("utf-8")
-            ).hexdigest()
+            expected_content = render_transcript_markdown(title, correction.text, output_metadata)
+            expected_sha256 = hashlib.sha256(expected_content.encode("utf-8")).hexdigest()
             output_path = next(
                 path
                 for path in candidate_output_paths(self.paths.output_dir, title, video_id)
@@ -1146,18 +1244,30 @@ def _error_details(exc: Exception) -> tuple[str, str, str | None]:
             return exc.code, str(exc), "精简术语词典中的规则或备注后重试。"
         return exc.code, str(exc), "调低媒体时长或 ASR 输出，或按需提高配置上限后重试。"
     if isinstance(exc, UnsupportedUrlError):
+        if exc.code == "BROWSER_ISOLATION_UNAVAILABLE":
+            return (
+                exc.code,
+                str(exc),
+                "短链接解析需要可用的系统隔离服务；当前可改用抖音直链或本地媒体。",
+            )
         return exc.code, str(exc), "检查链接格式，或改用有权处理的本地媒体文件。"
-    if isinstance(exc, (CaptureError, DownloadError)):
-        hint = "请在打开的浏览器中手动登录后重试。" if exc.code == "LOGIN_REQUIRED" else None
+    if isinstance(exc, CaptureClientError):
+        hint = (
+            "请先安装并启动经验证的管理员隔离服务；当前不支持在调用进程中直接采集。"
+            if exc.code in {"BROWSER_ISOLATION_UNAVAILABLE", "CAPTURE_TRANSPORT_FAILED"}
+            else None
+        )
         return exc.code, str(exc), hint
+    if isinstance(exc, MediaInvalidError):
+        return exc.code, str(exc), "确认媒体文件完整且包含可解码音轨。"
+    if isinstance(exc, DownloadError):
+        return exc.code, str(exc), None
     if isinstance(exc, ASRUnavailableError):
         message = str(exc)
         code = "MODEL_NOT_FOUND" if "模型" in message else "ASR_DEPENDENCY_MISSING"
         return code, message, "运行 doctor 检查 ASR 依赖和本地模型。"
     if isinstance(exc, DecoderUnavailableError):
         return exc.code, str(exc), "安装项目的媒体解码依赖后重试。"
-    if isinstance(exc, MediaInvalidError):
-        return exc.code, str(exc), "确认媒体文件完整且包含可解码音轨。"
     if isinstance(exc, PermissionError):
         return "OUTPUT_NOT_WRITABLE", "目标目录或文件不可写。", "检查输出目录权限或更换输出路径。"
     if isinstance(exc, OSError):

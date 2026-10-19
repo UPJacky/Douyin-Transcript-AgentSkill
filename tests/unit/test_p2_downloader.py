@@ -5,7 +5,9 @@ import socket
 import sys
 import threading
 import time
+from fractions import Fraction
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import urlsplit
 
 import douyin_transcript.downloader as downloader_module
@@ -312,9 +314,7 @@ def test_oversized_cache_entry_is_skipped_before_decoder(tmp_path):
         tmp_path,
         max_bytes=20,
         decoder=decoder,
-        requester=lambda *_args, **_kwargs: (
-            FakeConnection(), FakeResponse(b"small")
-        ),
+        requester=lambda *_args, **_kwargs: (FakeConnection(), FakeResponse(b"small")),
         retries=0,
         sleeper=lambda _: None,
     )
@@ -370,18 +370,70 @@ def test_expired_cache_deadline_prevents_decoder_call(monkeypatch, tmp_path):
     assert decoder_calls == []
 
 
-def test_expired_cache_deadline_stops_before_download_attempt(tmp_path):
+def test_cache_scan_checks_deadline_without_sorting_directory_entries(
+    monkeypatch, tmp_path
+):
+    clock = [10.0]
+    monkeypatch.setattr(
+        downloader_module,
+        "time",
+        SimpleNamespace(monotonic=lambda: clock[0]),
+    )
+
+    class SlowEntries:
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if getattr(self, "yielded", False):
+                raise StopIteration
+            self.yielded = True
+            clock[0] = 11.0
+            return tmp_path / f"123-audio-{'x' * 16}.m4a"
+
+    monkeypatch.setattr(Path, "iterdir", lambda _self: SlowEntries())
+    monkeypatch.setattr(
+        Path,
+        "glob",
+        lambda *_args, **_kwargs: pytest.fail("cache discovery must stream entries"),
+    )
+    decoder_calls = []
+
+    with pytest.raises(DownloadError) as error:
+        downloader_module._find_valid_cache(
+            "123",
+            "audio",
+            tmp_path,
+            lambda path: decoder_calls.append(path) or ("mp4", 1.0),
+            max_bytes=1024,
+            deadline=10.5,
+            expected_duration_seconds=None,
+        )
+
+    assert error.value.code == "TIMEOUT"
+    assert decoder_calls == []
+
+
+def test_expired_cache_deadline_stops_before_download_attempt(monkeypatch, tmp_path):
     cached = tmp_path / f"123-audio-{'g' * 16}.m4a"
     cached.write_bytes(b"cached audio")
     requester_calls = []
+    monotonic_values = iter((10.0, 10.5, 10.75, 11.01))
+    monkeypatch.setattr(
+        downloader_module,
+        "time",
+        SimpleNamespace(monotonic=lambda: next(monotonic_values)),
+    )
 
     with pytest.raises(DownloadError) as error:
         download_media(
             "123",
             [candidate()],
             tmp_path,
-            total_timeout=1e-12,
-            decoder=lambda _path: pytest.fail("deadline should stop before cache decoding"),
+            total_timeout=1.0,
+            decoder=lambda _path: pytest.fail(
+                "deadline should stop before cache decoding"
+            ),
             requester=lambda *args, **_kwargs: requester_calls.append(args),
             retries=0,
         )
@@ -400,7 +452,10 @@ def test_cache_directory_with_media_name_is_skipped(tmp_path):
         [candidate()],
         tmp_path,
         decoder=lambda path: decoder_paths.append(path) or ("mp4", 1.0),
-        requester=lambda *_args, **_kwargs: (FakeConnection(), FakeResponse(b"download")),
+        requester=lambda *_args, **_kwargs: (
+            FakeConnection(),
+            FakeResponse(b"download"),
+        ),
         retries=0,
         sleeper=lambda _: None,
     )
@@ -416,7 +471,9 @@ def test_cache_symlink_is_skipped_when_supported(tmp_path):
     try:
         linked.symlink_to(outside)
     except (OSError, NotImplementedError) as exc:
-        pytest.skip(f"filesystem does not permit symlink creation: {type(exc).__name__}")
+        pytest.skip(
+            f"filesystem does not permit symlink creation: {type(exc).__name__}"
+        )
     decoder_paths = []
 
     result = download_media(
@@ -424,7 +481,10 @@ def test_cache_symlink_is_skipped_when_supported(tmp_path):
         [candidate()],
         tmp_path,
         decoder=lambda path: decoder_paths.append(path) or ("mp4", 1.0),
-        requester=lambda *_args, **_kwargs: (FakeConnection(), FakeResponse(b"download")),
+        requester=lambda *_args, **_kwargs: (
+            FakeConnection(),
+            FakeResponse(b"download"),
+        ),
         retries=0,
         sleeper=lambda _: None,
     )
@@ -464,7 +524,9 @@ def test_candidate_failure_summary_keeps_safe_codes_without_signed_urls(tmp_path
     def requester(url, **_kwargs):
         if "/audio." in url:
             return FakeConnection(), FakeResponse(b"", status=403)
-        return FakeConnection(), FakeResponse(b"<!doctype html>", content_type="video/mp4")
+        return FakeConnection(), FakeResponse(
+            b"<!doctype html>", content_type="video/mp4"
+        )
 
     with pytest.raises(DownloadError) as error:
         download_media(
@@ -705,14 +767,19 @@ def test_total_timeout_is_checked_after_media_validation(tmp_path):
     assert not list(tmp_path.glob(".*.part"))
 
 
-def test_absolute_deadline_caps_downloader_total_timeout(tmp_path):
-    started = time.monotonic()
-    deadline = started + 0.05
+def test_absolute_deadline_caps_downloader_total_timeout(monkeypatch, tmp_path):
+    clock = [100.0]
+    deadline = 100.05
+    monkeypatch.setattr(
+        downloader_module,
+        "time",
+        SimpleNamespace(monotonic=lambda: clock[0]),
+    )
     request_options = []
 
     def requester(_url, **kwargs):
         request_options.append(kwargs)
-        time.sleep(0.08)
+        clock[0] = deadline + 0.01
         return FakeConnection(), FakeResponse(b"audio")
 
     with pytest.raises(DownloadError) as error:
@@ -730,8 +797,7 @@ def test_absolute_deadline_caps_downloader_total_timeout(tmp_path):
 
     assert error.value.code == "TIMEOUT"
     assert request_options
-    assert request_options[0]["timeout"] < 0.1
-    assert time.monotonic() - started < 0.3
+    assert request_options[0]["timeout"] == pytest.approx(0.05)
     assert not list(tmp_path.glob(".*.part"))
     assert not list(tmp_path.glob("123-audio-*"))
 
@@ -1062,7 +1128,182 @@ def test_media_duration_uses_decoded_samples_when_container_metadata_understates
     assert frames_yielded == [0, 1, 2]
 
 
-def test_media_validation_skips_recoverable_invalid_audio_frame(
+@pytest.mark.parametrize(
+    ("frame_count", "max_duration_seconds", "expected_error"),
+    [(2, 3, None), (2, 1.5, "MEDIA_TOO_LONG")],
+)
+def test_media_duration_uses_decoded_samples_without_duration_metadata(
+    monkeypatch, tmp_path, frame_count, max_duration_seconds, expected_error
+):
+    import sys
+    from types import ModuleType
+
+    class Stream:
+        type = "audio"
+        duration = None
+        time_base = None
+
+    class Frame:
+        samples = 48_000
+        sample_rate = 48_000
+        pts = None
+        time_base = None
+
+    class Container:
+        streams = [Stream()]
+        duration = None
+        format = type("Format", (), {"name": "wav"})()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            pass
+
+        def decode(self, _stream):
+            return iter(Frame() for _ in range(frame_count))
+
+    av = ModuleType("av")
+    av.open = lambda *_args, **_kwargs: Container()
+    monkeypatch.setitem(sys.modules, "av", av)
+    path = tmp_path / "unknown-duration.wav"
+    path.write_bytes(b"non-empty")
+
+    if expected_error is None:
+        result = validate_media_file(path, max_duration_seconds=max_duration_seconds)
+        assert result.duration_seconds == 2.0
+    else:
+        with pytest.raises(ResourceLimitError) as error:
+            validate_media_file(path, max_duration_seconds=max_duration_seconds)
+        assert error.value.code == expected_error
+
+
+def test_real_vbr_mp3_is_fully_decoded_and_duration_is_measured(tmp_path):
+    av = pytest.importorskip("av")
+    np = pytest.importorskip("numpy")
+    if "libmp3lame" not in av.codecs_available:
+        pytest.skip("the installed FFmpeg build has no libmp3lame encoder")
+
+    sample_rate = 44_100
+    requested_duration = 8
+    path = tmp_path / "variable-bitrate.mp3"
+    with av.open(str(path), mode="w", format="mp3") as output:
+        stream = output.add_stream("libmp3lame", rate=sample_rate)
+        stream.layout = "stereo"
+        stream.codec_context.flags |= av.codec.context.Flags.qscale
+        stream.codec_context.options = {"qscale": "5"}
+
+        for start in range(0, sample_rate * requested_duration, 1_152):
+            count = min(1_152, sample_rate * requested_duration - start)
+            seconds = (np.arange(count, dtype=np.float64) + start) / sample_rate
+            if start < sample_rate * 2:
+                signal = np.zeros(count)
+            elif start < sample_rate * 4:
+                signal = 0.15 * np.sin(2 * np.pi * 440 * seconds)
+            elif start < sample_rate * 6:
+                signal = np.random.default_rng(start).normal(0, 0.3, count)
+            else:
+                signal = 0.8 * np.sin(2 * np.pi * (220 + 500 * (seconds - 6)) * seconds)
+
+            samples = np.clip(signal * 32_767, -32_768, 32_767).astype(np.int16)
+            frame = av.AudioFrame.from_ndarray(
+                np.stack([samples, samples]), format="s16p", layout="stereo"
+            )
+            frame.sample_rate = sample_rate
+            frame.pts = start
+            frame.time_base = Fraction(1, sample_rate)
+            for packet in stream.encode(frame):
+                output.mux(packet)
+
+        for packet in stream.encode(None):
+            output.mux(packet)
+
+    with av.open(str(path)) as encoded:
+        packet_sizes = [
+            packet.size for packet in encoded.demux(audio=0) if packet.size > 0
+        ]
+
+    assert len(set(packet_sizes)) >= 3
+    assert max(packet_sizes) >= min(packet_sizes) * 2
+
+    validated = validate_media_file(path)
+    assert requested_duration <= validated.duration_seconds <= requested_duration + 0.2
+
+
+def test_mp4_video_container_with_aac_audio_is_decoded_and_duration_is_measured(
+    tmp_path,
+):
+    av = pytest.importorskip("av")
+    np = pytest.importorskip("numpy")
+    missing_codecs = {"aac", "mpeg4"} - av.codecs_available
+    if missing_codecs:
+        pytest.skip("the installed FFmpeg build lacks an MP4 test encoder")
+
+    sample_rate = 48_000
+    audio_frame_size = 1_024
+    audio_frame_count = 192
+    requested_duration = audio_frame_size * audio_frame_count / sample_rate
+    video_rate = 10
+    video_frame_count = int(requested_duration * video_rate) + 1
+    path = tmp_path / "video-with-aac-audio.mp4"
+
+    with av.open(str(path), mode="w", format="mp4") as output:
+        video = output.add_stream("mpeg4", rate=video_rate)
+        video.width = 64
+        video.height = 64
+        video.pix_fmt = "yuv420p"
+        video.codec_context.max_b_frames = 0
+
+        audio = output.add_stream("aac", rate=sample_rate)
+        audio.layout = "stereo"
+
+        next_video_frame = 0
+        for audio_index in range(audio_frame_count):
+            audio_start = audio_index * audio_frame_size
+            audio_time = Fraction(audio_start, sample_rate)
+            while (
+                next_video_frame < video_frame_count
+                and Fraction(next_video_frame, video_rate) <= audio_time
+            ):
+                pixels = np.full(
+                    (64, 64, 3),
+                    48 + (next_video_frame % 160),
+                    dtype=np.uint8,
+                )
+                video_frame = av.VideoFrame.from_ndarray(pixels, format="rgb24")
+                video_frame.pts = next_video_frame
+                video_frame.time_base = Fraction(1, video_rate)
+                for packet in video.encode(video_frame):
+                    output.mux(packet)
+                next_video_frame += 1
+
+            seconds = (
+                np.arange(audio_frame_size, dtype=np.float64) + audio_start
+            ) / sample_rate
+            signal = (0.1 * np.sin(2 * np.pi * 440 * seconds)).astype(np.float32)
+            audio_frame = av.AudioFrame.from_ndarray(
+                np.stack((signal, signal)), format="fltp", layout="stereo"
+            )
+            audio_frame.sample_rate = sample_rate
+            audio_frame.pts = audio_start
+            audio_frame.time_base = Fraction(1, sample_rate)
+            for packet in audio.encode(audio_frame):
+                output.mux(packet)
+
+        for packet in audio.encode(None):
+            output.mux(packet)
+        for packet in video.encode(None):
+            output.mux(packet)
+
+    with av.open(str(path)) as encoded:
+        assert any(stream.type == "video" for stream in encoded.streams)
+        assert any(stream.type == "audio" for stream in encoded.streams)
+
+    validated = validate_media_file(path)
+    assert requested_duration <= validated.duration_seconds <= requested_duration + 0.2
+
+
+def test_media_validation_rejects_invalid_data_that_ends_the_decode_iterator(
     monkeypatch, tmp_path
 ):
     import sys
@@ -1082,23 +1323,6 @@ def test_media_validation_skips_recoverable_invalid_audio_frame(
         pts = 0
         time_base = 1
 
-    class DecodeIterator:
-        def __init__(self):
-            self.index = 0
-
-        def __iter__(self):
-            return self
-
-        def __next__(self):
-            self.index += 1
-            if self.index == 1:
-                return Frame()
-            if self.index == 2:
-                raise InvalidDataError("recoverable packet")
-            if self.index == 3:
-                return Frame()
-            raise StopIteration
-
     class Container:
         streams = [Stream()]
         duration = 1_000_000
@@ -1111,7 +1335,9 @@ def test_media_validation_skips_recoverable_invalid_audio_frame(
             pass
 
         def decode(self, _stream):
-            return DecodeIterator()
+            yield Frame()
+            raise InvalidDataError("corrupt packet ends the decoder iterator")
+            yield Frame()  # pragma: no cover - a closed generator cannot resume
 
     av = ModuleType("av")
     av.error = SimpleNamespace(InvalidDataError=InvalidDataError)
@@ -1120,9 +1346,10 @@ def test_media_validation_skips_recoverable_invalid_audio_frame(
     path = tmp_path / "recoverable-corruption.wav"
     path.write_bytes(b"non-empty")
 
-    result = validate_media_file(path, max_duration_seconds=2)
+    with pytest.raises(MediaInvalidError) as error:
+        validate_media_file(path, max_duration_seconds=2)
 
-    assert result.duration_seconds == 2.0
+    assert error.value.code == "MEDIA_DECODE_FAILED"
 
 
 def test_declared_over_limit_media_is_rejected_before_decoding(monkeypatch, tmp_path):
@@ -1160,9 +1387,7 @@ def test_declared_over_limit_media_is_rejected_before_decoding(monkeypatch, tmp_
     assert error.value.code == "MEDIA_TOO_LONG"
 
 
-def test_standalone_media_validator_uses_default_one_hour_limit(
-    monkeypatch, tmp_path
-):
+def test_standalone_media_validator_uses_default_one_hour_limit(monkeypatch, tmp_path):
     import sys
     from types import ModuleType
 

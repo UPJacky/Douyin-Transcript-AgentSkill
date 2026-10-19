@@ -10,7 +10,7 @@ Include the affected file or command, the relevant version or commit if known, a
 
 Reports may concern the CLI, local storage, browser capture, URL handling, dependency setup, or Agent Skill behavior. The tool is intended to process only content the operator is authorized to access. It does not bypass authentication, CAPTCHA, DRM, or access controls.
 
-The application is designed to keep transcript bodies in local Markdown files and omit them from CLI JSON summaries. Treat diagnostic output and local task data as potentially sensitive. The selected output path may be returned to the operator who requested the transcription so they can find the file; redact private paths or other personal information before forwarding diagnostics to another recipient.
+The CLI keeps transcript bodies in local Markdown files and omits them from CLI JSON summaries. The Agent Skill can place the body in the calling Agent's configured/default model context for proofreading and may therefore send it to that model provider. It must disclose this data flow and obtain approval unless the user directly requested or already approved model review. Reviewed output is a separate local Markdown file; diagnostics and chat replies must not include transcript text. Treat diagnostic output and local task data as potentially sensitive. The selected output path may be returned to the operator who requested the transcription so they can find the file; redact private paths or other personal information before forwarding diagnostics to another recipient.
 
 ## Supported versions
 

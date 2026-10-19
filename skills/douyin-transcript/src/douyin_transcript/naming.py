@@ -43,8 +43,7 @@ def sanitize_filename(
         value = strip_bidi_controls(value)
         cleaned = _INVALID_WINDOWS.sub("_", value)
         cleaned = "".join(
-            "_" if unicodedata.category(char) in {"Cc", "Cs"} else char
-            for char in cleaned
+            "_" if unicodedata.category(char) in {"Cc", "Cs"} else char for char in cleaned
         )
         cleaned = cleaned.strip().strip(" .")
         if cleaned and cleaned.split(".", 1)[0].upper() in _RESERVED:

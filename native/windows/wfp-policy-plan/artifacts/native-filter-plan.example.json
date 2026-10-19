@@ -1,0 +1,213 @@
+{
+  "SchemaVersion": "1",
+  "PlanKind": "native-filter-construction-preview",
+  "Deployability": "not-deployable",
+  "BrowserIdentitySource": "FWPM_CONDITION_ALE_APP_ID must be populated from FwpmGetAppIdFromFileName0 using an administrator-protected browser path.",
+  "SublayerKey": "00000000-0000-0000-0000-000000000000",
+  "SublayerKeyStatus": "placeholder; no provider or sublayer is installed",
+  "LeaseEndpoint": "illustrative TCP 127.0.0.1:43127",
+  "Rules": [
+    {
+      "Id": "allow-exact-broker-endpoint",
+      "FilterKey": "00000000-0000-0000-0000-000000000000",
+      "FilterKeyStatus": "placeholder; a service must assign and own a unique stable key",
+      "Layer": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Action": "FWP_ACTION_PERMIT",
+      "ActionValue": 4098,
+      "Flags": 0,
+      "Persistent": false,
+      "ClearActionRight": false,
+      "Weight": 15,
+      "WeightType": "FWP_UINT8",
+      "WeightMeaning": "filter-weight range index from 0 through 15; higher range has higher priority",
+      "Conditions": [
+        {
+          "Field": "FWPM_CONDITION_ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_BYTE_BLOB_TYPE",
+          "Value": "not-serialized",
+          "ValueSource": "FwpmGetAppIdFromFileName0(service-protected-browser-path)",
+          "Representation": "Runtime app ID must be derived by the service from its protected executable path."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_PROTOCOL",
+          "FieldKey": "3971ef2b-623e-4f9a-8cb1-6e79b806b9a7",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_UINT8",
+          "Value": "6",
+          "ValueSource": "constant",
+          "Representation": "TCP protocol number."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_REMOTE_ADDRESS",
+          "FieldKey": "b235ae9a-1d64-49b8-a44c-5ff3d9095045",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_UINT32",
+          "Value": "2130706433 (0x7F000001)",
+          "ValueSource": "constant",
+          "Representation": "127.0.0.1 represented as host-order FWP_UINT32."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_REMOTE_PORT",
+          "FieldKey": "c35a604d-d22b-4e1a-91b4-68f674ee674b",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_UINT16",
+          "Value": "43127",
+          "ValueSource": "illustrative-only",
+          "Representation": "Example port only; a service must select and retain its actual listener port."
+        }
+      ]
+    },
+    {
+      "Id": "deny-ipv4-non-tcp",
+      "FilterKey": "00000000-0000-0000-0000-000000000000",
+      "FilterKeyStatus": "placeholder; a service must assign and own a unique stable key",
+      "Layer": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Action": "FWP_ACTION_BLOCK",
+      "ActionValue": 4097,
+      "Flags": 1,
+      "Persistent": true,
+      "ClearActionRight": false,
+      "Weight": 1,
+      "WeightType": "FWP_UINT8",
+      "WeightMeaning": "filter-weight range index from 0 through 15; higher range has higher priority",
+      "Conditions": [
+        {
+          "Field": "FWPM_CONDITION_ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_BYTE_BLOB_TYPE",
+          "Value": "not-serialized",
+          "ValueSource": "FwpmGetAppIdFromFileName0(service-protected-browser-path)",
+          "Representation": "Runtime app ID must be derived by the service from its protected executable path."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_PROTOCOL",
+          "FieldKey": "3971ef2b-623e-4f9a-8cb1-6e79b806b9a7",
+          "Match": "FWP_MATCH_NOT_EQUAL",
+          "MatchValue": 10,
+          "ValueType": "FWP_UINT8",
+          "Value": "6",
+          "ValueSource": "constant",
+          "Representation": "TCP protocol number."
+        }
+      ]
+    },
+    {
+      "Id": "deny-ipv4-non-loopback-address",
+      "FilterKey": "00000000-0000-0000-0000-000000000000",
+      "FilterKeyStatus": "placeholder; a service must assign and own a unique stable key",
+      "Layer": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Action": "FWP_ACTION_BLOCK",
+      "ActionValue": 4097,
+      "Flags": 1,
+      "Persistent": true,
+      "ClearActionRight": false,
+      "Weight": 1,
+      "WeightType": "FWP_UINT8",
+      "WeightMeaning": "filter-weight range index from 0 through 15; higher range has higher priority",
+      "Conditions": [
+        {
+          "Field": "FWPM_CONDITION_ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_BYTE_BLOB_TYPE",
+          "Value": "not-serialized",
+          "ValueSource": "FwpmGetAppIdFromFileName0(service-protected-browser-path)",
+          "Representation": "Runtime app ID must be derived by the service from its protected executable path."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_REMOTE_ADDRESS",
+          "FieldKey": "b235ae9a-1d64-49b8-a44c-5ff3d9095045",
+          "Match": "FWP_MATCH_NOT_EQUAL",
+          "MatchValue": 10,
+          "ValueType": "FWP_UINT32",
+          "Value": "2130706433 (0x7F000001)",
+          "ValueSource": "constant",
+          "Representation": "127.0.0.1 represented as host-order FWP_UINT32."
+        }
+      ]
+    },
+    {
+      "Id": "deny-ipv4-non-lease-port",
+      "FilterKey": "00000000-0000-0000-0000-000000000000",
+      "FilterKeyStatus": "placeholder; a service must assign and own a unique stable key",
+      "Layer": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Action": "FWP_ACTION_BLOCK",
+      "ActionValue": 4097,
+      "Flags": 1,
+      "Persistent": true,
+      "ClearActionRight": false,
+      "Weight": 1,
+      "WeightType": "FWP_UINT8",
+      "WeightMeaning": "filter-weight range index from 0 through 15; higher range has higher priority",
+      "Conditions": [
+        {
+          "Field": "FWPM_CONDITION_ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_BYTE_BLOB_TYPE",
+          "Value": "not-serialized",
+          "ValueSource": "FwpmGetAppIdFromFileName0(service-protected-browser-path)",
+          "Representation": "Runtime app ID must be derived by the service from its protected executable path."
+        },
+        {
+          "Field": "FWPM_CONDITION_IP_REMOTE_PORT",
+          "FieldKey": "c35a604d-d22b-4e1a-91b4-68f674ee674b",
+          "Match": "FWP_MATCH_NOT_EQUAL",
+          "MatchValue": 10,
+          "ValueType": "FWP_UINT16",
+          "Value": "43127",
+          "ValueSource": "illustrative-only",
+          "Representation": "Example port only; a service must select and retain its actual listener port."
+        }
+      ]
+    },
+    {
+      "Id": "deny-all-ipv6-destinations",
+      "FilterKey": "00000000-0000-0000-0000-000000000000",
+      "FilterKeyStatus": "placeholder; a service must assign and own a unique stable key",
+      "Layer": "FWPM_LAYER_ALE_AUTH_CONNECT_V6",
+      "LayerKey": "4a72393b-319f-44bc-84c3-ba54dcb3b6b4",
+      "Action": "FWP_ACTION_BLOCK",
+      "ActionValue": 4097,
+      "Flags": 1,
+      "Persistent": true,
+      "ClearActionRight": false,
+      "Weight": 1,
+      "WeightType": "FWP_UINT8",
+      "WeightMeaning": "filter-weight range index from 0 through 15; higher range has higher priority",
+      "Conditions": [
+        {
+          "Field": "FWPM_CONDITION_ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Match": "FWP_MATCH_EQUAL",
+          "MatchValue": 0,
+          "ValueType": "FWP_BYTE_BLOB_TYPE",
+          "Value": "not-serialized",
+          "ValueSource": "FwpmGetAppIdFromFileName0(service-protected-browser-path)",
+          "Representation": "Runtime app ID must be derived by the service from its protected executable path."
+        }
+      ]
+    }
+  ],
+  "UnresolvedValidationItems": [
+    "The exact permit is a dynamic soft permit with higher filter weight than the three persistent IPv4 mismatch blocks in the same project sublayer; external-provider arbitration still requires runtime validation.",
+    "The current Sandbox confirmed the host-order 127.0.0.1 FWP_UINT32 condition for PowerShell on this Windows build; the protected Chromium identity and other servicing levels remain unverified.",
+    "No native FWPM_FILTER0 instance is allocated or submitted. Filter and sublayer keys, provider ownership, sublayer weight, transaction behavior, and service ACLs are placeholders.",
+    "ALE loopback behavior, other providers\u0027 hard blocks, IPv6, UDP/raw-socket coverage, process-tree identity, service/BFE failure, rollback, and established-connection revocation remain unverified."
+  ],
+  "SafetyBoundary": "This command emits a construction preview only. It does not open BFE, create a WFP session, install or delete filters, configure a service, or establish that isolation is active."
+}

@@ -1,0 +1,183 @@
+Preliminary source-release allowlist; NOT APPROVED for packaging or publication.
+Only listed paths and constrained patterns may enter a candidate tree. Unlisted
+paths are excluded. Exclusions override patterns. Review the material marked
+REVIEW before treating this as a final allowlist. The project license is not approved; do not add a root LICENSE or internal license draft to a release candidate. Do not use git archive HEAD
+or git add -A as a substitute for materializing this list.
+Expand every pattern from the repository root and compare the exact resulting
+path list against the final candidate tree; do not use recursive copy as the
+materializer. For a current-worktree preview, the path universe is existing
+files returned by Git as tracked or non-ignored untracked; tracked deletions
+are omitted. Git paths use forward slashes and matching is case-sensitive.
+Patterns are matched by slash-separated path segments: `*` matches zero or
+more characters within one segment, and `**` is valid only as a complete
+segment and matches zero or more complete directory segments. Thus
+`scripts/**/*.py` matches both `scripts/foo.py` and `scripts/pkg/foo.py`.
+Exclusions take priority over every include, including explicit paths. Sort
+the resulting candidate paths by their Git path spelling.
+
+INCLUDE: CI, source, and locked-install inputs
+.editorconfig
+.gitignore
+.python-version
+CHANGELOG.md
+CONTRIBUTING.md
+SECURITY.md
+pytest.ini
+examples/sample_output.md
+examples/sample_summary.json
+examples/urls.example.txt
+.github/workflows/ci.yml
+.github/ISSUE_TEMPLATE/bug_report.yml
+.github/ISSUE_TEMPLATE/feature_request.yml
+.codex/skills/douyin-transcript/SKILL.md
+THIRD_PARTY_NOTICES.md  [REVIEW: legal applicability and notice scope remain; local cache replay found MIT declaration and no LICENSE/NOTICE/COPYING member; provenance proof is not archived]
+THIRD_PARTY_LICENSES/CC-BY-3.0.txt
+skills/douyin-transcript/scripts/run.cmd
+skills/douyin-transcript/scripts/run.sh
+skills/douyin-transcript/scripts/doctor.py
+scripts/**/*.py
+scripts/nuget_content_hash/NuGet.Config
+scripts/nuget_content_hash/NuGetContentHash.csproj
+scripts/nuget_content_hash/Program.cs
+scripts/nuget_content_hash/global.json
+scripts/schemas/spdx-2.3.schema.json
+tools/spdx-schema-check/pyproject.toml
+tools/spdx-schema-check/uv.lock
+skills/douyin-transcript/SKILL.md
+skills/douyin-transcript/pyproject.toml
+skills/douyin-transcript/uv.lock
+skills/douyin-transcript/.python-version
+skills/douyin-transcript/src/douyin_transcript/**/*.py
+skills/douyin-transcript/references/*.md
+skills/douyin-transcript/references/capture-ipc-v1.schema.json
+skills/douyin-transcript/assets/config.example.toml
+skills/douyin-transcript/assets/corrections.example.json
+tests/**/*.py
+README.md
+README_EN.md
+native/windows/capture-pipe/*.cs
+native/windows/capture-pipe/*.csproj
+native/windows/capture-pipe/global.json
+native/windows/capture-pipe/README.md
+native/windows/shared/PublicUnicastAddressPolicy.cs
+native/windows/wfp-policy-core/*.cs
+native/windows/wfp-policy-core/*.csproj
+native/windows/wfp-policy-core/global.json
+native/windows/wfp-policy-core/packages.lock.json
+native/windows/wfp-policy-runtime/*.cs
+native/windows/wfp-policy-runtime/*.csproj
+native/windows/wfp-policy-runtime/global.json
+native/windows/wfp-policy-runtime/packages.lock.json
+native/windows/wfp-policy-runtime/tests/*.cs
+native/windows/wfp-policy-runtime/tests/*.csproj
+native/windows/wfp-policy-runtime/tests/packages.lock.json
+native/windows/wfp-policy-runtime/DYNAMIC_LEASE_SCOPE_LIMITATIONS.md
+native/windows/wfp-policy-native-readback/*.cs
+native/windows/wfp-policy-native-readback/*.txt
+native/windows/wfp-policy-native-readback/*.md
+native/windows/wfp-policy-native-readback/*.csproj
+native/windows/wfp-policy-native-readback/global.json
+native/windows/wfp-policy-native-readback/packages.lock.json
+native/windows/wfp-policy-native-readback/tests/*.cs
+native/windows/wfp-policy-native-readback/tests/*.csproj
+native/windows/wfp-policy-native-readback/tests/packages.lock.json
+native/windows/wfp-policy-plan/*.cs
+native/windows/wfp-policy-plan/*.ps1
+native/windows/wfp-policy-plan/.editorconfig
+native/windows/wfp-policy-plan/.gitattributes
+native/windows/wfp-policy-plan/.gitignore
+native/windows/wfp-policy-plan/*.csproj
+native/windows/wfp-policy-plan/global.json
+native/windows/wfp-policy-plan/packages.lock.json
+native/windows/wfp-policy-plan/NativeMethods.txt
+native/windows/wfp-policy-plan/tests/*.cs
+native/windows/wfp-policy-plan/tests/*.csproj
+native/windows/wfp-policy-plan/artifacts/native-filter-plan.example.json
+native/windows/wfp-policy-plan/README.md
+native/windows/wfp-policy-plan/sandbox/ScopedNetworkWfpSmoke.ps1
+native/windows/wfp-policy-plan/sandbox/AppContainerIdentitySmoke.ps1
+native/windows/wfp-policy-plan/sandbox/ChromiumAsUserTokenSmoke.ps1
+native/windows/wfp-policy-plan/sandbox/ChromiumInteractiveHeadlessSmoke.ps1
+native/windows/wfp-policy-plan/sandbox/GrantInteractiveDesktopAccess.ps1
+native/windows/wfp-policy-plan/sandbox/ProcessSingletonApiProbe.ps1
+native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.cmd
+native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.ps1
+native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeSandboxSmoke.ps1
+native/windows/wfp-policy-plan/sandbox/UserSidChromiumSmoke.ps1
+docs/dotnet-windows-build-bom.json
+docs/third-party-license-evidence.json
+docs/third-party-sbom.spdx.json
+
+Product-document review (2026-10-15): CHANGELOG.md and
+native/windows/wfp-policy-runtime/DYNAMIC_LEASE_SCOPE_LIMITATIONS.md are
+included. docs/ACCEPTANCE.md, docs/BENCHMARK.md, and docs/RELEASE_CHECKLIST.md
+are internal acceptance, machine benchmark, and release-gate records and are
+excluded below. docs/ARCHITECTURE.md contains changing prototype detail and an
+internal-report link; exclude it until rewritten as a stable, scoped guide.
+The included CC BY file matches the official Creative Commons legal code
+bytes; its source and SHA-256 are recorded in THIRD_PARTY_NOTICES.md. The three
+explicit example files were individually reviewed on 2026-10-15:
+examples/sample_output.md labels its transcript fictional and contains only
+generic synthetic text; examples/sample_summary.json contains example task,
+title, and duration values plus the static C:\Users\Example\Transcripts
+placeholder; examples/urls.example.txt contains only
+REPLACE_WITH_AUTHORIZED_VIDEO_ID, not a real URL or video ID. README.md links
+to all three existing files. No real user content, credentials, or video links
+were found. The example summary contains only a generic Windows profile placeholder.
+The nine explicitly included Sandbox sources are dependencies
+of tests/unit/test_sandbox_cleanup_ownership.py; the test reads source text
+only and never executes PowerShell. Six are fail-closed stubs guarded by
+assertions: ChromiumAsUserTokenSmoke.ps1, GrantInteractiveDesktopAccess.ps1,
+RunMaterializerBfeProbe.cmd, RunMaterializerBfeProbe.ps1,
+RunMaterializerBfeSandboxSmoke.ps1, and UserSidChromiumSmoke.ps1. Three are
+executable diagnostics: AppContainerIdentitySmoke.ps1,
+ChromiumInteractiveHeadlessSmoke.ps1, and ProcessSingletonApiProbe.ps1.
+Those diagnostics can launch Chromium, create system/profile objects or
+change temporary-directory ACLs, and write SID, user, path, log, screenshot,
+or dump data. They are not product workflows or isolation boundaries; never
+run them during install, tests, or CI. Manual use requires a disposable,
+controlled Sandbox, with diagnostic output kept there. The AppContainer
+script's WFP/network branch is currently behind a gate but the script is
+still not an isolation boundary. The separately included
+ScopedNetworkWfpSmoke.ps1 is pinned by the included artifact verifier and
+currently exits before any WFP call.
+
+EXCLUDE
+LICENSE
+Examples rule: include only the three explicit examples listed above; exclude every other examples/** path. This sentence is a rule, not a glob.
+Documentation rule: include only the three explicit docs/ JSON paths listed above; exclude every other docs/** path. This sentence is a rule, not a glob.
+docs/ACCEPTANCE.md
+docs/ARCHITECTURE.md
+docs/BENCHMARK.md
+docs/RELEASE_CHECKLIST.md
+native/windows/wfp-policy-plan/sandbox/CapabilitySmoke.ps1
+native/windows/wfp-policy-plan/sandbox/ChromiumContextBaseline.ps1
+native/windows/wfp-policy-plan/sandbox/HoldChromiumProcessSingletonMutex.ps1
+native/windows/wfp-policy-plan/sandbox/NetworkWfpWriteSmoke.ps1
+native/windows/wfp-policy-plan/sandbox/ProbeInteractiveDesktopAcl.ps1
+native/windows/wfp-policy-plan/sandbox/ProbeInteractiveSession.ps1
+native/windows/wfp-policy-plan/sandbox/StageChromiumForDiagnostic.ps1
+native/windows/wfp-policy-plan/sandbox/StageChromiumForInteractiveUser.ps1
+native/windows/wfp-policy-plan/sandbox-results/**
+**/bin/**
+**/obj/**
+**/__pycache__/**
+**/*.pyc
+**/*.pyo
+**/*.dll
+**/*.exe
+**/.venv*/**
+**/.pytest_cache/**
+**/.ruff_cache/**
+**/cache/**
+**/models/**
+**/media/**
+**/outputs/**
+**/*profile*results*/**
+.audit-clean-skill-temp/**
+.venv-audit-py311/**
+MEMORY.md
+给执行Agent的启动指令.md
+Douyin-Transcript-AgentSkill-完整项目实施方案-V2.md
+Douyin-Transcript-AgentSkill-项目执行资料包.zip
+toolchain-smoke.obj

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import socket
+import ssl
 import sys
 import threading
 import time
@@ -10,6 +11,7 @@ import pytest
 from douyin_transcript.urls import (
     ResolvedInput,
     UnsupportedUrlError,
+    resolve_direct_input,
     resolve_input,
     resolve_many,
     resolve_public_addresses,
@@ -41,6 +43,22 @@ def test_jingxuan_uses_only_modal_id():
     result = resolve_input("https://www.douyin.com/jingxuan?from=share&modal_id=987654")
     assert result.video_id == "987654"
     assert result.canonical_url.endswith("/video/987654")
+
+
+def test_direct_only_resolver_rejects_short_link_without_network(monkeypatch):
+    def unexpected_network(*_args, **_kwargs):
+        raise AssertionError("direct-only resolution must not access the network")
+
+    monkeypatch.setattr(
+        "douyin_transcript.urls._request_short_redirect", unexpected_network
+    )
+
+    assert (
+        resolve_direct_input("https://www.douyin.com/video/123456").video_id == "123456"
+    )
+    with pytest.raises(UnsupportedUrlError) as error:
+        resolve_direct_input("https://v.douyin.com/example/")
+    assert error.value.code == "BROWSER_ISOLATION_UNAVAILABLE"
 
 
 @pytest.mark.parametrize(
@@ -262,9 +280,7 @@ sys.stdout.write(json.dumps({"ok": True, "addresses": [address]}) + "\\n")
             "good.example", deadline=time.monotonic() + 3
         ) == ("8.8.8.8",)
         with pytest.raises(UnsupportedUrlError) as private_error:
-            resolve_public_addresses(
-                "private.example", deadline=time.monotonic() + 3
-            )
+            resolve_public_addresses("private.example", deadline=time.monotonic() + 3)
         assert private_error.value.code == "UNSAFE_ADDRESS"
         assert len(reaped) >= 4
         assert all(returncode is not None for returncode in reaped)
@@ -319,3 +335,179 @@ def test_https_validator_returns_validated_public_ip(monkeypatch):
     )
     assert parsed.hostname == "v.douyin.com"
     assert address == "8.8.8.8"
+
+
+@pytest.mark.parametrize("address", ["198.18.0.0", "198.18.0.15", "198.19.255.255"])
+def test_fake_ip_dns_requires_explicit_personal_opt_in(monkeypatch, address):
+    import douyin_transcript.urls as urls
+
+    monkeypatch.setattr(urls, "_getaddrinfo_until", lambda *_args: (address,))
+    with pytest.raises(UnsupportedUrlError) as failure:
+        urls.resolve_public_addresses("www.douyin.com")
+    assert failure.value.code == "UNSAFE_ADDRESS"
+    assert urls.resolve_public_addresses("www.douyin.com", allow_proxy_dns=True) == (address,)
+    # A truthy configuration value is not the explicit boolean opt-in.
+    with pytest.raises(UnsupportedUrlError):
+        urls.resolve_public_addresses("www.douyin.com", allow_proxy_dns=1)
+
+
+@pytest.mark.parametrize(
+    "address",
+    [
+        "0.0.0.0", "127.0.0.1", "10.1.2.3", "172.16.0.1", "192.168.0.1",
+        "169.254.1.1", "100.64.0.1", "::1", "fc00::1", "fe80::1", "::ffff:198.18.0.15",
+    ],
+)
+def test_personal_fake_ip_opt_in_still_rejects_other_nonpublic_answers(monkeypatch, address):
+    import douyin_transcript.urls as urls
+
+    monkeypatch.setattr(urls, "_getaddrinfo_until", lambda *_args: ("198.18.0.15", address))
+    with pytest.raises(UnsupportedUrlError) as failure:
+        urls.resolve_public_addresses("www.douyin.com", allow_proxy_dns=True)
+    assert failure.value.code == "UNSAFE_ADDRESS"
+
+
+def test_fake_ip_opt_in_keeps_url_hostname_allowlist_and_ip_literal_rejection(monkeypatch):
+    import douyin_transcript.urls as urls
+
+    def unexpected_dns(*_args):
+        pytest.fail("invalid hostname must be rejected before DNS")
+
+    monkeypatch.setattr(urls, "_getaddrinfo_until", unexpected_dns)
+    for value in ("https://evil.example/video/123", "https://198.18.0.15/video/123"):
+        with pytest.raises(UnsupportedUrlError):
+            urls.validate_https_url(value, allowed_hosts={"www.douyin.com"}, allow_proxy_dns=True)
+
+
+def test_fake_ip_https_pins_address_and_forwards_deadline_and_cancellation(monkeypatch):
+    import douyin_transcript.urls as urls
+
+    observed = []
+    deadline = time.monotonic() + 10
+    monkeypatch.setattr(urls, "_getaddrinfo_until", lambda *_args: ("198.18.0.15",))
+
+    class Cancellation:
+        def is_set(self):
+            return False
+
+        def register(self, closer):
+            observed.append(("register", closer))
+            return lambda: None
+
+    class Connection:
+        def __init__(self, host, address, **options):
+            observed.append(("connection", host, address, options))
+
+        def abort(self):
+            pass
+
+        def arm_deadline(self):
+            pass
+
+        def request(self, method, path, **options):
+            observed.append(("request", method, path, options))
+
+        def getresponse(self):
+            return "response"
+
+    monkeypatch.setattr(urls, "_PinnedHTTPSConnection", Connection)
+    cancellation = Cancellation()
+    with pytest.raises(UnsupportedUrlError):
+        urls.open_pinned_https("https://www.douyin.com/video/123", allowed_hosts={"www.douyin.com"})
+    connection, response = urls.open_pinned_https(
+        "https://www.douyin.com/video/123",
+        allowed_hosts={"www.douyin.com"},
+        allow_proxy_dns=True,
+        deadline=deadline,
+        cancellation=cancellation,
+    )
+    assert isinstance(connection, Connection) and response == "response"
+    created = next(event for event in observed if event[0] == "connection")
+    assert created[1:3] == ("www.douyin.com", "198.18.0.15")
+    assert created[3]["deadline"] == deadline
+    assert created[3]["cancellation"] is cancellation
+    assert any(event[0] == "register" for event in observed)
+
+
+@pytest.mark.parametrize("certificate_failure", [False, True])
+def test_fake_ip_connection_keeps_tls_hostname_verification(monkeypatch, certificate_failure):
+    import douyin_transcript.urls as urls
+
+    observed = []
+
+    class Socket:
+        def settimeout(self, timeout):
+            pass
+
+        def connect(self, address):
+            observed.append(("connect", address))
+
+        def do_handshake(self):
+            observed.append("handshake")
+            if certificate_failure:
+                raise ssl.SSLCertVerificationError("certificate fixture")
+
+        def close(self):
+            observed.append("close")
+
+    connection = urls._PinnedHTTPSConnection("v3-web.douyinvod.com", "198.18.0.15", timeout=1)
+    assert connection._context.check_hostname is True
+    assert connection._context.verify_mode == ssl.CERT_REQUIRED
+
+    def wrap(sock, *, server_hostname, do_handshake_on_connect):
+        observed.append(("tls", server_hostname, do_handshake_on_connect))
+        assert connection._context.check_hostname is True
+        assert connection._context.verify_mode == ssl.CERT_REQUIRED
+        return sock
+
+    monkeypatch.setattr(urls.socket, "socket", lambda *_args: Socket())
+    monkeypatch.setattr(connection._context, "wrap_socket", wrap)
+    if certificate_failure:
+        with pytest.raises(ssl.SSLCertVerificationError):
+            connection.connect()
+    else:
+        connection.connect()
+        connection.close()
+    assert ("connect", ("198.18.0.15", 443)) in observed
+    assert ("tls", "v3-web.douyinvod.com", False) in observed
+    assert "handshake" in observed
+
+
+def test_short_redirect_forwards_personal_dns_option_and_request_bounds(monkeypatch):
+    import douyin_transcript.urls as urls
+
+    observed = []
+    closed = []
+    deadline = time.monotonic() + 10
+    cancellation = object()
+
+    class Connection:
+        def close(self):
+            closed.append("connection")
+
+    class Response:
+        status = 302
+
+        def getheader(self, name):
+            assert name == "Location"
+            return "https://www.douyin.com/video/123"
+
+        def close(self):
+            closed.append("response")
+
+    def request(url, **options):
+        observed.append(options)
+        return Connection(), Response()
+
+    monkeypatch.setattr(urls, "open_pinned_https", request)
+    assert urls._request_short_redirect(
+        "https://v.douyin.com/fixture/",
+        deadline=deadline,
+        cancellation=cancellation,
+        allow_proxy_dns=True,
+    ) == "https://www.douyin.com/video/123"
+    assert observed[0]["allow_proxy_dns"] is True
+    assert observed[0]["deadline"] == deadline
+    assert observed[0]["cancellation"] is cancellation
+    assert observed[0]["allowed_hosts"] == urls.DOUYIN_SHORT_HOSTS
+    assert closed == ["response", "connection"]

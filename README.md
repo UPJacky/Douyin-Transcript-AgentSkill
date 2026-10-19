@@ -1,20 +1,19 @@
 # Douyin Transcript
 
-把**有权处理的**抖音视频链接或本地音视频转成按标题命名的 Markdown 口播逐字稿。ASR 在本机运行，程序不调用 LLM，也不会把逐字稿正文输出到终端或 JSON。
+把**有权处理的**本地音视频或抖音链接转成 Markdown 口播逐字稿，优先按标题命名，缺失时使用视频 ID。当前面向个人 Windows 自用：以现有普通账号运行专用 Chromium profile，一次处理一个 URL，不要求管理员服务。三条不同真实授权链接已完成采集、下载、本地 ASR、当前默认模型文本校对及独立校对稿注册；原稿保留，声学听审未验证。后两条没有独立短标题，使用视频 ID 文件名，见[当前交付状态](docs/CURRENT_DELIVERY_STATUS.md)。ASR 在本机运行；CLI 不调用 LLM，也不会把逐字稿正文输出到终端或 JSON。经用户要求或授权后，Agent Skill 使用调用它的 Agent 当前默认模型检查明显的 ASR 错词并补充中文标点，另存并核验 `.reviewed.md` 校对稿；只有完成这一步才报告端到端任务完成。校对会将正文放入该 Agent 的模型上下文，可能发送给模型服务商；首次校对前须说明这一数据流。用户可要求本地模式跳过此步骤，此时结果仍是未校对的原始稿。
 
-## 当前验证情况
+## 能力范围
 
-| 项目 | 状态 |
-|---|---|
-| Windows 本地离线回归 | Python 3.11.15 和 3.12.13 最新工作树均为 382 passed、20 skipped；Ruff 全仓检查和敏感文件检查通过（2026-10-09）。20 项跳过包含 POSIX 专属用例和本机 symlink 能力限制 |
-| 本地媒体真实 ASR、速度和识别质量 | 未验证；未下载模型 |
-| 真实抖音登录、媒体捕获和 CDN 下载 | 未验证；没有使用账号或授权链接 |
-| macOS / Linux | CI 目标，尚未验证 |
-| Agent Skills 标准文件 | 已通过标准校验；仓库外离线干净副本安装和 CLI 冒烟通过；真实 Agent 调用待验证 |
+- 官方支持目标为 Windows 11 x64、Python 3.11/3.12；macOS 和 Linux 暂不支持。
+- 本地音视频可使用 faster-whisper 在本机转写。首次安装和准备模型会写入本地环境，并可能从配置的软件源下载锁定依赖或模型。
+- 个人 URL 采集使用当前账号的可见 Chromium 和专用 profile，串行下载并复用本地 ASR；没有操作系统网络隔离保证。`doctor` 的 URL ready 只表示依赖和路径就绪，不表示某条链接已抓取成功。
+- Agent Skill 可在用户明确要求或授权后调用当前 Agent 默认模型校对 ASR 文本。校对会将正文放入模型上下文，首次处理前应说明该数据流；用户也可选择仅保留本地原稿。
 
 ## 安装和首次准备
 
 项目要求 Python 3.11/3.12 和 [uv](https://docs.astral.sh/uv/)。CI 固定使用 uv 0.12.7；更早版本尚未验证。基础安装只安装轻量 CLI。`uv sync --locked` 会在 Skill 目录创建或更新 `.venv`，并可能从配置的软件源下载锁定依赖；由 Agent 执行前，应先说明这些网络和文件写入行为并取得用户同意：
+
+官方支持目标为 Windows 11 x64、Python 3.11/3.12；macOS 和 Linux 暂不支持。
 
 ```powershell
 uv sync --project .\skills\douyin-transcript --locked
@@ -27,11 +26,7 @@ uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript
 uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript setup --model balanced
 ```
 
-抖音链接抓取需要 Chromium，可另行准备。首次启动会打开浏览器；需要登录时请在浏览器中手动登录：
-
-```powershell
-uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript setup --browser
-```
+个人 URL 采集需要 Playwright/Chromium。先运行 `doctor --json`；缺少浏览器时，确认安装行为后运行 `setup --browser`。个人模式报告 `capture_mode=personal`、`checks.browser_isolation.status=not_used`；`capabilities.douyin_urls=ready` 只表示本地依赖和所需路径就绪，不证明某条抖音链接可访问。
 
 Windows 优先使用 `%LOCALAPPDATA%\douyin-transcript`；若祖先 ACL 不安全且该数据目录尚不存在，会退回当前用户目录下的 `%USERPROFILE%\.local\share\douyin-transcript`。如果旧目录已经存在但不安全，程序保留原路径并拒绝写入，不会静默切换或迁移数据。用 `doctor --json` 查看实际选中的 `data_dir`。也可以显式把模型、数据库、浏览器 profile 与媒体缓存放到经确认私有的其他目录：
 
@@ -42,28 +37,28 @@ uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript
 
 模型文件可能占用数百 MB 到约 1.5 GB，实际大小、下载时间取决于模型和网络。setup 不会自动执行；数据只保存在本机。
 
-程序为自己新建的数据目录设置私有权限：POSIX 使用目录 `0700`、新建 SQLite 文件 `0600`；Windows 在创建目录时直接设置只允许当前用户的受保护 DACL。`doctor` 会只读检查敏感目标和已有祖先，拒绝无法确认或可被其他主体替换的路径；数据目录不安全时不会修改已有权限。浏览器 profile 会长期保留登录状态，任务数据库和媒体缓存也包含本地信息，请勿把数据目录放入共享盘、公开同步目录或提交到仓库。路径检查保留原始词法组件并拒绝 symlink/reparse 别名及 UNC 存储路径；检查与 SQLite、Playwright 等依赖按路径重开的操作仍不是同一文件句柄，存在残余 TOCTOU，不抵御同一 UID 进程、管理员/root 或所有网络文件系统行为。POSIX 扩展 ACL 与 Windows 多账户 ACL 尚需跨平台实机验收。`doctor` 默认检查配置中的输出目录；用 `doctor --output-dir PATH` 检查指定目标。转写、dry-run 和失败重试都会检查本次实际输出目录，并对 `unsafe`/`unknown` 状态发出提示；这是提醒，不会阻止你有意保存到共享目录，也不会改写既有权限。
+程序会为自己新建的数据目录设置仅当前用户可访问的权限。`doctor` 可检查有效数据和输出路径；如果隐式默认目录不安全，转写会停止且不会改写已有权限。浏览器 profile 可能长期保留登录状态，任务数据库和媒体缓存也包含本地信息；请勿把它们放入共享盘、公开同步目录或提交到仓库。显式指定的输出目录可按需要共享，但程序会报告其权限状态。旧任务保存的输出路径不安全或无法确认时，重试需要用户明确指定新的 `--output-dir`。
 
-逐字稿目录依次使用命令行 `--output-dir`、环境变量 `DOUYIN_TRANSCRIPT_OUTPUT`、数据目录 `config.toml` 的 `[paths].output_dir`，最后回退到当前工作目录下的 `douyin-transcripts/output`。数据目录可由 `DOUYIN_TRANSCRIPT_HOME` 指定。
+逐字稿目录依次使用命令行 `--output-dir`、环境变量 `DOUYIN_TRANSCRIPT_OUTPUT`、配置锚点 `config.toml` 的 `[paths].output_dir`，最后回退到所选应用数据目录下的 `output/`。配置锚点依次由 `--data-dir`、`DOUYIN_TRANSCRIPT_HOME` 和平台默认位置确定；没有显式覆盖时，`[paths].data_dir` 选择任务库、浏览器资料、媒体缓存和本地模型所在的数据目录，不会移动正在读取的 `config.toml`。默认输出沿用应用数据目录的私有权限；若默认目录权限不安全或无法确认，转写会停止并要求指定 `--output-dir` 或修复数据目录权限。显式输出目录仍可按需共享并会显示权限提示。新任务按当前设置选择输出目录；失败重试默认恢复任务保存的输出目录，但有效 schema 1/2 快照若保存目录权限为 `unsafe`/`unknown`，在未显式指定 `retry-failed --output-dir` 时会跳过。
 
 ## 使用
 
-单条链接：
+在 `doctor` 报告 `capabilities.douyin_urls=ready` 后处理一条获授权链接；个人模式一次下载一个任务。同一数据目录的登录与采集通过跨进程占用锁串行；如返回 `CAPTURE_BUSY`，等当前操作完成后重试。`--dry-run` 不创建锁文件：
 
 ```powershell
-uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe 'https://www.douyin.com/video/1234567890' --json
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe 'https://www.douyin.com/video/1234567890' --max-downloads 1 --json
 ```
 
-URL 清单每行一个链接，空行和 `#` 注释会忽略；任务逐条入库，重复视频会跳过：
+URL 清单按串行任务处理：
 
 ```powershell
-uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --file .\urls.txt --json
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --file .\urls.txt --max-downloads 1 --json
 ```
 
 本地音视频：
 
 ```powershell
-uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --input-file 'D:\Videos\sample.mp4' --output-dir "$env:USERPROFILE\Transcripts" --json
+uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript transcribe --input-file "$env:USERPROFILE\Videos\sample.mp4" --output-dir "$env:USERPROFILE\Transcripts" --json
 ```
 
 查看状态或重试可重试的失败任务：
@@ -72,6 +67,8 @@ uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript
 uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript status --json
 uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript retry-failed --json
 ```
+
+`status --json` 保留原稿任务的 `state` 与 `output_path`，并新增 `review_status`、`reviewed_output_path`、`review_scope`。状态会按登记顺序检查最新校对稿以及原稿的登记哈希；只有两者均可检查且哈希匹配时才返回校对稿路径。`completed` 仍只表示原稿任务完成，文本校对范围会明确标为未听审。JSON 和文本摘要都不包含正文。
 
 已完成结果默认跳过，也可显式写 `--skip-existing`；它与 `--force` 互斥。`--force` 会重新处理并另存新文件，不覆盖已有逐字稿。默认会保留远端媒体缓存以支持恢复；本地源文件不会被修改。
 
@@ -82,7 +79,7 @@ uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript
 可下载的示例文件：[`examples/sample_summary.json`](examples/sample_summary.json)、[`examples/sample_output.md`](examples/sample_output.md)；批量 URL 清单模板见 [`examples/urls.example.txt`](examples/urls.example.txt)，运行前需替换为你获授权处理的链接。
 
 ```json
-{"status":"success","total":1,"success":1,"skipped":0,"failed":0,"output_dir":"C:\\Users\\Example\\Transcripts","output_dir_permissions":{"status":"ok","directories":[{"path":"C:\\Users\\Example\\Transcripts","status":"ok","detail":"private output directory"}]},"items":[{"status":"success","title":"阳台种植入门（虚构样例）","video_id":null,"output_path":"C:\\Users\\Example\\Transcripts\\阳台种植入门-虚构样例.md","error_code":null,"hint":null,"duration_seconds":18.2}]}
+{"status":"success","result_scope":"raw_asr_only","llm_review_status":"not_performed_by_cli","total":1,"success":1,"skipped":0,"failed":0,"output_dir":"<output-dir>","output_dir_permissions":{"status":"ok","directories":[{"path":"<output-dir>","status":"ok","detail":"private output directory"}]},"items":[{"status":"success","title":"阳台种植入门（虚构样例）","video_id":null,"output_path":"<output-file>","error_code":null,"hint":null,"duration_seconds":18.2}]}
 ```
 
 生成的 Markdown 正文大致如下；自动识别内容未经逐字校对：
@@ -111,16 +108,16 @@ task_id: "example-task-001"
 ## 输出与限制
 
 - Markdown frontmatter 记录标题、来源、模型、语言和时长；时间轴可用 `--timestamps` 另存。
-- `--json` 返回任务状态与计数、标题/视频 ID、路径、目录权限状态、错误码/提示和时长，不含逐字稿正文。Agent 应只回复摘要与文件路径，不读取全文。
+- `--json` 返回任务状态与计数、标题/视频 ID、路径、目录权限状态、错误码/提示和时长，不含逐字稿正文。转写的 `status=success` 表示 raw ASR 文件已写入；`result_scope=raw_asr_only` 和 `llm_review_status=not_performed_by_cli` 明确 CLI 不会做模型校对。经授权的 Agent Skill 必须用调用 Agent 的默认模型校对、补充标点并保存/核验 `.reviewed.md` 后，才能报告端到端请求完成；聊天回复仍只包含状态和文件路径。
 - 需要本地模型及 PyAV 解码；`doctor` 可检查依赖、所选档位模型、目录可写性和磁盘空间；使用 `--output-dir` 可检查具体转写目录的隐私权限状态。
-- 资源默认上限为媒体 60 分钟、20,000 个识别分段和 2,000,000 个识别字符；超限媒体会在模型加载前拒绝。可在实际数据目录（`doctor --json` 中的 `data_dir`）下的 `config.toml` 的 `[limits]` 中调整，或对单次转写使用 `--max-duration-minutes`、`--max-output-segments` 和 `--max-output-characters`。硬上限分别为 4 小时、100,000 段和 10,000,000 字符。
+- 资源默认上限为媒体 60 分钟、20,000 个识别分段和 2,000,000 个识别字符；超限媒体会在模型加载前拒绝。可在配置锚点所读取的 `config.toml` 的 `[limits]` 中调整，或对单次转写使用 `--max-duration-minutes`、`--max-output-segments` 和 `--max-output-characters`。配置锚点由 `--data-dir`、`DOUYIN_TRANSCRIPT_HOME` 或平台默认位置确定；`[paths].data_dir` 不改变配置文件位置。硬上限分别为 4 小时、100,000 段和 10,000,000 字符。
 - 每条媒体的解码、远端下载和 ASR 共用绝对处理时限，默认 7,200 秒。超时会终止负责解码/推理的子进程并将已创建任务标记失败；可通过 `--processing-timeout-seconds N` 调整，最高 86,400 秒。单条任务的 ASR 模型在子进程内复用。
 - 抖音页面、登录状态和媒体域名会变化；工具不绕过验证码、登录、DRM 或访问控制。失败时请使用自己有权处理的本地媒体。
-- ASR 可能错词，尤其是专有名词、方言和背景音乐；输出未经过人工校对。
+- CLI 原始稿可能有错词，尤其是专有名词、方言和背景音乐；Agent 模型校对可修复上下文明确的错误并补标点，但不能替代听音，也不会验证事实或数字。
 
 ## 常见问题
 
-**遇到 403 或 `LOGIN_REQUIRED` 怎么办？** 若页面要求登录，请在打开的 Chromium 窗口中手动登录。工具不绕过登录、验证码、DRM 或访问控制。链接不可用时，改用你有权处理的本地音视频。
+**遇到 403 或 `LOGIN_REQUIRED` 怎么办？** 页面可能要求登录或当前账号没有访问权。运行 `uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript login`，在专用可见浏览器中手动登录，关闭窗口保存状态后用同一命令前缀执行 `transcribe <原URL> --force --max-downloads 1 --json`，仅重跑这个失败目标。工具不绕过登录、验证码、DRM 或访问控制。仍无法访问时，使用你有权处理的本地音视频。
 
 **抓不到音频或提示 `DECODER_UNAVAILABLE` 怎么办？** 页面、登录状态和媒体域名可能变化；本地文件还必须包含可解码的音频流。运行 `doctor --json` 检查 PyAV 和模型状态，再使用有音轨且你有权处理的文件排查。
 
@@ -131,9 +128,9 @@ task_id: "example-task-001"
 **如何减少 C 盘占用？** 在同一个 PowerShell 会话中，先把应用数据、uv 缓存和 Playwright 浏览器目录指向有足够空间且权限合适的本地磁盘，再执行安装或 setup：
 
 ```powershell
-$env:DOUYIN_TRANSCRIPT_HOME = 'D:\douyin-transcript-data'
-$env:UV_CACHE_DIR = 'D:\uv-cache'
-$env:PLAYWRIGHT_BROWSERS_PATH = 'D:\playwright-browsers'
+$env:DOUYIN_TRANSCRIPT_HOME = "$env:LOCALAPPDATA\douyin-transcript"
+$env:UV_CACHE_DIR = "$env:LOCALAPPDATA\uv\cache"
+$env:PLAYWRIGHT_BROWSERS_PATH = "$env:LOCALAPPDATA\ms-playwright"
 uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript doctor --json
 ```
 
@@ -154,26 +151,30 @@ uv run --project .\skills\douyin-transcript --locked --no-sync douyin-transcript
 
 ### Preview, concurrency, terminology, and cache
 
-Use `--dry-run` to resolve inputs, check path writability, and report output-directory permissions without creating directories, downloading, or running ASR. URL batches can use `--max-downloads 1|2`; ASR remains serial. Set bounded retries with `--retry 0|1|2`. Each item's decoding, download, and ASR share a 7,200-second absolute deadline by default; adjust it with `--processing-timeout-seconds N` (maximum 86,400 seconds). A timeout terminates the processing child and marks a created task failed.
+Use `--dry-run` to resolve inputs, check path writability, and report output-directory permissions without creating directories, downloading, or running ASR. Personal URL batches use `--max-downloads 1`; capture, download, and ASR remain serial. Set bounded retries with `--retry 0|1|2`. Each item's decoding, download, and ASR share a 7,200-second absolute deadline by default; adjust it with `--processing-timeout-seconds N` (maximum 86,400 seconds). A timeout terminates the processing child and marks a created task failed.
 
-An optional UTF-8 JSON terminology whitelist is applied only when passed through `--terminology-dictionary PATH`. Rules use literal, case-sensitive matching and are recorded as metadata without transcript text. Use `--force` to rerun a completed task after changing the dictionary.
+An optional UTF-8 JSON terminology whitelist is applied only when passed through `--terminology-dictionary PATH`. Rules use literal, case-sensitive matching. Markdown metadata contains the ruleset hash and aggregate applied-rule/replacement counts, not rule IDs, source or replacement strings, notes, or per-rule counts. The hash can still be compared with a known dictionary. Full rules are kept in the protected local task database so failed tasks can be retried with the same settings. Use `--force` to rerun a completed task after changing the dictionary.
 
-Failed tasks save the non-transcript processing options used for that run, and `retry-failed` restores them. Older task records without a valid snapshot are skipped by default; add `--use-current-defaults` only when you accept processing with current defaults. That choice is saved as the task's new retry snapshot. `retry-failed --output-dir PATH` explicitly overrides the saved output directory.
+Failed tasks save the non-transcript processing options used for that run, and `retry-failed` restores them. Older task records without a valid snapshot are skipped by default; add `--use-current-defaults` only when you accept processing with current defaults. That choice is saved as the task's new retry snapshot. A valid schema 1/2 snapshot with unsafe or unknown saved output permissions is also skipped before requeue unless `retry-failed --output-dir PATH` explicitly selects and saves a new destination.
 
 `cache inspect` reports application-owned media cache files. `cache clean --max-bytes N` and/or `--max-age-hours N` preview cleanup by default; add `--apply` after reviewing the paths. Media referenced by non-completed tasks is protected. Cache cleanup serializes against task claims; the direct Python cache API leaves `.part` files alone unless the caller explicitly coordinates task state.
 
 ## Agent Skill
 
-Skill 位于 [`skills/douyin-transcript`](skills/douyin-transcript/)。待仓库归属和安装源确定后，可以使用 Agent Skills CLI 安装。单独目录包含运行所需的 Python 包定义、锁文件、脚本和参考文档；仓库外离线干净副本的基础安装与 CLI 冒烟已通过，远端仓库安装、模型准备和真实 Agent 调用尚未验收。
+Canonical Skill 文件为 [`skills/douyin-transcript/SKILL.md`](skills/douyin-transcript/SKILL.md)。它描述本地媒体转写、个人 URL 采集、用户授权后的默认模型校对和独立校对稿保存流程。CLI 本身只运行本地 ASR，不调用 LLM。
 
 ## 开发检查
 
+SPDX Schema 校验器使用独立锁定环境；首次运行前准备该环境：
+
 ```powershell
+uv sync --project .\tools\spdx-schema-check --locked
+uv run --project .\tools\spdx-schema-check --locked --no-sync python .\scripts\check_spdx_schema.py
 uv run --project .\skills\douyin-transcript --locked --no-sync --group dev pytest -q
 uv run --project .\skills\douyin-transcript --locked --no-sync --group dev ruff check .\skills\douyin-transcript\src .\tests
 ```
 
-项目实施状态、架构、验收与发布门槛见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)、[`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) 和 [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)。审核结论见 [`docs/PROJECT_AUDIT_REPORT.md`](docs/PROJECT_AUDIT_REPORT.md)，分优先级的整改与验收对策见 [`docs/PROJECT_REMEDIATION_PLAN.md`](docs/PROJECT_REMEDIATION_PLAN.md)；阶段计划见 [`docs/PROJECT_IMPLEMENTATION_PLAN.md`](docs/PROJECT_IMPLEMENTATION_PLAN.md)。
+用户说明见 [安装指南](skills/douyin-transcript/references/INSTALL.md)、[CLI 参考](skills/douyin-transcript/references/CLI_REFERENCE.md) 和[故障排查](skills/douyin-transcript/references/TROUBLESHOOTING.md)。
 
 ## 贡献与问题反馈
 
@@ -181,4 +182,4 @@ uv run --project .\skills\douyin-transcript --locked --no-sync --group dev ruff 
 
 ## 安全与版权
 
-只处理你有权访问和转录的内容，并尊重平台条款、作者版权及隐私。Cookie 保留在用户浏览器 profile；仓库不导出 Cookie，也不上传媒体或逐字稿。faster-whisper、PyAV、Playwright/Chromium 受各自许可证约束。本仓库尚未添加 LICENSE，需仓库所有者确认许可证后再发布。
+只处理你有权访问和转录的内容，并尊重平台条款、作者版权及隐私。Cookie 保留在用户浏览器 profile；仓库不导出 Cookie，也不上传媒体或逐字稿。项目许可证尚未确定；请勿将本仓库视为已授予其中原创内容的复用许可。第三方依赖仍按各自许可和 NOTICE。当前计划交付范围不包含 wheel、模型、浏览器或预构建二进制。

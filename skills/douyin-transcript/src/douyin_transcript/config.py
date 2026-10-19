@@ -17,6 +17,7 @@ from .limits import (
     validate_resource_limits,
 )
 from .storage_security import PrivateStorageError, open_private_regular_file
+from .text_safety import strip_display_controls
 
 
 class ConfigurationError(ValueError):
@@ -31,6 +32,7 @@ class RuntimePaths:
     max_media_duration_seconds: float = DEFAULT_MAX_MEDIA_DURATION_SECONDS
     max_output_segments: int = DEFAULT_MAX_OUTPUT_SEGMENTS
     max_output_characters: int = DEFAULT_MAX_OUTPUT_CHARACTERS
+    output_dir_is_default: bool = False
 
 
 def _read_config(path: Path) -> dict[str, Any]:
@@ -78,7 +80,8 @@ def _configured_limits(config: dict[str, Any]) -> dict[str, Any]:
     }
     unknown = set(limits) - allowed
     if unknown:
-        raise ConfigurationError(f"config.toml [limits] 包含未知选项：{', '.join(sorted(unknown))}")
+        safe_names = ", ".join(strip_display_controls(name) for name in sorted(unknown))
+        raise ConfigurationError(f"config.toml [limits] 包含未知选项：{safe_names}")
     return limits
 
 
@@ -91,10 +94,16 @@ def resolve_paths(
     max_output_characters: int | None = None,
     cwd: str | Path | None = None,
 ) -> RuntimePaths:
-    """Resolve explicit CLI, environment, config, then platform defaults."""
+    """Resolve explicit CLI, environment, config, then private data defaults."""
+    if data_dir == "":
+        raise ConfigurationError("--data-dir 不能为空")
+    if output_dir == "":
+        raise ConfigurationError("--output-dir 不能为空")
     env_data = os.environ.get("DOUYIN_TRANSCRIPT_HOME")
-    config_anchor = Path(data_dir).expanduser() if data_dir else (
-        Path(env_data).expanduser() if env_data else default_data_dir()
+    config_anchor = (
+        Path(data_dir).expanduser()
+        if data_dir
+        else (Path(env_data).expanduser() if env_data else default_data_dir())
     )
     config_path = config_anchor / "config.toml"
     config = _read_config(config_path)
@@ -112,6 +121,7 @@ def resolve_paths(
     )
 
     env_output = os.environ.get("DOUYIN_TRANSCRIPT_OUTPUT")
+    output_dir_is_default = output_dir is None and not env_output and "output_dir" not in configured
     effective_output = (
         Path(output_dir).expanduser()
         if output_dir is not None
@@ -119,7 +129,7 @@ def resolve_paths(
         if env_output
         else Path(configured["output_dir"]).expanduser()
         if "output_dir" in configured
-        else Path(cwd or Path.cwd()) / "douyin-transcripts" / "output"
+        else effective_data / "output"
     )
     try:
         limits = validate_resource_limits(
@@ -133,9 +143,7 @@ def resolve_paths(
             else configured_limits.get("max_output_segments", DEFAULT_MAX_OUTPUT_SEGMENTS),
             max_output_characters
             if max_output_characters is not None
-            else configured_limits.get(
-                "max_output_characters", DEFAULT_MAX_OUTPUT_CHARACTERS
-            ),
+            else configured_limits.get("max_output_characters", DEFAULT_MAX_OUTPUT_CHARACTERS),
         )
     except (TypeError, ValueError) as exc:
         raise ConfigurationError(f"config.toml 的 [limits] 配置无效：{exc}") from None
@@ -146,6 +154,7 @@ def resolve_paths(
         max_media_duration_seconds=limits[0],
         max_output_segments=limits[1],
         max_output_characters=limits[2],
+        output_dir_is_default=output_dir_is_default,
     )
 
 

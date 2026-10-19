@@ -10,11 +10,21 @@ The ASR extra includes PyAV. Install it using the explicit setup flow. The input
 
 ## `LOGIN_REQUIRED`
 
-Run the URL task again and sign in manually in the opened persistent Chromium profile. The tool does not automate authentication or bypass verification.
+Personal URL capture uses the current ordinary account and a dedicated visible Chromium profile. Run `login [--data-dir PATH]` through the same CLI prefix, complete login manually, then close the window to save state. Use `transcribe <original-URL> --force --max-downloads 1 --json` with the same prefix and data directory to rerun only that failed target, including a previous `LOGIN_REQUIRED` task. Existing failures are not automatically requeued. The tool does not automate authentication or bypass CAPTCHA, DRM, or access controls. If the account lacks access, use an authorized local media file.
+
+Run `doctor --json` first. Personal mode reports `capture_mode=personal` and `checks.browser_isolation.status=not_used`; `capabilities.douyin_urls=ready` checks local dependencies and paths, not login or page availability.
 
 ## `CAPTURE_NO_MEDIA` or download failure
 
 The page may have changed, the user may not have access, or the current media host may not be supported. Use an authorized local audio/video file as a fallback. Do not copy signed media URLs or browser cookies into logs or support tickets.
+
+## Browser setup or an old isolation error
+
+If Playwright or Chromium is missing, use the authorized `setup --browser` flow. The current personal CLI path does not require an administrator broker or WFP service and does not claim OS network isolation. If an old entry point returns `BROWSER_ISOLATION_UNAVAILABLE` or `BROWSER_ISOLATION_LOST`, check that you are using the current CLI and personal capture configuration. Do not revive the old WFP/ACL diagnostic scripts. Caller-supplied executable or security launch overrides remain unsupported.
+
+## `CAPTURE_BUSY`
+
+Another task is using the dedicated browser profile. Let it finish or cancel it before retrying. Use `--max-downloads 1` and run URL batches serially.
 
 ## Output collision or invalid completed output
 

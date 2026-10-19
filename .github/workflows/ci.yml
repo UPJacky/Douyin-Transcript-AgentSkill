@@ -13,6 +13,154 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  native-capture-pipe:
+    name: Windows / Native prototypes
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up the pinned .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: native/windows/capture-pipe/global.json
+
+      - name: Restore locked WFP runtime projects
+        run: dotnet restore tests/WfpPolicy.Runtime.Harness.csproj --locked-mode
+        working-directory: native/windows/wfp-policy-runtime
+
+      - name: Check capture-pipe C# formatting
+        run: dotnet format whitespace CapturePipe.csproj --verify-no-changes
+        working-directory: native/windows/capture-pipe
+
+      - name: Check pure WFP policy core formatting
+        run: dotnet format whitespace WfpPolicy.Core.csproj --verify-no-changes
+        working-directory: native/windows/wfp-policy-core
+
+      - name: Check WFP runtime coordinator formatting
+        run: dotnet format whitespace WfpPolicy.Runtime.csproj --verify-no-changes
+        working-directory: native/windows/wfp-policy-runtime
+
+      - name: Check WFP runtime coordinator harness formatting
+        run: dotnet format whitespace tests/WfpPolicy.Runtime.Harness.csproj --verify-no-changes
+        working-directory: native/windows/wfp-policy-runtime
+
+      - name: Build x64 Release
+        run: dotnet build CapturePipe.csproj -c Release -p:Platform=x64
+        working-directory: native/windows/capture-pipe
+
+      - name: Run named-pipe and SCM lifecycle self-test
+        run: dotnet run --project CapturePipe.csproj -c Release -p:Platform=x64 --no-build -- --self-test
+        working-directory: native/windows/capture-pipe
+
+      - name: Verify SCM entry rejects interactive launch
+        shell: pwsh
+        run: |
+          $output = & dotnet run --project CapturePipe.csproj -c Release -p:Platform=x64 --no-build -- --service 2>&1
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 1063) {
+            throw "Expected ERROR_FAILED_SERVICE_CONTROLLER_CONNECT (1063), got $exitCode. Output: $output"
+          }
+        working-directory: native/windows/capture-pipe
+
+      - name: Restore locked WFP policy projects
+        run: dotnet restore tests/LeasePolicyCompiler.Tests.csproj --locked-mode
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Restore locked native WFP readback project and fixture harness
+        run: dotnet restore tests/WfpPolicy.NativeReadback.Harness.csproj --locked-mode -p:NuGetAudit=false
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Check WFP project C# formatting
+        run: dotnet format whitespace WfpPolicyPlan.csproj --verify-no-changes --no-restore
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Check WFP harness C# formatting
+        run: dotnet format whitespace tests/LeasePolicyCompiler.Tests.csproj --verify-no-changes --no-restore
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Check native WFP readback C# formatting
+        run: dotnet format whitespace WfpPolicy.NativeReadback.csproj --verify-no-changes --no-restore
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Check native WFP readback fixture formatting
+        run: dotnet format whitespace tests/WfpPolicy.NativeReadback.Harness.csproj --verify-no-changes --no-restore
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Build non-deployable WFP structure preview
+        run: dotnet build WfpPolicyPlan.csproj -c Release --no-restore -p:Platform=x64
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Run semantic and native-structure harness
+        run: dotnet run --project tests/LeasePolicyCompiler.Tests.csproj -c Release --no-restore
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Build read-only native WFP snapshot assembly
+        run: dotnet build WfpPolicy.NativeReadback.csproj -c Release --no-restore -p:Platform=x64
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Build native WFP unmanaged fixture harness
+        run: dotnet build tests/WfpPolicy.NativeReadback.Harness.csproj -c Release --no-restore -p:Platform=x64
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Run native WFP unmanaged fixture harness
+        run: dotnet run --project tests/WfpPolicy.NativeReadback.Harness.csproj -c Release -p:Platform=x64 --no-build --no-restore
+        working-directory: native/windows/wfp-policy-native-readback
+
+      - name: Build WFP baseline coordinator harness
+        run: dotnet build tests/WfpPolicy.Runtime.Harness.csproj -c Release --no-restore -p:Platform=x64
+        working-directory: native/windows/wfp-policy-runtime
+
+      - name: Run WFP baseline coordinator harness
+        run: dotnet run --project tests/WfpPolicy.Runtime.Harness.csproj -c Release -p:Platform=x64 --no-build --no-restore
+        working-directory: native/windows/wfp-policy-runtime
+
+      - name: Verify the unchanged preview artifact and Sandbox pin
+        run: .\VerifyFilterPlanArtifact.ps1 -DotNetPath (Get-Command dotnet).Source
+        working-directory: native/windows/wfp-policy-plan
+
+      - name: Set up Python for build BOM generation
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Verify pinned .NET build BOM
+        shell: pwsh
+        run: |
+          $bomPath = Join-Path $env:RUNNER_TEMP 'dotnet-windows-build-bom.json'
+          python scripts/generate_dotnet_build_bom.py --dotnet (Get-Command dotnet).Source --output $bomPath
+          if ($LASTEXITCODE -ne 0) { throw "Build BOM generation failed with exit code $LASTEXITCODE" }
+          $actual = Get-Content $bomPath -Raw | ConvertFrom-Json
+          $expected = Get-Content docs/dotnet-windows-build-bom.json -Raw | ConvertFrom-Json
+          foreach ($field in @('schemaVersion', 'scope', 'toolchain', 'sourceInputs', 'nugetLock', 'packages')) {
+            $actualValue = ConvertTo-Json -InputObject $actual.$field -Depth 100 -Compress
+            $expectedValue = ConvertTo-Json -InputObject $expected.$field -Depth 100 -Compress
+            if ($actualValue -cne $expectedValue) { throw "Generated .NET build BOM source field differs: $field" }
+          }
+          if ($actual.relatedBuilds.Count -ne 2) { throw 'Generated BOM does not contain exactly two related WFP prototype build records.' }
+          $runtimeFields = @('projects', 'targetFramework', 'runtimeIdentifier', 'purpose', 'globalJson', 'sourceInputs', 'nugetLocks', 'nugetPackages', 'buildCommand', 'limitations')
+          foreach ($field in $runtimeFields) {
+            $actualValue = ConvertTo-Json -InputObject $actual.relatedBuilds[0].$field -Depth 100 -Compress
+            $expectedValue = ConvertTo-Json -InputObject $expected.relatedBuilds[0].$field -Depth 100 -Compress
+            if ($actualValue -cne $expectedValue) { throw "Generated Runtime BOM source field differs: $field" }
+          }
+          if ($actual.relatedBuilds[0].buildOutputs.Count -eq 0) { throw 'Generated Runtime BOM has no Release outputs.' }
+          $readbackFields = @('projects', 'targetFramework', 'runtimeIdentifier', 'purpose', 'globalJson', 'sourceInputs', 'nugetLocks', 'nugetPackages', 'buildCommand', 'harnessCommand', 'limitations')
+          foreach ($field in $readbackFields) {
+            $actualValue = ConvertTo-Json -InputObject $actual.relatedBuilds[1].$field -Depth 100 -Compress
+            $expectedValue = ConvertTo-Json -InputObject $expected.relatedBuilds[1].$field -Depth 100 -Compress
+            if ($actualValue -cne $expectedValue) { throw "Generated native readback BOM source field differs: $field" }
+          }
+          if ($actual.relatedBuilds[1].buildOutputs.Count -eq 0) { throw 'Generated native readback BOM has no Release outputs.' }
+
+      - name: Compare .NET build output identities
+        shell: pwsh
+        run: |
+          $actualPath = Join-Path $env:RUNNER_TEMP 'dotnet-windows-build-bom.json'
+          python scripts/check_dotnet_build_bom_outputs.py --actual $actualPath
+          if ($LASTEXITCODE -ne 0) { throw "Build output identity comparison failed with exit code $LASTEXITCODE" }
+
   ci-checks:
     name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
@@ -46,10 +194,9 @@ jobs:
         with:
           version: "0.12.7"
           enable-cache: true
-          cache-dependency-glob: skills/douyin-transcript/uv.lock
-
-      - name: Validate Agent Skill metadata
-        run: uvx --from skills-ref==0.1.1 agentskills validate skills/douyin-transcript
+          cache-dependency-glob: |
+            skills/douyin-transcript/uv.lock
+            tools/spdx-schema-check/uv.lock
 
       - name: Verify the lock file
         run: uv lock --project skills/douyin-transcript --check
@@ -60,12 +207,65 @@ jobs:
       - name: Install locked development dependencies
         run: uv sync --project skills/douyin-transcript --locked --group dev
 
+      - name: Set up .NET SDK for Windows capture-pipe interop
+        if: runner.os == 'Windows' && matrix.python-version == '3.11'
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: native/windows/capture-pipe/global.json
+
+      - name: Build Windows capture-pipe interop test server
+        if: runner.os == 'Windows' && matrix.python-version == '3.11'
+        run: dotnet build CapturePipe.csproj -c Release -p:Platform=x64
+        working-directory: native/windows/capture-pipe
+
+      - name: Test Python to native named-pipe artifact transfer
+        if: runner.os == 'Windows' && matrix.python-version == '3.11'
+        env:
+          DOUYIN_CAPTURE_PIPE_DLL: ${{ github.workspace }}/native/windows/capture-pipe/bin/x64/Release/net10.0-windows/win-x64/CapturePipe.dll
+        run: >-
+          uv run --project skills/douyin-transcript --locked --no-sync --group dev
+          pytest tests/integration/test_windows_capture_pipe.py -q
+
+      - name: Install the locked SPDX schema-check environment
+        run: uv sync --project tools/spdx-schema-check --locked
+
+      - name: Validate Agent Skill metadata from the locked environment
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project skills/douyin-transcript --locked --no-sync --group dev
+          agentskills validate skills/douyin-transcript
+
+      - name: Validate the repo-scoped Codex Skill entry point
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project skills/douyin-transcript --locked --no-sync --group dev
+          agentskills validate .codex/skills/douyin-transcript
+
+      - name: Validate SPDX 2.3 SBOM against the pinned official schema
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project tools/spdx-schema-check --locked --no-sync
+          python scripts/check_spdx_schema.py
+
+      - name: Verify SPDX SBOM freshness against lock and license evidence
+        run: python scripts/check_spdx_sbom_freshness.py
+
       - name: Run Ruff
         env:
           UV_OFFLINE: "1"
         run: >-
           uv run --project skills/douyin-transcript --locked --group dev
           ruff check scripts skills/douyin-transcript/src skills/douyin-transcript/scripts tests
+
+      - name: Check Ruff formatting
+        env:
+          UV_OFFLINE: "1"
+        run: >-
+          uv run --project skills/douyin-transcript --locked --group dev
+          ruff format --check scripts skills/douyin-transcript/src skills/douyin-transcript/scripts tests
 
       - name: Run offline unit and simulated integration tests
         env:

@@ -535,6 +535,7 @@ def _unlink_windows_by_handle(root: Path, entry: CacheEntry) -> bool:
         _fields_ = [("delete_file", ctypes.c_ubyte)]
 
     if sys.version_info >= (3, 12):
+
         class FileId128(ctypes.Structure):
             _fields_ = [("identifier", ctypes.c_ubyte * 16)]
 

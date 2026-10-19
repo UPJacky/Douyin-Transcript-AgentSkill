@@ -1,0 +1,3138 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "douyin-transcript-uv-lock-all-platforms-extras-and-dev",
+  "documentNamespace": "https://spdx.org/spdxdocs/douyin-transcript-uv-lock-7d6648b9f4c0fa0af6db012e01233d9c7449953ad0a42334ad8e850554f71269",
+  "creationInfo": {
+    "created": "2026-10-14T13:23:51Z",
+    "creators": [
+      "Tool: scripts/generate_spdx_sbom.py"
+    ],
+    "comment": "Inventory of every package record in uv.lock, including platform marker variants, optional extras, and development dependencies. licenseDeclared uses valid SPDX expressions from exact locked artifact author metadata, license-file evidence tied to exact artifacts in uv.lock, or a reviewed version-specific legacy-value mapping recorded in docs/third-party-license-evidence.json; unresolved declarations and every licenseConcluded remain NOASSERTION pending review."
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-6914459121c46b7a",
+      "name": "anyio",
+      "versionInfo": "4.15.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94); metadata entry anyio-4.15.1/PKG-INFO has SHA-256 043aecb571af7189e8a6c528f5d8e32545f1b2cdfaaf761d51e6d5b67ea3ca81. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/anyio@4.15.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-478ad8e9154d502f",
+      "name": "av",
+      "versionInfo": "15.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 39cda2dc810e11c1938f8cb5759c41d6b630550236b3365790e67a313660ec85); metadata entry av-15.1.0/PKG-INFO has SHA-256 9ac27bdb13e15e236547d233094ae6eabf0b2fa0e8c100fd1be2e95272aa0f42. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 44 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 15; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/av@15.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-3ecefe6389e6b6a5",
+      "name": "certifi",
+      "versionInfo": "2026.7.22",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MPL-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55); metadata entry certifi-2026.7.22/PKG-INFO has SHA-256 ef5af1638fbb23676ac3c5777dfcfc2cd9c348fe4172ed5ba3d277655b248090. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/certifi@2026.7.22"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-acbdcde11e1b8228",
+      "name": "click",
+      "versionInfo": "8.5.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34); metadata entry click-8.5.0/PKG-INFO has SHA-256 e87bce0bd194de70dfb8e708e0a6b0483009f25611804eaf87bfeb63e6c20501. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 3 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/click@8.5.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-5bd93003546013b4",
+      "name": "colorama",
+      "versionInfo": "0.4.6",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is supported by colorama-0.4.6.dist-info/licenses/LICENSE.txt (SHA-256 cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318) in the locked wheel (SHA-256 4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The license text carries BSD-3-Clause terms; the declaration describes Colorama and does not conclude licenses for other components. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/colorama@0.4.6"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-4de69e49109a4e0f",
+      "name": "ctranslate2",
+      "versionInfo": "4.8.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked wheel (SHA-256 995938fcd24a1174a7abf9765e7fa216b5b91a1d8e8c4c8f383c7a186e8bab2e); metadata entry ctranslate2-4.8.2.dist-info/METADATA has SHA-256 48ee9c58767ae5a6be5e648bd704e952b1829a2cbb982ede5a6ec60dbe061b80. licenseConcluded remains NOASSERTION pending file-level and bundled-component review.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 10; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/ctranslate2@4.8.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-1aa3f4884f0f4620",
+      "name": "douyin-transcript",
+      "versionInfo": "0.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "licenseComments": "The project license remains unselected by its owner; license conclusion is NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "APPLICATION",
+      "sourceInfo": "uv.lock source kind: editable; locked artifact records: 0; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/douyin-transcript@0.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-af57c86193e1e427",
+      "name": "editables",
+      "versionInfo": "0.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is supported by editables-0.5.dist-info/LICENSE.txt (SHA-256 c73e08a04e1557fdb49525fb7a579f73bcab84a254910b9350ee56daf143932d) in the locked wheel (SHA-256 61e5ffa82629e0d8bfe09bc44a07db3c1ab8ed1ce78a6980732870f19b5e7d4c); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The wheel LICENSE.txt contains MIT terms; the declaration describes editables only and does not conclude licenses for other components. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/editables@0.5"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-478e4de7522ae1dd",
+      "name": "faster-whisper",
+      "versionInfo": "1.2.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked wheel (SHA-256 79a66ad50688c0b794dd501dc340a736992a6342f7f95e5811be60b5224a26a7); metadata entry faster_whisper-1.2.1.dist-info/METADATA has SHA-256 b85622132a43897972924db98e024c0d40dcec19c577b1ee5640f1bc1b59aada. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 1; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/faster-whisper@1.2.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-244941fd5984cbfb",
+      "name": "filelock",
+      "versionInfo": "4.0.12",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 cf42711a7ac791818b299fab0332a088c65aeeefa36290de98db92c434303b0c); metadata entry filelock-4.0.12/PKG-INFO has SHA-256 13cef4f5394eede99fa578d493e22e063e9aa007d90b7145c18c21cb2ea0102a. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/filelock@4.0.12"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-e53a89a898bb80d8",
+      "name": "flatbuffers",
+      "versionInfo": "25.12.19",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared maps the exact legacy author metadata value License='Apache 2.0' to Apache-2.0 under a reviewed, version-specific mapping. The metadata entry flatbuffers-25.12.19.dist-info/METADATA in the locked wheel has SHA-256 9f38239f96faa21522a6aadab6912e1e560708bbe9c9f696a0679c9403fa089e; mapping evidence: https://pypi.org/project/flatbuffers/25.12.19/, https://github.com/google/flatbuffers/blob/v25.12.19/python/setup.py, https://github.com/google/flatbuffers/blob/v25.12.19/LICENSE. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 1; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/flatbuffers@25.12.19"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-6004078b571e8a3c",
+      "name": "fsspec",
+      "versionInfo": "2026.9.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 0f08147951c8cb31d844c3547d631053b127863b60be04cf06e121333ee0e2fe); metadata entry fsspec-2026.9.0/PKG-INFO has SHA-256 68f5a262767510638e9b1933b1493f2baadc9616fe1e696f62aedd59c8c0a37c. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 3 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/fsspec@2026.9.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-43632f825338f1ac",
+      "name": "greenlet",
+      "versionInfo": "3.5.6",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT AND PSF-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 8e67c43bdfc88d5fee6db0d3e40175b362fc95fb85f0412d233b9b203c53a575); metadata entry greenlet-3.5.6/PKG-INFO has SHA-256 b9b4cbbc1f3165e50fbc4696c433fe82b8a151fde65eede28fb6ec5efb3e1fab. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 42 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 21; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/greenlet@3.5.6"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-68617ff701e5f79c",
+      "name": "h11",
+      "versionInfo": "0.16.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1); metadata entry h11-0.16.0/PKG-INFO has SHA-256 28f326098ac09fcba79b8f180f96087c841fe2456215cb7b872a9c7d5cd19d64. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/h11@0.16.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-ee0f6000652c448c",
+      "name": "hatchling",
+      "versionInfo": "1.27.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6); metadata entry hatchling-1.27.0/PKG-INFO has SHA-256 a224ea37d2658f75ccf569e61d849ff7e9297cdac2396022278e82a47b9fed3e. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 4 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/hatchling@1.27.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-4fffd491d3e0ff0d",
+      "name": "hf-xet",
+      "versionInfo": "1.7.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 d406ec79053c0871817f700c2ac8c36ba0d87f9c34b7458b0f0063bb218b0466); metadata entry hf_xet-1.7.0/PKG-INFO has SHA-256 05975b1239f188bb418539f178ef68a693ea6824f20c30583a02eea94faf650a. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 10 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 9; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/hf-xet@1.7.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-f55201215754231f",
+      "name": "httpcore",
+      "versionInfo": "1.0.9",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8); metadata entry httpcore-1.0.9/PKG-INFO has SHA-256 fe2d4fda6199128978779e0cf27f3c045c531863fcdd987eacc74f3a18d41c21. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/httpcore@1.0.9"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-05ba2f5be5134f88",
+      "name": "httpx",
+      "versionInfo": "0.28.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc); metadata entry httpx-0.28.1/PKG-INFO has SHA-256 febb9b0f8f3e80d57c8199c304f35c4336e8581d1d18d7983c92766b82793b25. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/httpx@0.28.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "name": "huggingface-hub",
+      "versionInfo": "1.33.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 367be21a201db9523eddf8aeac7048f2602c1b308691c97640d5e72ed188007e); metadata entry huggingface_hub-1.33.0/PKG-INFO has SHA-256 bee565776d66f486d224f74024b656a69ed42e2639d80b18811fca4365adc42e. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/huggingface-hub@1.33.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-5dcbb5b343362260",
+      "name": "idna",
+      "versionInfo": "3.20",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44); metadata entry idna-3.20/PKG-INFO has SHA-256 dbd8c14c1e4ca1e0c9824a6dbc7cbbf78884f38eb52d91148cd3025f671e4b85. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/idna@3.20"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-dcc4e1efdaaabde3",
+      "name": "iniconfig",
+      "versionInfo": "2.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960); metadata entry iniconfig-2.3.1/PKG-INFO has SHA-256 47c2c35d936f5c649d8074c6464719a42966a67b5cebad01e3e5784cf090cfb6. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/iniconfig@2.3.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-0f202b98d741fea2",
+      "name": "numpy",
+      "versionInfo": "2.4.6",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda); metadata entry numpy-2.4.6/PKG-INFO has SHA-256 b082c52ccbe3b880bae177c35171b52ed6c947f3ad71e3762f2723f60a411de0. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 608 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 30; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/numpy@2.4.6"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-78a46eabe4c6a3e5",
+      "name": "numpy",
+      "versionInfo": "2.5.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563); metadata entry numpy-2.5.3/PKG-INFO has SHA-256 451a9b8028000588e66b0b415587b6aef0bbc51a96d8e8a0cba0dc23acf64f99. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 247 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 12; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/numpy@2.5.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-0d5d599e5ee330ad",
+      "name": "onnxruntime",
+      "versionInfo": "1.30.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is supported by onnxruntime/LICENSE (SHA-256 c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674) in the locked wheel (SHA-256 0edd0145a6e3fce8a1276491dc784d615e3c58bcb952c9b4e5c876d5c6a12ad7); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The wheel also includes ThirdPartyNotices.txt (SHA-256 c53a76501ef60db6f865f20599f220761201ac4057683acefdab37d861b86622); its component notices have not been mapped to linked binaries. 17 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 10; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/onnxruntime@1.30.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-f94e61627a7b57b2",
+      "name": "packaging",
+      "versionInfo": "26.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0 OR BSD-2-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79); metadata entry packaging-26.3/PKG-INFO has SHA-256 70fdb89fc4d4a9a043bf7372b8972bcc883fddff34ab55e9cf80d73875384763. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 12 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/packaging@26.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-45714c1085c49da2",
+      "name": "pathspec",
+      "versionInfo": "1.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MPL-2.0",
+      "licenseComments": "licenseDeclared is supported by pathspec-1.1.1.dist-info/licenses/LICENSE (SHA-256 fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85) in the locked wheel (SHA-256 a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The wheel LICENSE contains Mozilla Public License 2.0 terms; the declaration describes pathspec only and does not conclude licenses for other components. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pathspec@1.1.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-03689fd438227403",
+      "name": "playwright",
+      "versionInfo": "1.63.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is supported by playwright-1.63.0.dist-info/licenses/LICENSE (SHA-256 7fab1461b41970ff376f1c9303a637076bfaaeb71cd12dd3a1c44aaf59a1a2b9) in the locked wheel (SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The locked wheel LICENSE supports the Playwright Apache-2.0 declaration. Across all 8 locked platform wheels, 64 license/notice-like members were checked against their archive bytes and RECORD entries; the ThirdPartyNotices file describes adjacent JavaScript bundle license sidecars, and the driver has a separate Node license inventory. This verifies file presence and integrity only; it does not conclude component licensing or distribution obligations. 63 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion. The webp_codec sidecar associates unversioned libwebp (BSD-3-Clause) with webp_codec.wasm and Emscripten (MIT OR NCSA) with its JavaScript glue/runtime. It also reproduces Node.js and musl MIT notices without versions or a direct dependency mapping; these notes record sidecar content only. licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 8; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/playwright@1.63.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-80ec0dd04855b14c",
+      "name": "pluggy",
+      "versionInfo": "1.6.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3); metadata entry pluggy-1.6.0/PKG-INFO has SHA-256 7438c35ee25a095eb7416f84b461c2d74425c5e734ad54c3912453c65244e01c. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pluggy@1.6.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-56f486296d78d5d1",
+      "name": "protobuf",
+      "versionInfo": "7.36.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb); metadata entry protobuf-7.36.2/PKG-INFO has SHA-256 1a434a32036a78bd41e2008f9d111728df9bcc01f7eb910097c0dcac74f49a87. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 8 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 8; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/protobuf@7.36.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-f92d7b469294f564",
+      "name": "pyee",
+      "versionInfo": "13.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 0b931f7c14535667ed4c7e0d531716368715e860b988770fc7eb8578d1f67fc8); metadata entry pyee-13.0.1/PKG-INFO has SHA-256 7512d063d60cb405124a6c5fdd2c688d78a4c6b6841b8eeb00a59474ef59d43c. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pyee@13.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-3d3423d9387b1307",
+      "name": "pygments",
+      "versionInfo": "2.21.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-2-Clause",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c); metadata entry pygments-2.21.0/PKG-INFO has SHA-256 1dde075570136774c706bf0009183a793fe0ee262e4a5590cc6eff8453eedd43. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 3 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pygments@2.21.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-d7a3ec5341114e1d",
+      "name": "pytest",
+      "versionInfo": "8.4.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01); metadata entry pytest-8.4.2/PKG-INFO has SHA-256 93d6c5ef0a9714d53716243035037b77fa7d5f970596c48433887cf57f7f675a. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 4 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pytest@8.4.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-96e9021050ce912b",
+      "name": "python-dateutil",
+      "versionInfo": "2.9.0.post0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "licenseDeclared is supported by python-dateutil-2.9.0.post0/LICENSE (SHA-256 ba00f51a0d92823b5a1cde27d8b5b9d2321e67ed8da9bc163eff96d5e17e577e) in the locked sdist (SHA-256 37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The exact locked sdist LICENSE states that BSD terms apply to all code, including code also covered by Apache 2.0. This records the package-wide BSD-3-Clause option; it does not conclude bundled-component or redistribution obligations. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/python-dateutil@2.9.0.post0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-7178bcb824a1daea",
+      "name": "pyyaml",
+      "versionInfo": "6.0.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f); metadata entry pyyaml-6.0.3/PKG-INFO has SHA-256 03c3b415ed38d09faedc49360e930769b40c58f68585e6de00e2e4916a858d34. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 20 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 20; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/pyyaml@6.0.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-791e0b05b9fcb126",
+      "name": "ruff",
+      "versionInfo": "0.14.14",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is supported by ruff-0.14.14.dist-info/licenses/LICENSE (SHA-256 2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18) in the locked wheel (SHA-256 3dde1435e6b6fe5b66506c1dff67a421d0b7f6488d466f651c07f4cab3bf20fd); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The wheel LICENSE supports MIT for Ruff; Rust dependency licenses and notices have not been reviewed. 22 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 19; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/ruff@0.14.14"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-aceac34b03b20e3d",
+      "name": "six",
+      "versionInfo": "1.17.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81); metadata entry six-1.17.0/PKG-INFO has SHA-256 562042078c2752549f6d8a7c86dbc5dd708088a7be6d80672ec7b07100b72468. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/six@1.17.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-840268c02e8a1247",
+      "name": "skills-ref",
+      "versionInfo": "0.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 6b400ca6e0049be62dca0167ff943ba2745fd67efb37fbba4d0ee341fccd2695); metadata entry skills_ref-0.1.1/PKG-INFO has SHA-256 52ad09f2c1507f89c584305edf2412d130453284d4f694a856c81ae8205b2de7. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 3 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/skills-ref@0.1.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-c4bb9ee76fe675f7",
+      "name": "strictyaml",
+      "versionInfo": "1.7.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 22f854a5fcab42b5ddba8030a0e4be51ca89af0267961c8d6cfa86395586c407); metadata entry strictyaml-1.7.3/PKG-INFO has SHA-256 e63e8f644c23a0f74544cb7d1373f160e0b1a4d40340f72d1d2ad4f3afbb73ce. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/strictyaml@1.7.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-d17cfba4f5600863",
+      "name": "tokenizers",
+      "versionInfo": "0.23.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is supported by tokenizers-0.23.2/tokenizers/LICENSE (SHA-256 c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4) in the locked sdist (SHA-256 7f0f085686b9de0d0079e6f874ae053600db64c5d13049e0bbc0119926d25aac); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The source archive LICENSE states Apache License 2.0; Rust dependency licenses and notices in the built wheel have not been reviewed.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 17; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/tokenizers@0.23.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-401d3655acabaa40",
+      "name": "tqdm",
+      "versionInfo": "4.70.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MPL-2.0 AND MIT",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License in the locked sdist (SHA-256 cefd0eca11b2a37a3aee776544d4f4ae913f02688135b5556b8788dfa474afc4); metadata entry tqdm-4.70.1/PKG-INFO has SHA-256 a5da70b966afea3a759716041bad7187f2ece02c22348cf9e7c0a512bbf15f57. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/tqdm@4.70.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-6bcb7c4e9829d3f5",
+      "name": "trove-classifiers",
+      "versionInfo": "2026.9.21.13",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "licenseComments": "licenseDeclared is supported by trove_classifiers-2026.9.21.13.dist-info/licenses/LICENSE (SHA-256 c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4) in the locked wheel (SHA-256 8b1ff4f9c191b1040b71c37f1e445ab99732911e3cd91de52838453a854d7a17); the artifact is pinned by uv.lock. licenseConcluded remains NOASSERTION pending review of bundled components and redistribution obligations. The wheel LICENSE contains Apache License 2.0 terms; the declaration describes trove-classifiers only and does not conclude licenses for other components. 1 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/trove-classifiers@2026.9.21.13"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-d54e8e51b87bfa6c",
+      "name": "typing-extensions",
+      "versionInfo": "4.16.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "PSF-2.0",
+      "licenseComments": "licenseDeclared is copied unchanged from author metadata field License-Expression in the locked sdist (SHA-256 dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5); metadata entry typing_extensions-4.16.0/PKG-INFO has SHA-256 b05084ca1d50879865178d9fff9fabeab61bdfb1f361bfbde95421ffc8f9be46. licenseConcluded remains NOASSERTION pending file-level and bundled-component review. 2 additional artifact members with license/notice-like filenames are byte-verified; see docs/third-party-license-evidence.json. This records presence and integrity only, not license applicability or conclusion.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "uv.lock source kind: registry; locked artifact records: 2; dependency marker conditions are attached to SPDX relationships.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/typing-extensions@4.16.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-60d74007427623c6",
+      "name": "@hono/node-server",
+      "versionInfo": "1.19.14",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/%40hono/node-server@1.19.14"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-a4720b30fbdd1e94",
+      "name": "@modelcontextprotocol/sdk",
+      "versionInfo": "1.29.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/%40modelcontextprotocol/sdk@1.29.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-3f086487ddb384d6",
+      "name": "@sec-ant/readable-stream",
+      "versionInfo": "0.4.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/%40sec-ant/readable-stream@0.4.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-439af92eda9782c8",
+      "name": "agent-base",
+      "versionInfo": "9.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/agent-base@9.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-9c728cf87aba8556",
+      "name": "ajv",
+      "versionInfo": "8.20.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ajv@8.20.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-3081140538322aaf",
+      "name": "ajv-formats",
+      "versionInfo": "3.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ajv-formats@3.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-8023b8bb9921fbbc",
+      "name": "ansi-colors",
+      "versionInfo": "4.1.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ansi-colors@4.1.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-7fa0e28daa6f9c69",
+      "name": "ansi-regex",
+      "versionInfo": "5.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ansi-regex@5.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5d9d8851e0b3a24a",
+      "name": "balanced-match",
+      "versionInfo": "4.0.4",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/balanced-match@4.0.4"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-b8c1c57e6a54451c",
+      "name": "brace-expansion",
+      "versionInfo": "5.0.7",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/brace-expansion@5.0.7"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-7ee15af2b678aa50",
+      "name": "buffer-crc32",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/buffer-crc32@1.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d08b5e69ef91add4",
+      "name": "buffer-from",
+      "versionInfo": "1.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/buffer-from@1.1.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-9307e757191c716f",
+      "name": "bundle-name",
+      "versionInfo": "4.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/bundle-name@4.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-bc4d24341f85f604",
+      "name": "bytes",
+      "versionInfo": "3.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/bytes@3.1.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-53582bdf9c22ed07",
+      "name": "chokidar",
+      "versionInfo": "4.0.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/serverRegistry.js.LICENSE (SHA-256 3098a6efcbc11752cbdf6075fa65480f5470f78c8d981fab9c0796dc9a41cefe, 2982 bytes); playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/chokidar@4.0.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-379e787bc2b4b887",
+      "name": "colors",
+      "versionInfo": "1.4.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/colors@1.4.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d36df49098a7d427",
+      "name": "commander",
+      "versionInfo": "15.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/commander@15.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-65e9de41d2cef0ed",
+      "name": "content-type",
+      "versionInfo": "1.0.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/content-type@1.0.5"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-50cb51119b3e7a04",
+      "name": "cross-spawn",
+      "versionInfo": "7.0.6",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/cross-spawn@7.0.6"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-6390bf853aed627e",
+      "name": "debug",
+      "versionInfo": "4.4.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/debug@4.4.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d56e9863eb766454",
+      "name": "default-browser",
+      "versionInfo": "5.5.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/default-browser@5.5.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-f63dfb38aa4c3377",
+      "name": "default-browser-id",
+      "versionInfo": "5.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/default-browser-id@5.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-6e79b04c4690532e",
+      "name": "define-lazy-prop",
+      "versionInfo": "3.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/define-lazy-prop@3.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5a9cf482041d1ef6",
+      "name": "diff",
+      "versionInfo": "9.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "The sidecar lists BSD-3-Clause and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/diff@9.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-33ae256cd25a22f1",
+      "name": "dotenv",
+      "versionInfo": "17.4.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-2-Clause",
+      "licenseComments": "The sidecar lists BSD-2-Clause and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/dotenv@17.4.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-4c2c6a72952a0691",
+      "name": "enquirer",
+      "versionInfo": "2.4.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/enquirer@2.4.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-09407100555afb65",
+      "name": "eventsource",
+      "versionInfo": "3.0.7",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/eventsource@3.0.7"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-8922cc2aa3ffe5cc",
+      "name": "eventsource-parser",
+      "versionInfo": "3.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/eventsource-parser@3.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-60db03f2d9496a0b",
+      "name": "fast-deep-equal",
+      "versionInfo": "3.1.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/fast-deep-equal@3.1.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-0962e5ce59c1d22a",
+      "name": "fast-uri",
+      "versionInfo": "3.1.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "The sidecar lists BSD-3-Clause and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/fast-uri@3.1.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-e487f45e21fef63b",
+      "name": "get-east-asian-width",
+      "versionInfo": "1.6.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/get-east-asian-width@1.6.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-c5e93a0a2e1dba96",
+      "name": "get-stream",
+      "versionInfo": "9.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/get-stream@9.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-c0b8c47fbef7d288",
+      "name": "graceful-fs",
+      "versionInfo": "4.2.11",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/graceful-fs@4.2.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-7ec819116728d891",
+      "name": "has-flag",
+      "versionInfo": "4.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/has-flag@4.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-4499d3c6a4f775c2",
+      "name": "https-proxy-agent",
+      "versionInfo": "9.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/https-proxy-agent@9.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-0ae502b601c2c7ee",
+      "name": "ini",
+      "versionInfo": "7.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ini@7.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-10fdd28d247104ac",
+      "name": "ip-address",
+      "versionInfo": "10.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ip-address@10.2.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-b21de9a8d47c7c16",
+      "name": "is-docker",
+      "versionInfo": "3.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/is-docker@3.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5c276fae7d395a2f",
+      "name": "is-in-ssh",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/is-in-ssh@1.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-3f45825f7cda0ec2",
+      "name": "is-inside-container",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/is-inside-container@1.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-4cc0b1f9633a6b9b",
+      "name": "is-stream",
+      "versionInfo": "4.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/is-stream@4.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-a44f70aa8a1b98c8",
+      "name": "is-wsl",
+      "versionInfo": "3.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/is-wsl@3.1.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-2f62e711a6921973",
+      "name": "isexe",
+      "versionInfo": "2.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/isexe@2.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5666c5fcfbdee827",
+      "name": "jpeg-js",
+      "versionInfo": "0.4.4",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "The sidecar lists BSD-3-Clause and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/jpeg-js@0.4.4"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-e830fd7d93f6ebaa",
+      "name": "json-schema-traverse",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/json-schema-traverse@1.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-16281c6ea25e0cec",
+      "name": "json5",
+      "versionInfo": "2.2.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/json5@2.2.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-6887a25dc460806d",
+      "name": "mime",
+      "versionInfo": "4.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/mime@4.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-b16f0360d9fcf5f8",
+      "name": "minimatch",
+      "versionInfo": "10.2.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BlueOak-1.0.0",
+      "licenseComments": "The sidecar lists BlueOak-1.0.0 and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/minimatch@10.2.5"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-2083576c5af80549",
+      "name": "ms",
+      "versionInfo": "2.1.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ms@2.1.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-178e4fb38ad3de5b",
+      "name": "open",
+      "versionInfo": "11.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/open@11.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-e1a2a032096ace66",
+      "name": "path-key",
+      "versionInfo": "3.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/path-key@3.1.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5280e611ad1ea939",
+      "name": "pend",
+      "versionInfo": "1.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/pend@1.2.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-560377ce6df233b2",
+      "name": "pkce-challenge",
+      "versionInfo": "5.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/pkce-challenge@5.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-c4a10d4036f34449",
+      "name": "pngjs",
+      "versionInfo": "7.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/pngjs@7.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-4ccc9b2cdccda69c",
+      "name": "powershell-utils",
+      "versionInfo": "0.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/powershell-utils@0.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-b598d996665da76d",
+      "name": "progress",
+      "versionInfo": "2.0.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/progress@2.0.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d0685ac4da43ad32",
+      "name": "proxy-agent-negotiate",
+      "versionInfo": "1.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists this package with a declared MIT license but contains no license text for it; licenseDeclared records that declaration only. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/proxy-agent-negotiate@1.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-892c3217563598ae",
+      "name": "proxy-from-env",
+      "versionInfo": "2.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/proxy-from-env@2.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-30837b987fddf04f",
+      "name": "readdirp",
+      "versionInfo": "4.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/serverRegistry.js.LICENSE (SHA-256 3098a6efcbc11752cbdf6075fa65480f5470f78c8d981fab9c0796dc9a41cefe, 2982 bytes); playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/readdirp@4.1.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-96cc5eabb0f92326",
+      "name": "retry",
+      "versionInfo": "0.13.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/retry@0.13.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d5373e028313ca08",
+      "name": "run-applescript",
+      "versionInfo": "7.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/run-applescript@7.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-a9cba97b71b818fb",
+      "name": "shebang-command",
+      "versionInfo": "2.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/shebang-command@2.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-849fb37298f1c4dc",
+      "name": "shebang-regex",
+      "versionInfo": "3.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/shebang-regex@3.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-09ce5ebc7ff1552b",
+      "name": "signal-exit",
+      "versionInfo": "4.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/signal-exit@4.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-bc8fbee089eb9cdd",
+      "name": "smart-buffer",
+      "versionInfo": "4.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/smart-buffer@4.2.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d403b00b9f091afc",
+      "name": "socks",
+      "versionInfo": "2.8.9",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/socks@2.8.9"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-306a97fc68f4b9d9",
+      "name": "socks-proxy-agent",
+      "versionInfo": "10.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/socks-proxy-agent@10.1.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-55fb2b4a8e114a26",
+      "name": "source-map",
+      "versionInfo": "0.6.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "licenseComments": "The sidecar lists BSD-3-Clause and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/source-map@0.6.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-51292ddf8fc7ef77",
+      "name": "source-map-support",
+      "versionInfo": "0.5.21",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/source-map-support@0.5.21"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-695c3ef9530b873f",
+      "name": "strip-ansi",
+      "versionInfo": "6.0.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/strip-ansi@6.0.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-b97a30572cac0a03",
+      "name": "supports-color",
+      "versionInfo": "7.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/supports-color@7.2.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-5a71f2b741944bf1",
+      "name": "which",
+      "versionInfo": "2.0.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/which@2.0.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-d757d0a1cc8f7a6e",
+      "name": "ws",
+      "versionInfo": "8.21.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ws@8.21.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-df44f7fd756698a5",
+      "name": "wsl-utils",
+      "versionInfo": "0.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/wsl-utils@0.3.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-be80181ebffd939c",
+      "name": "yaml",
+      "versionInfo": "2.9.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/yaml@2.9.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-ba04cdba56764e1a",
+      "name": "yauzl",
+      "versionInfo": "3.4.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/yauzl@3.4.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-f5c50ce169f2be92",
+      "name": "yazl",
+      "versionInfo": "3.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/yazl@3.3.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-0479f5dfed7fff3d",
+      "name": "zod",
+      "versionInfo": "4.4.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "licenseComments": "The sidecar lists MIT and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/zod@4.4.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-NpmPackage-4009fd307a1c4ee1",
+      "name": "zod-to-json-schema",
+      "versionInfo": "3.25.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC",
+      "licenseComments": "The sidecar lists ISC and includes associated license text; this records the artifact's notice evidence. Evidence is bound to locked Playwright 1.63.0 Windows x64 wheel SHA-256 2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6: playwright/driver/package/lib/utilsBundle.js.LICENSE (SHA-256 2495f30be29620d54b58339821eda0ebabdfb6ee9b09455f7285a06fd46fb9f3, 106591 bytes). licenseConcluded remains NOASSERTION.",
+      "copyrightText": "NOASSERTION",
+      "primaryPackagePurpose": "LIBRARY",
+      "sourceInfo": "Bundled npm package listed in the locked Playwright wheel sidecar evidence.",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/zod-to-json-schema@3.25.2"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-1aa3f4884f0f4620"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-60d74007427623c6"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-a4720b30fbdd1e94"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-3f086487ddb384d6"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-439af92eda9782c8"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-9c728cf87aba8556"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-3081140538322aaf"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-8023b8bb9921fbbc"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-7fa0e28daa6f9c69"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5d9d8851e0b3a24a"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-b8c1c57e6a54451c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-7ee15af2b678aa50"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d08b5e69ef91add4"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-9307e757191c716f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-bc4d24341f85f604"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-53582bdf9c22ed07"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-379e787bc2b4b887"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d36df49098a7d427"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-65e9de41d2cef0ed"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-50cb51119b3e7a04"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-6390bf853aed627e"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d56e9863eb766454"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-f63dfb38aa4c3377"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-6e79b04c4690532e"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5a9cf482041d1ef6"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-33ae256cd25a22f1"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-4c2c6a72952a0691"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-09407100555afb65"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-8922cc2aa3ffe5cc"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-60db03f2d9496a0b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-0962e5ce59c1d22a"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-e487f45e21fef63b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-c5e93a0a2e1dba96"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-c0b8c47fbef7d288"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-7ec819116728d891"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-4499d3c6a4f775c2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-0ae502b601c2c7ee"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-10fdd28d247104ac"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-b21de9a8d47c7c16"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5c276fae7d395a2f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-3f45825f7cda0ec2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-4cc0b1f9633a6b9b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-a44f70aa8a1b98c8"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-2f62e711a6921973"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5666c5fcfbdee827"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-e830fd7d93f6ebaa"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-16281c6ea25e0cec"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-6887a25dc460806d"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-b16f0360d9fcf5f8"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-2083576c5af80549"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-178e4fb38ad3de5b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-e1a2a032096ace66"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5280e611ad1ea939"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-560377ce6df233b2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-c4a10d4036f34449"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-4ccc9b2cdccda69c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-b598d996665da76d"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d0685ac4da43ad32"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-892c3217563598ae"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-30837b987fddf04f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-96cc5eabb0f92326"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d5373e028313ca08"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-a9cba97b71b818fb"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-849fb37298f1c4dc"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-09ce5ebc7ff1552b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-bc8fbee089eb9cdd"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d403b00b9f091afc"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-306a97fc68f4b9d9"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-55fb2b4a8e114a26"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-51292ddf8fc7ef77"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-695c3ef9530b873f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-b97a30572cac0a03"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-5a71f2b741944bf1"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-d757d0a1cc8f7a6e"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-df44f7fd756698a5"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-be80181ebffd939c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-ba04cdba56764e1a"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-f5c50ce169f2be92"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-0479f5dfed7fff3d"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-NpmPackage-4009fd307a1c4ee1"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-6914459121c46b7a",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-5dcbb5b343362260"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-6914459121c46b7a",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d54e8e51b87bfa6c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-4de69e49109a4e0f",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-0f202b98d741fea2",
+      "comment": "uv marker: python_full_version < '3.12'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-4de69e49109a4e0f",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-78a46eabe4c6a3e5",
+      "comment": "uv marker: python_full_version >= '3.12'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-4de69e49109a4e0f",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-7178bcb824a1daea"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-478ad8e9154d502f",
+      "comment": "uv group/extra: extra:asr"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-478e4de7522ae1dd",
+      "comment": "uv group/extra: extra:asr"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-03689fd438227403",
+      "comment": "uv group/extra: extra:browser"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-af57c86193e1e427",
+      "comment": "uv group/extra: dev:build"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-ee0f6000652c448c",
+      "comment": "uv group/extra: dev:build"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d7a3ec5341114e1d",
+      "comment": "uv group/extra: dev:dev"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-791e0b05b9fcb126",
+      "comment": "uv group/extra: dev:dev"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-1aa3f4884f0f4620",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-840268c02e8a1247",
+      "comment": "uv group/extra: dev:dev"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-478ad8e9154d502f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-4de69e49109a4e0f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d1d4ecb4b24e3a89"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-0d5d599e5ee330ad"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d17cfba4f5600863"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-478e4de7522ae1dd",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-401d3655acabaa40"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-ee0f6000652c448c",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f94e61627a7b57b2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-ee0f6000652c448c",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-45714c1085c49da2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-ee0f6000652c448c",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-80ec0dd04855b14c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-ee0f6000652c448c",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-6bcb7c4e9829d3f5"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-f55201215754231f",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-3ecefe6389e6b6a5"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-f55201215754231f",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-68617ff701e5f79c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-05ba2f5be5134f88",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-6914459121c46b7a"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-05ba2f5be5134f88",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-3ecefe6389e6b6a5"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-05ba2f5be5134f88",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f55201215754231f"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-05ba2f5be5134f88",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-5dcbb5b343362260"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-acbdcde11e1b8228"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-244941fd5984cbfb"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-6004078b571e8a3c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-4fffd491d3e0ff0d",
+      "comment": "uv marker: platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-05ba2f5be5134f88"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f94e61627a7b57b2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-7178bcb824a1daea"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-401d3655acabaa40"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d1d4ecb4b24e3a89",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d54e8e51b87bfa6c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-0d5d599e5ee330ad",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-e53a89a898bb80d8"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-0d5d599e5ee330ad",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-0f202b98d741fea2",
+      "comment": "uv marker: python_full_version < '3.12'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-0d5d599e5ee330ad",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-78a46eabe4c6a3e5",
+      "comment": "uv marker: python_full_version >= '3.12'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-0d5d599e5ee330ad",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f94e61627a7b57b2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-0d5d599e5ee330ad",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-56f486296d78d5d1"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-43632f825338f1ac"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-03689fd438227403",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f92d7b469294f564"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-f92d7b469294f564",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d54e8e51b87bfa6c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d7a3ec5341114e1d",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-5bd93003546013b4",
+      "comment": "uv marker: sys_platform == 'win32'"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d7a3ec5341114e1d",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-dcc4e1efdaaabde3"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d7a3ec5341114e1d",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-f94e61627a7b57b2"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d7a3ec5341114e1d",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-80ec0dd04855b14c"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d7a3ec5341114e1d",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-3d3423d9387b1307"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-96e9021050ce912b",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-aceac34b03b20e3d"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-840268c02e8a1247",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-acbdcde11e1b8228"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-840268c02e8a1247",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-c4bb9ee76fe675f7"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-c4bb9ee76fe675f7",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-96e9021050ce912b"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-d17cfba4f5600863",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-d1d4ecb4b24e3a89"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-401d3655acabaa40",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-5bd93003546013b4",
+      "comment": "uv marker: sys_platform == 'win32'"
+    }
+  ]
+}

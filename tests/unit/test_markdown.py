@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Barrier
@@ -14,6 +15,7 @@ from douyin_transcript.markdown import (
     escape_markdown_text,
     render_transcript_markdown,
     serialize_frontmatter,
+    write_reviewed_transcript_markdown,
     write_transcript_markdown,
 )
 
@@ -187,6 +189,7 @@ def test_writer_fails_if_parent_directory_cannot_be_synced(tmp_path, monkeypatch
     synced: list[Path] = []
 
     if os.name == "nt":
+
         def fail_publish(source: Path, destination: Path) -> None:
             raise OSError("write-through rename failed")
 
@@ -245,7 +248,9 @@ def test_windows_generic_move_error_is_not_treated_as_collision(tmp_path, monkey
     destination = tmp_path / "appeared.md"
     destination.write_text("external file", encoding="utf-8")
     fake_kernel32 = SimpleNamespace(MoveFileExW=FakeFunction())
-    monkeypatch.setattr(markdown_module.ctypes, "WinDLL", lambda *_args, **_kwargs: fake_kernel32)
+    monkeypatch.setattr(
+        markdown_module.ctypes, "WinDLL", lambda *_args, **_kwargs: fake_kernel32
+    )
     monkeypatch.setattr(markdown_module.ctypes, "get_last_error", lambda: 5)
 
     with pytest.raises(OSError) as error:
@@ -253,3 +258,111 @@ def test_windows_generic_move_error_is_not_treated_as_collision(tmp_path, monkey
 
     assert not isinstance(error.value, FileExistsError)
     assert error.value.winerror == 5
+
+
+def test_reviewed_sidecar_preserves_raw_frontmatter_and_never_overwrites(tmp_path):
+    raw_path = write_transcript_markdown(
+        tmp_path,
+        "模型校对样例",
+        "原始正文不能被覆盖。",
+        {"video_id": "synthetic-123", "author": "测试"},
+    )
+    raw_before = raw_path.read_bytes()
+    raw_frontmatter = raw_before.split(b"\n---\n", 1)[0] + b"\n---"
+    reviewed_body = "这里是校对后的闭源术语，标点完整。\n\n下一段保留原意！"
+
+    first = write_reviewed_transcript_markdown(raw_path, reviewed_body)
+    first_bytes = first.read_bytes()
+    second = write_reviewed_transcript_markdown(raw_path, reviewed_body)
+
+    assert first.name == "模型校对样例.reviewed.md"
+    assert second.name == "模型校对样例__2.reviewed.md"
+    assert first.read_bytes() == first_bytes
+    assert raw_path.read_bytes() == raw_before
+    assert first_bytes.startswith(raw_frontmatter)
+    assert b'video_id: "synthetic-123"' in first_bytes
+    assert "未经人工逐字校对".encode() not in first_bytes
+    assert "当前 Agent 默认模型进行文本校对和标点整理".encode() in first_bytes
+    assert "这里是校对后的闭源术语，标点完整。".encode() in first_bytes
+    assert "原始正文不能被覆盖".encode() not in first_bytes
+
+
+@pytest.mark.parametrize(
+    ("reviewed_body", "message"),
+    [
+        ("", "reviewed text is empty"),
+        ("一段没有句读标点的文字", "Chinese sentence punctuation"),
+        ("一句里有逗号，和冒号：但没有句末标点", "Chinese sentence punctuation"),
+        ("只有列表顿号、分号；也没有句末标点", "Chinese sentence punctuation"),
+        ("甲" * 299 + "。", "paragraph breaks"),
+    ],
+)
+def test_reviewed_sidecar_rejects_incomplete_review_format(
+    tmp_path, reviewed_body, message
+):
+    raw_path = write_transcript_markdown(tmp_path, "format-check", "raw text。", {})
+
+    with pytest.raises(ValueError, match=message):
+        write_reviewed_transcript_markdown(raw_path, reviewed_body)
+
+    assert not list(tmp_path.glob("*.reviewed.md"))
+
+
+def test_reviewed_sidecar_rejects_long_unpunctuated_run(tmp_path):
+    raw_path = write_transcript_markdown(
+        tmp_path, "punctuation-check", "raw text。", {}
+    )
+    reviewed_body = "转写文字" * 41 + "，这里虽然出现了一个标点，但前文过长。"
+
+    with pytest.raises(ValueError, match="unpunctuated run"):
+        write_reviewed_transcript_markdown(raw_path, reviewed_body)
+
+    assert not list(tmp_path.glob("*.reviewed.md"))
+
+
+def test_reviewed_sidecar_rejects_a_punctuation_free_paragraph(tmp_path):
+    raw_path = write_transcript_markdown(
+        tmp_path, "paragraph-punctuation-check", "raw text。", {}
+    )
+    reviewed_body = "甲" * 149 + "，\n\n" + "乙" * 151
+
+    with pytest.raises(ValueError, match="every reviewed paragraph"):
+        write_reviewed_transcript_markdown(raw_path, reviewed_body)
+
+    assert not list(tmp_path.glob("*.reviewed.md"))
+
+
+def test_reviewed_sidecar_rejects_symlinked_raw_input(tmp_path):
+    raw_path = write_transcript_markdown(tmp_path, "symlink-source", "raw text。", {})
+    alias = tmp_path / "alias.md"
+    try:
+        alias.symlink_to(raw_path)
+    except OSError as exc:
+        pytest.skip(
+            f"filesystem does not permit symlink creation: {type(exc).__name__}"
+        )
+
+    with pytest.raises(PermissionError):
+        write_reviewed_transcript_markdown(alias, "已校对正文。")
+
+    assert not (tmp_path / "alias.reviewed.md").exists()
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX mode bits are not Windows ACLs")
+def test_reviewed_sidecar_refuses_shared_parent_without_changing_permissions(tmp_path):
+    shared = tmp_path / "shared"
+    shared.mkdir(mode=0o755)
+    shared.chmod(0o755)
+    raw_path = shared / "raw.md"
+    raw_path.write_text(
+        '---\ntitle: "raw"\n---\n\n# raw\n\n'
+        "> 本文为自动语音识别逐字稿，未经人工逐字校对。\n\n"
+        "## 口播逐字稿\n\nraw text。\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(PermissionError):
+        write_reviewed_transcript_markdown(raw_path, "已校对正文。")
+
+    assert stat.S_IMODE(shared.stat().st_mode) == 0o755
+    assert not list(shared.glob("*.reviewed.md"))

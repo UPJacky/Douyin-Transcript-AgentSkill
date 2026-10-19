@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0-windows7.0": {
+      "wfppolicy.core": {
+        "type": "Project"
+      },
+      "wfppolicy.nativereadback": {
+        "type": "Project"
+      },
+      "wfppolicy.runtime": {
+        "type": "Project",
+        "dependencies": {
+          "WfpPolicy.Core": "[1.0.0, )",
+          "WfpPolicy.NativeReadback": "[1.0.0, )"
+        }
+      }
+    },
+    "net10.0-windows7.0/win-x64": {}
+  }
+}

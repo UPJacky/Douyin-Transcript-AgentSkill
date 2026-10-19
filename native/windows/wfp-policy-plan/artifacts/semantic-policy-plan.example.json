@@ -1,0 +1,134 @@
+{
+  "SchemaVersion": "1",
+  "PlanKind": "semantic-preview-only",
+  "Deployability": "not-deployable",
+  "IdentitySource": "A future broker must derive the application ID from its own protected browser path; caller-supplied paths are not trusted.",
+  "Identity": {
+    "ExecutablePath": "C:\\Program Files\\DouyinTranscript\\Browser\\chrome.exe",
+    "PathProtection": "illustrative-only; administrator-protected ACL has not been installed or verified",
+    "ContentPin": "not-provided"
+  },
+  "Endpoint": {
+    "Address": "127.0.0.1",
+    "Port": 43127,
+    "Transport": "TCP",
+    "AddressFamily": "IPv4",
+    "Lifetime": "illustrative lease endpoint; a service must choose and own the actual port"
+  },
+  "IntendedRules": [
+    {
+      "Id": "allow-exact-broker-endpoint",
+      "Effect": "allow-only-this-destination",
+      "FilterOrder": "highest weight in the dedicated sublayer; soft permit",
+      "Layer": "ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Conditions": [
+        {
+          "Name": "ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Predicate": "equals service-derived protected browser identity"
+        },
+        {
+          "Name": "IP_PROTOCOL",
+          "FieldKey": "3971ef2b-623e-4f9a-8cb1-6e79b806b9a7",
+          "Predicate": "equals TCP (6)"
+        },
+        {
+          "Name": "IP_REMOTE_ADDRESS",
+          "FieldKey": "b235ae9a-1d64-49b8-a44c-5ff3d9095045",
+          "Predicate": "equals 127.0.0.1/32"
+        },
+        {
+          "Name": "IP_REMOTE_PORT",
+          "FieldKey": "c35a604d-d22b-4e1a-91b4-68f674ee674b",
+          "Predicate": "equals the service-owned lease port"
+        }
+      ],
+      "Lifetime": "only while the authenticated broker lease and listener are active"
+    },
+    {
+      "Id": "deny-ipv4-non-tcp",
+      "Effect": "block-if-condition-matches",
+      "FilterOrder": "lower weight than the exact endpoint permit in the same dedicated sublayer; hard block",
+      "Layer": "ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Conditions": [
+        {
+          "Name": "ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Predicate": "equals service-derived protected browser identity"
+        },
+        {
+          "Name": "IP_PROTOCOL",
+          "FieldKey": "3971ef2b-623e-4f9a-8cb1-6e79b806b9a7",
+          "Predicate": "does not equal TCP (6)"
+        }
+      ],
+      "Lifetime": "persistent app-wide default-deny filter; must be present before the browser starts"
+    },
+    {
+      "Id": "deny-ipv4-address-outside-loopback-proxy",
+      "Effect": "block-if-condition-matches",
+      "FilterOrder": "lower weight than the exact endpoint permit in the same dedicated sublayer; hard block",
+      "Layer": "ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Conditions": [
+        {
+          "Name": "ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Predicate": "equals service-derived protected browser identity"
+        },
+        {
+          "Name": "IP_REMOTE_ADDRESS",
+          "FieldKey": "b235ae9a-1d64-49b8-a44c-5ff3d9095045",
+          "Predicate": "does not equal 127.0.0.1/32"
+        }
+      ],
+      "Lifetime": "persistent app-wide default-deny filter; must be present before the browser starts"
+    },
+    {
+      "Id": "deny-ipv4-port-outside-active-lease",
+      "Effect": "block-if-condition-matches",
+      "FilterOrder": "lower weight than the exact endpoint permit in the same dedicated sublayer; hard block",
+      "Layer": "ALE_AUTH_CONNECT_V4",
+      "LayerKey": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+      "Conditions": [
+        {
+          "Name": "ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Predicate": "equals service-derived protected browser identity"
+        },
+        {
+          "Name": "IP_REMOTE_PORT",
+          "FieldKey": "c35a604d-d22b-4e1a-91b4-68f674ee674b",
+          "Predicate": "does not equal the service-owned lease port"
+        }
+      ],
+      "Lifetime": "persistent app-wide default-deny filter; must be present before the browser starts"
+    },
+    {
+      "Id": "deny-all-ipv6-destinations",
+      "Effect": "block",
+      "FilterOrder": "default hard block in the dedicated sublayer",
+      "Layer": "ALE_AUTH_CONNECT_V6",
+      "LayerKey": "4a72393b-319f-44bc-84c3-ba54dcb3b6b4",
+      "Conditions": [
+        {
+          "Name": "ALE_APP_ID",
+          "FieldKey": "d78e1e87-8644-4ea5-9437-d809ecefc971",
+          "Predicate": "equals service-derived protected browser identity"
+        }
+      ],
+      "Lifetime": "must be present before the browser starts"
+    }
+  ],
+  "UnresolvedValidationItems": [
+    "The IPv4 exception is decomposed into three single-mismatch filters because conditions within one WFP filter are conjunctive; native filter synthesis and action-right behavior remain unimplemented.",
+    "The IPv4 address mismatch requires a sortable UINT32 representation for FWP_MATCH_NOT_EQUAL; address byte order and supported-layer acceptance are not yet verified against the Windows SDK/runtime.",
+    "ALE loopback classification and the exact behavior of this endpoint on supported Windows builds have not been tested.",
+    "Raw sockets, bind/resource-assignment paths, broker/IPC authentication, socket duplication, service lifecycle, and rollback are outside this semantic plan.",
+    "The example browser path and endpoint are placeholders; no protected executable identity or service-owned listener was verified.",
+    "Other providers\u0027 blocks must remain effective; conflicting hard permits and cross-sublayer action-right arbitration are unresolved."
+  ],
+  "SafetyBoundary": "This is an intended-policy description only. It is not a concrete FWPM_FILTER0 plan, does not query or mutate BFE/WFP, and cannot establish that isolation is active."
+}

@@ -1,13 +1,17 @@
 # Local ASR benchmark record
 
-## Status: NOT VERIFIED
+## Status: REAL LOCAL RUN RECORDED; P4 REVIEW PENDING
 
-No real inference timing has been measured in this worktree. The historical 16.5-minute medium/small figures in the project specification belong to another machine and are not this project's benchmark.
+The pinned medium model and runtime dependencies were installed on 2026-10-09. A user-provided local audio-only MP4 completed a real run on 2026-10-10. The historical 16.5-minute medium/small figures in the project specification belong to another machine and are not this project's benchmark. Manual quality review remains pending.
 
 Fill one row per actual run; use the same authorized media when comparing models. Keep media and transcript files outside Git.
 
-| Date | OS | Python | CPU / cores | RAM | Model revision / file hash | Source duration | Download/capture | Model load | Inference | End-to-end | Peak RAM | Notes |
+| Date | OS | Python | CPU / cores | RAM | Model revision / file hash | Source duration | Download/capture | Model load | Inference | End-to-end | Observed RAM | Notes |
 |---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---|
-| NOT RUN | NOT MEASURED | NOT MEASURED | NOT MEASURED | NOT MEASURED | NOT DOWNLOADED | NOT MEASURED | NOT MEASURED | NOT MEASURED | NOT MEASURED | NOT MEASURED | NOT MEASURED | Awaiting authorized sample and setup authorization |
+| 2026-10-10 — user-provided local media | Windows 11 10.0.26100 | Python 3.11.15 (CPython) | Intel Core i5-12400 / 12 logical cores | 31.7 GiB installed | `Systran/faster-whisper-medium@08e178d48790749d25932bbc082711ddcfdfbc4f` (installed; file hash not recorded) | 315.907 sec; MP4 container, AAC stereo audio, no video stream | N/A (local) | Not separately measured | Not separately measured | 302.50 sec | At least 2.07 GiB working set observed in one sample; peak not continuously measured | CLI success; one non-empty Markdown file, 4,658 bytes; transcript body 1,556 characters. Captured CLI/status logs contained no checked 16-character CJK transcript windows; stderr 0 bytes. A separate worker-startup plus full PyAV validation run took 0.953 seconds; it is not a timing split of this ASR run. Human listening review remains pending. |
+| 2026-10-10 — default-deadline re-run | Windows 11 10.0.26100 | Python 3.11.15 (CPython) | Intel Core i5-12400 / 12 logical cores | 31.7 GiB installed | Same pinned medium revision (file hash not recorded) | 315.907 sec; MP4 container, AAC stereo audio, no video stream | N/A (local) | Not separately measured | Not separately measured | Not separately measured | NOT MEASURED | `--force --json` succeeded without a timeout override (default 7,200 sec); one non-empty private Markdown file, 4,656 bytes. No transcript body was captured in the CLI summary. |
+| 2026-10-10 — synthetic smoke | Windows 11 10.0.26100 | Python 3.11.15 (CPython) | Intel Core i5-12400 / 12 logical cores | 31.7 GiB installed | `Systran/faster-whisper-medium@08e178d48790749d25932bbc082711ddcfdfbc4f` (installed; file hash not recorded) | 190.477 sec (SAPI-generated zh-CN) | N/A (local) | Not separately measured | Not separately measured | 101.98 sec | NOT MEASURED | CLI success; one Markdown file, 2,625 bytes, stored privately. Transcript body was not read; synthetic-only, not P1/P4 acceptance |
+
+The terminology-dictionary rerun and 5,764-byte reviewed sidecar recorded in §72 are historical outputs. A later metadata-only lineage check found that sidecar matched a numbered raw Markdown output, not the unnumbered raw file originally identified by the user. The source-matched §158 review left the original raw SHA-256 unchanged (`0a2152dc02267f099ea62208d81869c016ff7df903de3c6cdc99599ce26a853e`) and created a separate sidecar with SHA-256 `adc2e978828100969a96698c682b749c69a4cc36568220b963f7958a701be08a`; it has three unresolved listening markers. These text-review operations were not benchmarked with a monotonic clock, so no runtime or memory values are inferred. `P1_REPORT.md` records the output inventory and the unaccounted 4,689-byte private file without reading its body.
 
 Report only timings measured with a monotonic clock and memory actually sampled by the host. Do not infer speed from another machine's measurements or from mock tests.

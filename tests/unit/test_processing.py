@@ -37,7 +37,9 @@ def test_worker_uses_json_frames_and_reuses_its_child(tmp_path):
     assert first_process.poll() is not None
 
 
-def test_default_worker_ignores_shadow_package_in_current_directory(tmp_path, monkeypatch):
+def test_default_worker_ignores_shadow_package_in_current_directory(
+    tmp_path, monkeypatch
+):
     marker = tmp_path / "shadow-imported"
     shadow_package = tmp_path / "douyin_transcript"
     shadow_package.mkdir()
@@ -53,9 +55,7 @@ def test_default_worker_ignores_shadow_package_in_current_directory(tmp_path, mo
     worker = SupervisedProcessingWorker()
     try:
         with pytest.raises(MediaInvalidError) as error:
-            worker.validate_media(
-                tmp_path / "missing.wav", max_duration_seconds=3600
-            )
+            worker.validate_media(tmp_path / "missing.wav", max_duration_seconds=3600)
 
         process = worker._process
         assert process is not None and process.poll() is None

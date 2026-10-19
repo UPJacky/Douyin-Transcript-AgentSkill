@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import _thread
+import hashlib
+import json
+import subprocess
+import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -9,10 +13,14 @@ from pathlib import Path
 import douyin_transcript.pipeline as pipeline_module
 import pytest
 from douyin_transcript.asr import TranscriptionResult, TranscriptSegment
-from douyin_transcript.capture import MediaCandidate, VideoMetadata
-from douyin_transcript.config import RuntimePaths
+from douyin_transcript.capture_client import CaptureClientError, CapturedMedia
+from douyin_transcript.capture_ipc import CaptureVideoMetadata
+from douyin_transcript.config import ConfigurationError, RuntimePaths
 from douyin_transcript.corrections import CorrectionRule, CorrectionWorkBudget
-from douyin_transcript.downloader import DownloadError, MediaFile, MediaIdentity
+from douyin_transcript.downloader import (
+    MediaFile,
+    MediaInvalidError,
+)
 from douyin_transcript.naming import candidate_output_paths
 from douyin_transcript.output import json_summary, make_summary
 from douyin_transcript.pipeline import (
@@ -21,7 +29,6 @@ from douyin_transcript.pipeline import (
     validate_url_batch,
 )
 from douyin_transcript.tasks import TaskStore
-from douyin_transcript.urls import ResolvedInput
 
 
 def _paths(tmp_path: Path) -> RuntimePaths:
@@ -30,6 +37,35 @@ def _paths(tmp_path: Path) -> RuntimePaths:
         output_dir=tmp_path / "output",
         config_path=tmp_path / "data" / "config.toml",
     )
+
+
+def test_pipeline_blocks_unsafe_implicit_output_directory(monkeypatch, tmp_path):
+    paths = _paths(tmp_path)
+    paths = RuntimePaths(
+        data_dir=paths.data_dir,
+        output_dir=paths.output_dir,
+        config_path=paths.config_path,
+        output_dir_is_default=True,
+    )
+    monkeypatch.setattr(
+        pipeline_module,
+        "output_directory_permission_status",
+        lambda _path: {"status": "unsafe", "detail": "shared"},
+    )
+
+    with pytest.raises(ConfigurationError, match="默认输出目录权限不安全"):
+        TranscriptionPipeline(paths)
+
+
+def test_pipeline_keeps_explicit_shared_output_available(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        pipeline_module,
+        "output_directory_permission_status",
+        lambda _path: {"status": "unsafe", "detail": "shared"},
+    )
+
+    pipeline = TranscriptionPipeline(_paths(tmp_path))
+    pipeline.close()
 
 
 def _validator(path: Path) -> MediaFile:
@@ -49,6 +85,16 @@ class _ASR:
 
 def _asr_factory(_data_dir: Path, _profile: str, **_kwargs) -> _ASR:
     return _ASR()
+
+
+def test_media_invalid_error_has_media_specific_recovery_hint():
+    error = MediaInvalidError("MEDIA_DECODE_FAILED", "媒体包含无法恢复的数据")
+
+    code, message, hint = pipeline_module._error_details(error)
+
+    assert code == "MEDIA_DECODE_FAILED"
+    assert message == "媒体包含无法恢复的数据"
+    assert hint == "确认媒体文件完整且包含可解码音轨。"
 
 
 def test_local_pipeline_writes_markdown_and_summary_excludes_body(tmp_path):
@@ -144,14 +190,16 @@ def test_concurrent_local_retries_reserve_once_and_report_the_race_as_skipped(tm
         asr_calls.append(True)
         return _ASR()
 
-    first = TranscriptionPipeline(paths, media_validator=validator, asr_factory=asr_factory)
-    second = TranscriptionPipeline(paths, media_validator=validator, asr_factory=asr_factory)
+    first = TranscriptionPipeline(
+        paths, media_validator=validator, asr_factory=asr_factory
+    )
+    second = TranscriptionPipeline(
+        paths, media_validator=validator, asr_factory=asr_factory
+    )
     try:
         with ThreadPoolExecutor(max_workers=2) as executor:
             futures = [
-                executor.submit(
-                    pipeline.run_local, media, retry_task_id=task.task_id
-                )
+                executor.submit(pipeline.run_local, media, retry_task_id=task.task_id)
                 for pipeline in (first, second)
             ]
             results = [future.result(timeout=5) for future in futures]
@@ -276,7 +324,9 @@ def test_timeline_symlink_collision_is_not_resolved_or_overwritten(tmp_path):
     try:
         first_sidecar.symlink_to(external_target)
     except (OSError, NotImplementedError) as exc:
-        pytest.skip(f"filesystem does not permit symlink creation: {type(exc).__name__}")
+        pytest.skip(
+            f"filesystem does not permit symlink creation: {type(exc).__name__}"
+        )
 
     pipeline = TranscriptionPipeline(
         paths,
@@ -341,72 +391,116 @@ def test_local_pipeline_skips_completed_and_force_writes_new_file(tmp_path):
     assert Path(forced.output_path or "").is_file()
 
 
-class _Capture:
-    def __init__(self, _profile_dir: Path) -> None:
-        self.closed = False
+def test_local_force_retries_failed_task_with_current_processing_profile(tmp_path):
+    media = tmp_path / "failed-before-model-ready.wav"
+    media.write_bytes(b"fake fixture accepted by validator")
+    paths = _paths(tmp_path)
 
-    def start(self) -> _Capture:
-        return self
+    class FailingASR:
+        def transcribe(self, _path, *, language):
+            raise RuntimeError("model unavailable")
 
-    def capture(self, item: ResolvedInput) -> VideoMetadata:
-        return VideoMetadata(
-            item.video_id,
-            "远端标题",
-            "作者",
+    failed = TranscriptionPipeline(
+        paths,
+        profile="fast",
+        media_validator=_validator,
+        asr_factory=lambda *_args, **_kwargs: FailingASR(),
+    ).run_local(media)
+    assert failed.status == "failed"
+
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.list_tasks()[0]
+        assert task.state == "failed"
+        assert task.profile == "fast"
+
+    retried = TranscriptionPipeline(
+        paths,
+        profile="balanced",
+        language="auto",
+        force=True,
+        media_validator=_validator,
+        asr_factory=_asr_factory,
+    ).run_local(media)
+
+    assert retried.status == "success"
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.list_tasks()[0]
+        assert task.state == "completed"
+        assert task.profile == "balanced"
+        assert json.loads(task.processing_options_json or "{}")["language"] == "auto"
+
+
+def _captured_media(
+    paths: RuntimePaths,
+    video_id: str,
+    *,
+    title: str | None = None,
+    duration_seconds: float = 5.0,
+    body: bytes | None = None,
+) -> CapturedMedia:
+    """Create a protocol-shaped service result inside the private media cache."""
+    payload = body if body is not None else f"synthetic media for {video_id}".encode()
+    digest = hashlib.sha256(payload).hexdigest()
+    cache = paths.data_dir / "media-cache"
+    cache.mkdir(parents=True, exist_ok=True)
+    media = cache / f"{video_id}-{digest[:16]}.m4a"
+    media.write_bytes(payload)
+    return CapturedMedia(
+        CaptureVideoMetadata(
+            video_id,
+            title or f"服务标题 {video_id}",
+            "测试作者",
             None,
-            item.canonical_url,
-            5.0,
-            [
-                MediaCandidate(
-                    "https://media.douyinvod.com/audio.m4a?sig=secret",
-                    "audio",
-                    "audio/mp4",
-                )
-            ],
-        )
-
-    def close(self) -> None:
-        self.closed = True
-
-
-def _remote_resolver(_value: str) -> ResolvedInput:
-    return ResolvedInput(
-        "https://www.douyin.com/video/123",
-        "https://www.douyin.com/video/123",
-        "123",
-        "direct",
+            duration_seconds,
+        ),
+        media,
+        len(payload),
+        digest,
+        "audio/mp4",
+        duration_seconds,
     )
 
 
-def test_remote_pipeline_uses_capture_download_and_persists_task(tmp_path):
+class _CaptureServiceFake:
+    """Complete-job fake: resolution and capture are owned by one client."""
+
+    def __init__(
+        self, paths: RuntimePaths, *, resolve_handler=None, capture_handler=None
+    ) -> None:
+        self.paths = paths
+        self.resolve_handler = resolve_handler
+        self.capture_handler = capture_handler
+        self.resolve_calls: list[str] = []
+        self.capture_calls: list[str] = []
+
+    def resolve_source(self, original_url: str, **_kwargs) -> str:
+        self.resolve_calls.append(original_url)
+        if self.resolve_handler is not None:
+            return self.resolve_handler(original_url)
+        return original_url.rstrip("/").rsplit("/", 1)[-1].split("?", 1)[0]
+
+    def capture(self, original_url: str, **kwargs) -> CapturedMedia:
+        self.capture_calls.append(original_url)
+        if self.capture_handler is not None:
+            return self.capture_handler(original_url, **kwargs)
+        video_id = original_url.rstrip("/").rsplit("/", 1)[-1].split("?", 1)[0]
+        return _captured_media(self.paths, video_id)
+
+
+def test_remote_pipeline_uses_complete_capture_service_and_persists_task(tmp_path):
     paths = _paths(tmp_path)
     paths.output_dir.mkdir(parents=True, exist_ok=True)
     forged_output = paths.output_dir / "untrusted-existing.md"
     forged_output.write_text(
         '---\nvideo_id: "123"\n---\n\n未验证的旧内容\n', encoding="utf-8"
     )
-    capture_instances: list[_Capture] = []
-    expected_durations: list[float | None] = []
-
-    def capture_factory(profile_dir: Path) -> _Capture:
-        capture = _Capture(profile_dir)
-        capture_instances.append(capture)
-        return capture
-
-    def downloader(_video_id: str, _candidates, cache_dir: Path, **_kwargs) -> MediaFile:
-        expected_durations.append(_kwargs.get("expected_duration_seconds"))
-        cache_dir.mkdir(parents=True)
-        media = cache_dir / "123-audio-hash.m4a"
-        media.write_bytes(b"fake media")
-        return MediaFile(media, "mp4", media.stat().st_size, 5.0)
+    service = _CaptureServiceFake(paths)
 
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=capture_factory,
-        downloader=downloader,
+        capture_service_client=service,
         media_validator=_validator,
         asr_factory=_asr_factory,
-        url_resolver=_remote_resolver,
     )
     result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
 
@@ -414,72 +508,265 @@ def test_remote_pipeline_uses_capture_download_and_persists_task(tmp_path):
     assert result.video_id == "123"
     assert Path(result.output_path or "") != forged_output
     assert "未验证的旧内容" in forged_output.read_text(encoding="utf-8")
-    assert capture_instances[0].closed
+    assert service.capture_calls == ["https://www.douyin.com/video/123"]
     assert "你好。" not in str(result.to_dict())
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         task = store.get_task("123")
         assert task is not None and task.state == "completed"
+        assert task.title == "服务标题 123"
         assert task.output_sha256 is not None
         assert task.source_duration_seconds == 5.0
         assert store.is_completed_valid("123")
-    assert expected_durations == [5.0]
+
+    skipped = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+    assert skipped.status == "skipped"
+    assert skipped.title == "服务标题 123"
+    assert service.capture_calls == ["https://www.douyin.com/video/123"]
 
 
-def test_default_remote_pipeline_accepts_validated_mediafile_decoder(
-    monkeypatch, tmp_path
+@pytest.mark.parametrize(
+    ("crash_at", "expected_asr_calls"),
+    [("downloaded", 1), ("transcribing", 1), ("writing", 2)],
+)
+def test_pipeline_recovers_after_real_subprocess_crash(
+    tmp_path, crash_at: str, expected_asr_calls: int
 ):
-    import douyin_transcript.downloader as downloader_module
+    fixture = Path(__file__).parents[1] / "fixtures" / "pipeline_crash_worker.py"
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    events_path = tmp_path / "events.json"
+    arguments = [
+        sys.executable,
+        str(fixture),
+        str(data_dir),
+        str(output_dir),
+        str(events_path),
+    ]
 
-    body = b"validated remote audio"
-    requests = []
+    crashed = subprocess.run(
+        [*arguments, "crash", crash_at],
+        cwd=Path(__file__).parents[2],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert crashed.returncode == 86, crashed.stderr
 
-    class FakeSocket:
-        def settimeout(self, _timeout):
-            pass
+    resumed = subprocess.run(
+        [*arguments, "resume"],
+        cwd=Path(__file__).parents[2],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert resumed.returncode == 0, resumed.stderr
 
-    class FakeConnection:
-        def __init__(self):
-            self.sock = FakeSocket()
+    payload = json.loads((data_dir / "resume-result.json").read_text(encoding="utf-8"))
+    assert payload["status"] == "success"
+    assert payload["error_code"] is None
+    assert payload["events"] == {
+        "asr_calls": expected_asr_calls,
+        "capture_calls": 1,
+        "download_calls": 1,
+    }
+    output_path = Path(payload["output_path"])
+    assert output_path.is_file()
+    assert "测试恢复。" in output_path.read_text(encoding="utf-8")
+    with TaskStore(data_dir / "tasks.sqlite3") as store:
+        recovered = store.get_task("123")
+        assert recovered is not None and recovered.state == "completed"
+        assert recovered.title == "Crash recovery fixture"
+        assert store.is_completed_valid("123")
 
-        def close(self):
-            pass
 
-    class FakeResponse:
-        status = 200
+def test_old_capture_factory_is_rejected_and_url_pipeline_fails_closed_before_side_effects(
+    monkeypatch,
+    tmp_path,
+):
+    paths = _paths(tmp_path)
+    factory_calls = []
+    resolver_calls = []
+    store_factory_calls = []
 
-        def __init__(self):
-            self.offset = 0
+    def old_capture_factory(*_args, **_kwargs):
+        factory_calls.append(True)
+        raise AssertionError("legacy caller-side capture must never start")
 
-        def getheader(self, name, default=None):
-            return {
-                "Content-Type": "audio/mp4",
-                "Content-Length": str(len(body)),
-            }.get(name, default)
+    original_resolver = pipeline_module.resolve_direct_input
 
-        def read(self, size):
-            chunk = body[self.offset : self.offset + size]
-            self.offset += len(chunk)
-            return chunk
+    def resolver(value):
+        resolver_calls.append(value)
+        return original_resolver(value)
 
-        def close(self):
-            pass
+    monkeypatch.setattr(pipeline_module, "resolve_direct_input", resolver)
 
-    def requester(url, **_kwargs):
-        requests.append(url)
-        return FakeConnection(), FakeResponse()
+    def store_factory(path):
+        store_factory_calls.append(Path(path))
+        return TaskStore(path)
 
-    def validated_media(path):
-        info = Path(path).stat()
-        return MediaFile(
-            Path(path), "mp4", info.st_size, 5.0, MediaIdentity.from_stat(info)
+    with pytest.raises(TypeError, match="capture_factory"):
+        TranscriptionPipeline(
+            paths,
+            capture_factory=old_capture_factory,
+            task_store_factory=store_factory,
         )
+
+    pipeline = TranscriptionPipeline(
+        paths,
+        task_store_factory=store_factory,
+    )
+    result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+
+    assert result.status == "failed"
+    assert result.error_code == "BROWSER_ISOLATION_UNAVAILABLE"
+    assert factory_calls == []
+    assert resolver_calls == []
+    assert store_factory_calls == []
+    assert not paths.data_dir.exists()
+
+
+def test_default_pipeline_short_link_fails_closed_without_service(tmp_path):
+    pipeline = TranscriptionPipeline(_paths(tmp_path))
+
+    result = pipeline.run_urls(["https://v.douyin.com/example/"])[0]
+
+    assert result.status == "failed"
+    assert result.error_code == "BROWSER_ISOLATION_UNAVAILABLE"
+    assert "隔离服务" in (result.hint or "")
+
+
+def test_pipeline_uses_service_resolution_and_capture_while_deduplicating_ids(tmp_path):
+    paths = _paths(tmp_path)
+    paths.output_dir.mkdir(parents=True, exist_ok=True)
+
+    service = _CaptureServiceFake(
+        paths,
+        resolve_handler=lambda _url: "123",
+        capture_handler=lambda _url, **_kwargs: _captured_media(
+            paths, "123", title="服务标题"
+        ),
+    )
+    pipeline = TranscriptionPipeline(
+        paths,
+        capture_service_client=service,
+        media_validator=_validator,
+        asr_factory=_asr_factory,
+    )
+
+    results = pipeline.run_urls(
+        [
+            "https://v.douyin.com/example/?share_token=private",
+            "https://www.douyin.com/video/123",
+        ]
+    )
+
+    assert [item.status for item in results] == ["success", "skipped"]
+    assert service.resolve_calls == [
+        "https://v.douyin.com/example/?share_token=private"
+    ]
+    assert service.capture_calls == [
+        "https://v.douyin.com/example/?share_token=private"
+    ]
+    assert results[0].title == "服务标题"
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.get_task("123")
+        assert task is not None and task.state == "completed"
+        assert task.source_url == "https://www.douyin.com/video/123"
+        assert "share_token" not in task.source_url
+
+
+def test_pipeline_rejects_service_video_id_mismatch_before_asr(tmp_path):
+    paths = _paths(tmp_path)
+    paths.output_dir.mkdir(parents=True, exist_ok=True)
+
+    service = _CaptureServiceFake(
+        paths,
+        capture_handler=lambda _url, **_kwargs: _captured_media(
+            paths, "999", title="错配标题"
+        ),
+    )
+
+    pipeline = TranscriptionPipeline(
+        paths,
+        capture_service_client=service,
+        media_validator=lambda _path: pytest.fail(
+            "mismatched ID must fail before decoding"
+        ),
+        asr_factory=lambda *_args, **_kwargs: pytest.fail(
+            "mismatched ID must fail before ASR"
+        ),
+    )
+
+    result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+
+    assert result.status == "failed"
+    assert result.error_code == "INVALID_RESULT"
+    assert not list((paths.data_dir / "media-cache").glob("*.m4a"))
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.get_task("123")
+        assert task is not None and task.state == "failed"
+        assert task.media_path is None
+
+
+def test_service_resolution_retries_only_retryable_failures(tmp_path):
+    class RetryableService:
+        def __init__(self):
+            self.calls = 0
+
+        def resolve_source(self, _url: str, **_kwargs) -> str:
+            self.calls += 1
+            if self.calls == 1:
+                raise CaptureClientError("NETWORK_ERROR", "network", retryable=True)
+            return "123"
+
+    service = RetryableService()
+    pipeline = TranscriptionPipeline(_paths(tmp_path), retries=1)
+
+    assert (
+        pipeline._resolve_service_source_with_retries(
+            service,
+            "https://v.douyin.com/example/",
+            deadline_monotonic=time.monotonic() + 10,
+        )
+        == "123"
+    )
+    assert service.calls == 2
+
+
+def test_service_resolution_does_not_retry_nonretryable_failures(tmp_path):
+    class NonRetryableService:
+        calls = 0
+
+        def resolve_source(self, _url: str, **_kwargs) -> str:
+            self.calls += 1
+            raise CaptureClientError("UNSUPPORTED_URL", "unsupported", retryable=False)
+
+    service = NonRetryableService()
+    pipeline = TranscriptionPipeline(_paths(tmp_path), retries=2)
+
+    with pytest.raises(CaptureClientError) as error:
+        pipeline._resolve_service_source_with_retries(
+            service,
+            "https://v.douyin.com/example/",
+            deadline_monotonic=time.monotonic() + 10,
+        )
+
+    assert error.value.code == "UNSUPPORTED_URL"
+    assert service.calls == 1
+
+
+def test_capture_service_media_is_validated_before_it_reaches_asr(tmp_path):
+    paths = _paths(tmp_path)
+    service = _CaptureServiceFake(paths)
 
     class ValidationAwareASR:
         def __init__(self):
-            self.validated_media = None
+            self.received_path = None
 
-        def transcribe(self, _path, *, language, validated_media=None):
-            self.validated_media = validated_media
+        def transcribe(self, path, *, language):
+            self.received_path = Path(path)
             return TranscriptionResult(
                 (TranscriptSegment(0.0, 2.0, "远端已通过验证。"),),
                 5.0,
@@ -489,67 +776,41 @@ def test_default_remote_pipeline_accepts_validated_mediafile_decoder(
             )
 
     asr = ValidationAwareASR()
-    forwarded_deadlines = []
-    monkeypatch.setattr(pipeline_module, "LocalASR", ValidationAwareASR)
-    actual_download_media = downloader_module.download_media
+    validated_paths = []
 
-    def default_downloader(video_id, candidates, cache_dir, **kwargs):
-        forwarded_deadlines.append(kwargs.get("absolute_deadline"))
-        return actual_download_media(
-            video_id,
-            candidates,
-            cache_dir,
-            requester=requester,
-            sleeper=lambda _seconds: None,
-            **kwargs,
-        )
+    def validated_media(path):
+        path = Path(path)
+        validated_paths.append(path)
+        return MediaFile(path, "mp4", path.stat().st_size, 5.0)
 
-    monkeypatch.setattr(pipeline_module, "download_media", default_downloader)
     pipeline = TranscriptionPipeline(
-        _paths(tmp_path),
-        capture_factory=_Capture,
-        downloader=default_downloader,
+        paths,
+        capture_service_client=service,
         media_validator=validated_media,
         asr_factory=lambda *_args, **_kwargs: asr,
-        url_resolver=_remote_resolver,
     )
 
     result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
 
     assert result.status == "success"
-    assert len(requests) == 1
-    assert len(forwarded_deadlines) == 1
-    assert isinstance(forwarded_deadlines[0], float)
-    assert asr.validated_media is not None
-    assert asr.validated_media.path.is_file()
-    assert asr.validated_media.identity == MediaIdentity.from_stat(
-        asr.validated_media.path.stat()
-    )
+    assert service.capture_calls == ["https://www.douyin.com/video/123"]
+    assert len(validated_paths) == 1
+    assert asr.received_path == validated_paths[0]
+    assert asr.received_path.is_file()
 
 
-def test_remote_processing_deadline_reports_processing_timeout(
-    monkeypatch, tmp_path
-):
-    import douyin_transcript.downloader as downloader_module
-
-    class FakeConnection:
-        def close(self):
-            pass
-
-    class FakeResponse:
-        def close(self):
-            pass
-
-    def slow_requester(_url, **_kwargs):
-        time.sleep(1.05)
-        return FakeConnection(), FakeResponse()
-
-    monkeypatch.setattr(downloader_module, "open_pinned_https", slow_requester)
+def test_remote_processing_deadline_reports_processing_timeout(tmp_path):
     paths = _paths(tmp_path)
+
+    def capture_after_deadline(_url, **_kwargs):
+        time.sleep(1.05)
+        raise CaptureClientError("CAPTURE_TIMEOUT", "service timed out", retryable=True)
+
+    service = _CaptureServiceFake(paths, capture_handler=capture_after_deadline)
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=_Capture,
-        url_resolver=_remote_resolver,
+        capture_service_client=service,
+        retries=0,
         max_processing_seconds=1,
     )
 
@@ -564,72 +825,30 @@ def test_remote_processing_deadline_reports_processing_timeout(
         assert task.error_code == "PROCESSING_TIMEOUT"
 
 
-def test_keyboard_interrupt_cancels_slow_download_and_releases_claim(
-    monkeypatch, tmp_path
-):
-    import douyin_transcript.downloader as downloader_module
-
-    read_started = threading.Event()
-    connection_closed = threading.Event()
+def test_keyboard_interrupt_cancels_slow_service_capture_and_releases_claim(tmp_path):
+    capture_started = threading.Event()
+    cancellation_seen = threading.Event()
     interrupt_sent: list[bool] = []
-    captures: list[_Capture] = []
-
-    class FakeSocket:
-        def settimeout(self, _timeout):
-            pass
-
-    class SlowConnection:
-        def __init__(self):
-            self.sock = FakeSocket()
-
-        def close(self):
-            connection_closed.set()
-
-    class SlowResponse:
-        status = 200
-
-        def __init__(self):
-            self._connection = None
-
-        def getheader(self, name, default=None):
-            return {"Content-Type": "audio/mp4", "Content-Length": "100"}.get(
-                name, default
-            )
-
-        def read1(self, _size):
-            read_started.set()
-            if connection_closed.wait(timeout=10):
-                raise OSError("connection closed by cancellation")
-            return b"x" * 100
-
-        read = read1
-
-        def close(self):
-            pass
-
-    connection = SlowConnection()
-
-    def slow_requester(_url, **_kwargs):
-        return connection, SlowResponse()
-
-    def capture_factory(profile_dir: Path):
-        capture = _Capture(profile_dir)
-        captures.append(capture)
-        return capture
-
-    monkeypatch.setattr(downloader_module, "open_pinned_https", slow_requester)
     paths = _paths(tmp_path)
+
+    def slow_service_capture(_url, *, is_cancelled, **_kwargs):
+        capture_started.set()
+        while not is_cancelled():
+            time.sleep(0.01)
+        cancellation_seen.set()
+        raise CaptureClientError("CANCELLED", "service request cancelled")
+
+    service = _CaptureServiceFake(paths, capture_handler=slow_service_capture)
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=capture_factory,
-        url_resolver=_remote_resolver,
+        capture_service_client=service,
     )
 
-    def interrupt_when_reading():
-        interrupt_sent.append(read_started.wait(timeout=3))
+    def interrupt_during_capture():
+        interrupt_sent.append(capture_started.wait(timeout=3))
         _thread.interrupt_main()
 
-    interrupter = threading.Thread(target=interrupt_when_reading, daemon=True)
+    interrupter = threading.Thread(target=interrupt_during_capture, daemon=True)
     interrupter.start()
     started = time.monotonic()
     with pytest.raises(KeyboardInterrupt):
@@ -639,10 +858,9 @@ def test_keyboard_interrupt_cancels_slow_download_and_releases_claim(
 
     assert interrupt_sent == [True]
     assert elapsed < 1.5
-    assert connection_closed.is_set()
-    assert captures and captures[0].closed
+    assert cancellation_seen.wait(timeout=1)
     assert not interrupter.is_alive()
-    assert not list((paths.data_dir / "media-cache").glob(".*.part"))
+    assert not list((paths.data_dir / "media-cache").glob("*.m4a"))
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         task = store.get_task("123")
         assert task is not None
@@ -651,60 +869,27 @@ def test_keyboard_interrupt_cancels_slow_download_and_releases_claim(
         assert task.error_code == "CANCELLED"
 
 
-def test_keyboard_interrupt_during_capture_start_closes_created_capture(
-    tmp_path,
+def test_pipeline_cancels_processing_when_task_claim_is_recovered(
+    tmp_path, monkeypatch
 ):
-    start_entered = threading.Event()
-    interrupt_sent: list[bool] = []
-
-    class BlockingCapture(_Capture):
-        def start(self):
-            start_entered.set()
-            while True:
-                time.sleep(0.01)
-
-    captures: list[BlockingCapture] = []
-
-    def capture_factory(profile_dir: Path):
-        capture = BlockingCapture(profile_dir)
-        captures.append(capture)
-        return capture
-
-    paths = _paths(tmp_path)
-    pipeline = TranscriptionPipeline(
-        paths,
-        capture_factory=capture_factory,
-        url_resolver=_remote_resolver,
-    )
-
-    def interrupt_during_start():
-        interrupt_sent.append(start_entered.wait(timeout=3))
-        _thread.interrupt_main()
-
-    interrupter = threading.Thread(target=interrupt_during_start, daemon=True)
-    interrupter.start()
-    started = time.monotonic()
-    with pytest.raises(KeyboardInterrupt):
-        pipeline.run_urls(["https://www.douyin.com/video/123"])
-    elapsed = time.monotonic() - started
-    interrupter.join(timeout=1)
-
-    assert interrupt_sent == [True]
-    assert elapsed < 1.5
-    assert captures and captures[0].closed
-    assert not interrupter.is_alive()
-    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
-        task = store.get_task("123")
-        assert task is not None
-        assert task.state == "failed"
-        assert task.claimed_by is None
-        assert task.error_code == "CANCELLED"
-
-
-def test_pipeline_cancels_processing_when_task_claim_is_recovered(tmp_path):
     paths = _paths(tmp_path)
     database = paths.data_dir / "tasks.sqlite3"
     pipeline = TranscriptionPipeline(paths, heartbeat_interval_seconds=0.01)
+    heartbeat_started = threading.Event()
+    allow_heartbeat = threading.Event()
+    original_heartbeat = TaskStore.heartbeat_claim
+
+    def delayed_heartbeat(store, task_id, worker_id, *, claim_generation):
+        heartbeat_started.set()
+        allow_heartbeat.wait(timeout=2)
+        return original_heartbeat(
+            store,
+            task_id,
+            worker_id,
+            claim_generation=claim_generation,
+        )
+
+    monkeypatch.setattr(TaskStore, "heartbeat_claim", delayed_heartbeat)
 
     with TaskStore(database) as store:
         created = store.create_remote_task(
@@ -718,8 +903,19 @@ def test_pipeline_cancels_processing_when_task_claim_is_recovered(tmp_path):
             claimed.task_id,
             claim_generation=claimed.claim_generation,
         ) as cancellation:
-            with TaskStore(database) as recovery_store:
-                recovered = recovery_store.recover_interrupted(stale_after_seconds=0)
+            try:
+                assert heartbeat_started.wait(timeout=1)
+                with TaskStore(database) as recovery_store:
+                    with recovery_store._transaction():
+                        recovery_store._connection.execute(
+                            "UPDATE tasks SET claimed_at = ? WHERE task_id = ?",
+                            ("2000-01-01T00:00:00.000+00:00", claimed.task_id),
+                        )
+                    recovered = recovery_store.recover_interrupted(
+                        stale_after_seconds=0
+                    )
+            finally:
+                allow_heartbeat.set()
             assert [(item.from_state, item.to_state) for item in recovered] == [
                 ("resolving", "pending")
             ]
@@ -739,50 +935,13 @@ def test_pipeline_cancels_processing_when_task_claim_is_recovered(tmp_path):
     pipeline.close()
 
 
-def test_keyboard_interrupt_cancels_supervised_download_validation(
+def test_keyboard_interrupt_cancels_supervised_capture_media_validation(
     monkeypatch, tmp_path
 ):
-    import douyin_transcript.downloader as downloader_module
-
     validation_started = threading.Event()
     validation_cancelled = threading.Event()
     worker_closed = threading.Event()
     interrupt_sent: list[bool] = []
-
-    class FakeSocket:
-        def settimeout(self, _timeout):
-            pass
-
-    class FastConnection:
-        def __init__(self):
-            self.sock = FakeSocket()
-
-        def close(self):
-            pass
-
-    class FastResponse:
-        status = 200
-
-        def __init__(self):
-            self._body = b"synthetic media bytes"
-            self._read = False
-
-        def getheader(self, name, default=None):
-            return {
-                "Content-Type": "audio/mp4",
-                "Content-Length": str(len(self._body)),
-            }.get(name, default)
-
-        def read1(self, _size):
-            if self._read:
-                return b""
-            self._read = True
-            return self._body
-
-        read = read1
-
-        def close(self):
-            pass
 
     class BlockingProcessingWorker:
         def __init__(self):
@@ -797,7 +956,7 @@ def test_keyboard_interrupt_cancels_supervised_download_validation(
             while not cancellation.wait(0.01):
                 pass
             validation_cancelled.set()
-            raise DownloadError("CANCELLED", "decoder request cancelled")
+            raise CaptureClientError("CANCELLED", "decoder request cancelled")
 
         def close(self):
             worker_closed.set()
@@ -809,15 +968,12 @@ def test_keyboard_interrupt_cancels_supervised_download_validation(
         workers.append(worker)
         return worker
 
-    monkeypatch.setattr(downloader_module, "open_pinned_https", lambda *_a, **_k: (
-        FastConnection(), FastResponse()
-    ))
     monkeypatch.setattr(pipeline_module, "SupervisedProcessingWorker", worker_factory)
     paths = _paths(tmp_path)
+    service = _CaptureServiceFake(paths)
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=_Capture,
-        url_resolver=_remote_resolver,
+        capture_service_client=service,
     )
 
     def interrupt_during_validation():
@@ -837,7 +993,7 @@ def test_keyboard_interrupt_cancels_supervised_download_validation(
     assert validation_cancelled.is_set()
     assert worker_closed.is_set()
     assert not interrupter.is_alive()
-    assert not list((paths.data_dir / "media-cache").glob(".*.part"))
+    assert not list((paths.data_dir / "media-cache").glob("*.m4a"))
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         task = store.get_task("123")
         assert task is not None
@@ -846,25 +1002,24 @@ def test_keyboard_interrupt_cancels_supervised_download_validation(
         assert task.error_code == "CANCELLED"
 
 
-def test_remote_pipeline_rejects_media_shorter_than_page_metadata(tmp_path):
+def test_remote_pipeline_rejects_media_shorter_than_service_metadata(tmp_path):
     paths = _paths(tmp_path)
 
-    def downloader(_video_id: str, _candidates, cache_dir: Path, **_kwargs) -> MediaFile:
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        media = cache_dir / "123-audio-short.m4a"
-        media.write_bytes(b"short media")
-        return MediaFile(media, "mp4", media.stat().st_size, 1.0)
+    service = _CaptureServiceFake(
+        paths,
+        capture_handler=lambda _url, **_kwargs: _captured_media(
+            paths, "123", duration_seconds=5.0
+        ),
+    )
 
     def short_validator(path: Path) -> MediaFile:
         return MediaFile(Path(path), "mp4", Path(path).stat().st_size, 1.0)
 
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=_Capture,
-        downloader=downloader,
+        capture_service_client=service,
         media_validator=short_validator,
         asr_factory=_asr_factory,
-        url_resolver=_remote_resolver,
     )
 
     result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
@@ -874,27 +1029,57 @@ def test_remote_pipeline_rejects_media_shorter_than_page_metadata(tmp_path):
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         task = store.get_task("123")
         assert task is not None and task.state == "failed"
-        assert task.source_duration_seconds == 5.0
+        assert task.source_duration_seconds is None
 
 
-def test_remote_download_failure_is_durable_and_retryable(tmp_path):
+@pytest.mark.parametrize("force", [False, True])
+def test_remote_force_retries_only_the_requested_login_failure(tmp_path, force):
+    paths = _paths(tmp_path)
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        for video_id in ("123", "456"):
+            task = store.create_remote_task(
+                f"https://www.douyin.com/video/{video_id}", video_id
+            )
+            claimed = store.claim_task(task.task_id, "prior")
+            assert claimed is not None
+            store.fail_task(
+                task.task_id, "LOGIN_REQUIRED", worker_id="prior",
+                claim_generation=claimed.claim_generation,
+            )
+    service = _CaptureServiceFake(paths)
+    pipeline = TranscriptionPipeline(
+        paths, capture_service_client=service, force=force,
+        media_validator=_validator, asr_factory=_asr_factory,
+    )
+    try:
+        result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+    finally:
+        pipeline.close()
+    assert result.status == ("success" if force else "failed")
+    assert service.capture_calls == (["https://www.douyin.com/video/123"] if force else [])
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        assert store.get_task("456").state == "failed"
+
+
+def test_remote_capture_failure_is_durable_and_retryable(tmp_path):
     paths = _paths(tmp_path)
 
-    def downloader(*_args, **_kwargs):
-        raise DownloadError("NETWORK_FAILED", "network unavailable")
+    def failed_capture(_url, **_kwargs):
+        raise CaptureClientError("CAPTURE_TRANSPORT_FAILED", "service unavailable")
+
+    service = _CaptureServiceFake(paths, capture_handler=failed_capture)
 
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=_Capture,
-        downloader=downloader,
+        capture_service_client=service,
+        retries=0,
         media_validator=_validator,
         asr_factory=_asr_factory,
-        url_resolver=_remote_resolver,
     )
     result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
 
     assert result.status == "failed"
-    assert result.error_code == "NETWORK_FAILED"
+    assert result.error_code == "CAPTURE_TRANSPORT_FAILED"
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         failed = store.get_task("123")
         assert failed is not None and failed.state == "failed"
@@ -903,7 +1088,7 @@ def test_remote_download_failure_is_durable_and_retryable(tmp_path):
         assert queued[0].state == "pending"
 
 
-def test_remote_retry_reuses_valid_cached_media_without_browser_or_download(tmp_path):
+def test_remote_retry_reuses_valid_cached_media_without_service_capture(tmp_path):
     paths = _paths(tmp_path)
     cached_media = paths.data_dir / "media-cache" / "123-audio-0123456789abcdef.m4a"
     cached_media.parent.mkdir(parents=True)
@@ -942,21 +1127,24 @@ def test_remote_retry_reuses_valid_cached_media_without_browser_or_download(tmp_
         )
         assert store.retry_failed(task_id=created.task_id)[0].state == "pending"
 
+    service = _CaptureServiceFake(
+        paths,
+        capture_handler=lambda *_args, **_kwargs: pytest.fail(
+            "cached retry must not request new captured media"
+        ),
+    )
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=lambda *_args: pytest.fail("cached retry must not start capture"),
-        downloader=lambda *_args, **_kwargs: pytest.fail(
-            "cached retry must not download media again"
-        ),
+        capture_service_client=service,
         media_validator=_validator,
         asr_factory=_asr_factory,
-        url_resolver=_remote_resolver,
     )
     result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
     pipeline.close()
 
     assert result.status == "success"
     assert result.output_path is not None
+    assert service.capture_calls == []
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         completed = store.get_task(created.task_id)
         assert completed is not None
@@ -964,30 +1152,25 @@ def test_remote_retry_reuses_valid_cached_media_without_browser_or_download(tmp_
         assert completed.media_path == str(cached_media.resolve())
 
 
-def test_remote_pipeline_recovers_a_stale_interrupted_download(tmp_path):
+def test_remote_pipeline_recovers_a_stale_interrupted_capture(tmp_path):
     paths = _paths(tmp_path)
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         store.create_remote_task("https://www.douyin.com/video/123", "123")
         claimed = store.claim_task("123", "crashed-worker")
         assert claimed is not None
         store.transition(
-            "123", "downloading", worker_id="crashed-worker",
+            "123",
+            "downloading",
+            worker_id="crashed-worker",
             claim_generation=claimed.claim_generation,
         )
 
-    def downloader(_video_id: str, _candidates, cache_dir: Path, **_kwargs) -> MediaFile:
-        cache_dir.mkdir(parents=True)
-        media = cache_dir / "123-audio-hash.m4a"
-        media.write_bytes(b"fake media")
-        return MediaFile(media, "mp4", media.stat().st_size, 5.0)
-
+    service = _CaptureServiceFake(paths)
     pipeline = TranscriptionPipeline(
         paths,
-        capture_factory=_Capture,
-        downloader=downloader,
+        capture_service_client=service,
         media_validator=_validator,
         asr_factory=_asr_factory,
-        url_resolver=_remote_resolver,
         stale_after_seconds=0,
     )
 
@@ -997,6 +1180,128 @@ def test_remote_pipeline_recovers_a_stale_interrupted_download(tmp_path):
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         recovered = store.get_task("123")
         assert recovered is not None and recovered.state == "completed"
+
+
+def test_remote_recovery_defers_media_decode_until_task_processing(tmp_path):
+    paths = _paths(tmp_path)
+    media = paths.data_dir / "media" / "cached.wav"
+    media.parent.mkdir(parents=True)
+    media.write_bytes(b"fake media accepted by the test validator")
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.create_remote_task("https://www.douyin.com/video/123", "123")
+        claimed = store.claim_task(task.task_id, "crashed-worker")
+        assert claimed is not None
+        store.transition(
+            task.task_id,
+            "downloading",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+        )
+        store.transition(
+            task.task_id,
+            "downloaded",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+            media_path=media,
+        )
+        store.transition(
+            task.task_id,
+            "transcribing",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+        )
+
+    validation_calls = []
+
+    def validator(path: Path) -> MediaFile:
+        validation_calls.append(Path(path))
+        return _validator(Path(path))
+
+    service = _CaptureServiceFake(
+        paths,
+        capture_handler=lambda *_args, **_kwargs: pytest.fail(
+            "recovered cached media should not request a service capture"
+        ),
+    )
+    pipeline = TranscriptionPipeline(
+        paths,
+        capture_service_client=service,
+        media_validator=validator,
+        asr_factory=_asr_factory,
+        stale_after_seconds=0,
+    )
+
+    result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+
+    assert result.status == "success"
+    assert validation_calls == [media]
+    assert service.capture_calls == []
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        recovered = store.get_task("123")
+        assert recovered is not None and recovered.state == "completed"
+
+
+def test_remote_recovery_recaptures_when_deferred_cache_validation_fails(tmp_path):
+    paths = _paths(tmp_path)
+    cached_media = paths.data_dir / "media" / "cached.wav"
+    cached_media.parent.mkdir(parents=True)
+    cached_media.write_bytes(b"corrupt cached media")
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        task = store.create_remote_task("https://www.douyin.com/video/123", "123")
+        claimed = store.claim_task(task.task_id, "crashed-worker")
+        assert claimed is not None
+        store.transition(
+            task.task_id,
+            "downloading",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+        )
+        store.transition(
+            task.task_id,
+            "downloaded",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+            media_path=cached_media,
+        )
+        store.transition(
+            task.task_id,
+            "transcribing",
+            worker_id="crashed-worker",
+            claim_generation=claimed.claim_generation,
+        )
+
+    validation_calls = []
+    captured_media = []
+
+    def validator(path: Path) -> MediaFile:
+        path = Path(path)
+        validation_calls.append(path)
+        if path == cached_media:
+            raise MediaInvalidError("MEDIA_INVALID", "cached file is corrupt")
+        return _validator(path)
+
+    def capture(_url: str, **_kwargs) -> CapturedMedia:
+        result = _captured_media(paths, "123", body=b"fresh media")
+        captured_media.append(result.path)
+        return result
+
+    service = _CaptureServiceFake(paths, capture_handler=capture)
+    pipeline = TranscriptionPipeline(
+        paths,
+        capture_service_client=service,
+        media_validator=validator,
+        asr_factory=_asr_factory,
+        stale_after_seconds=0,
+    )
+
+    result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
+
+    assert result.status == "success", result
+    assert validation_calls == [cached_media, captured_media[0]]
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        recovered = store.get_task("123")
+        assert recovered is not None and recovered.state == "completed"
+        assert recovered.media_path == str(captured_media[0].resolve())
 
 
 def test_local_pipeline_rejects_overlong_media_before_asr_factory(tmp_path):
@@ -1020,36 +1325,28 @@ def test_local_pipeline_rejects_overlong_media_before_asr_factory(tmp_path):
     assert factory_calls == []
 
 
-def test_remote_pipeline_bounds_downloads_and_keeps_asr_serial(tmp_path):
+def test_remote_pipeline_bounds_service_captures_and_keeps_asr_serial(tmp_path):
     paths = _paths(tmp_path)
-    download_barrier = threading.Barrier(2)
+    capture_barrier = threading.Barrier(2)
     state_lock = threading.Lock()
-    active_downloads = 0
-    maximum_downloads = 0
+    active_captures = 0
+    maximum_captures = 0
     active_asr = 0
     maximum_asr = 0
-    retry_values: list[int] = []
 
-    def resolver(value: str) -> ResolvedInput:
-        video_id = value.rsplit("/", 1)[-1]
-        return ResolvedInput(value, value, video_id, "direct")
-
-    def downloader(video_id: str, _candidates, cache_dir: Path, **kwargs) -> MediaFile:
-        nonlocal active_downloads, maximum_downloads
-        retry_values.append(kwargs["retries"])
+    def capture(url: str, **_kwargs) -> CapturedMedia:
+        nonlocal active_captures, maximum_captures
+        video_id = url.rstrip("/").rsplit("/", 1)[-1]
         with state_lock:
-            active_downloads += 1
-            maximum_downloads = max(maximum_downloads, active_downloads)
+            active_captures += 1
+            maximum_captures = max(maximum_captures, active_captures)
         try:
-            download_barrier.wait(timeout=3)
+            capture_barrier.wait(timeout=3)
             time.sleep(0.02)
-            cache_dir.mkdir(parents=True, exist_ok=True)
-            media = cache_dir / f"{video_id}-audio-{'a' * 16}.m4a"
-            media.write_bytes(b"fake media")
-            return MediaFile(media, "mp4", media.stat().st_size, 5.0)
+            return _captured_media(paths, video_id)
         finally:
             with state_lock:
-                active_downloads -= 1
+                active_captures -= 1
 
     class SerialASR:
         def transcribe(self, _path: Path, *, language: str) -> TranscriptionResult:
@@ -1060,7 +1357,11 @@ def test_remote_pipeline_bounds_downloads_and_keeps_asr_serial(tmp_path):
             try:
                 time.sleep(0.02)
                 return TranscriptionResult(
-                    (TranscriptSegment(0, 1, "你好。"),), 5.0, language, "test", "balanced"
+                    (TranscriptSegment(0, 1, "你好。"),),
+                    5.0,
+                    language,
+                    "test",
+                    "balanced",
                 )
             finally:
                 with state_lock:
@@ -1070,11 +1371,9 @@ def test_remote_pipeline_bounds_downloads_and_keeps_asr_serial(tmp_path):
         paths,
         max_downloads=2,
         retries=1,
-        capture_factory=_Capture,
-        downloader=downloader,
+        capture_service_client=_CaptureServiceFake(paths, capture_handler=capture),
         media_validator=_validator,
         asr_factory=lambda *_args, **_kwargs: SerialASR(),
-        url_resolver=resolver,
     )
 
     results = pipeline.run_urls(
@@ -1082,9 +1381,8 @@ def test_remote_pipeline_bounds_downloads_and_keeps_asr_serial(tmp_path):
     )
 
     assert [item.status for item in results] == ["success", "success"]
-    assert maximum_downloads == 2
+    assert maximum_captures == 2
     assert maximum_asr == 1
-    assert retry_values == [1, 1]
 
 
 def test_terminology_dictionary_requires_opt_in_and_is_archived(tmp_path):
@@ -1110,40 +1408,44 @@ def test_terminology_dictionary_requires_opt_in_and_is_archived(tmp_path):
     corrected_text = Path(corrected.output_path or "").read_text(encoding="utf-8")
     assert "\u4f60\u597d\u3002" in unchanged_text
     assert "\u60a8\u597d\u3002" in corrected_text
-    assert 'enabled\\\":false' in unchanged_text
-    assert 'enabled\\\":true' in corrected_text
-    assert '\\"occurrences\\":1' in corrected_text
-    assert "\u4f60\u597d\u3002" not in corrected_text.split(
-        "## \u53e3\u64ad\u9010\u5b57\u7a3f", 1
-    )[-1]
-
+    unchanged_metadata = unchanged_text.split("## \u53e3\u64ad\u9010\u5b57\u7a3f", 1)[0]
+    corrected_metadata = corrected_text.split("## \u53e3\u64ad\u9010\u5b57\u7a3f", 1)[0]
+    for expected in (
+        '\\"schema_version\\":2',
+        '\\"applied_rule_count\\":1',
+        '\\"replacement_count\\":1',
+    ):
+        assert expected in corrected_metadata
+    for private_value in ("approved", "\u4f60\u597d", "\u60a8\u597d"):
+        assert private_value not in corrected_metadata
+    assert '\\"applied_rule_count\\":0' in unchanged_metadata
+    assert '\\"replacement_count\\":0' in unchanged_metadata
+    for private_value in ("approved", "\u4f60\u597d", "\u60a8\u597d"):
+        assert private_value not in unchanged_metadata
+    assert (
+        "\u4f60\u597d\u3002"
+        not in corrected_text.split("## \u53e3\u64ad\u9010\u5b57\u7a3f", 1)[-1]
+    )
 
 
 def test_ten_item_batch_isolates_failures_reuses_cache_and_deduplicates(tmp_path):
     paths = _paths(tmp_path)
 
-    def resolver(value: str) -> ResolvedInput:
-        video_id = value.rsplit("/", 1)[-1]
-        canonical = f"https://www.douyin.com/video/{video_id}"
-        return ResolvedInput(canonical, canonical, video_id, "direct")
-
-    def downloader(video_id: str, _candidates, cache_dir: Path, **_kwargs) -> MediaFile:
+    def capture(url: str, **_kwargs) -> CapturedMedia:
+        video_id = url.rstrip("/").rsplit("/", 1)[-1]
         if video_id in {"4", "5"}:
-            raise DownloadError("NETWORK_FAILED", "simulated network failure")
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        media = cache_dir / f"{video_id}-audio-{'a' * 16}.m4a"
-        media.write_bytes(b"fake media")
-        return MediaFile(media, "mp4", media.stat().st_size, 5.0)
+            raise CaptureClientError(
+                "CAPTURE_TRANSPORT_FAILED", "simulated service failure"
+            )
+        return _captured_media(paths, video_id)
 
     def make_pipeline() -> TranscriptionPipeline:
         return TranscriptionPipeline(
             paths,
             max_downloads=2,
-            capture_factory=_Capture,
-            downloader=downloader,
+            capture_service_client=_CaptureServiceFake(paths, capture_handler=capture),
             media_validator=_validator,
             asr_factory=_asr_factory,
-            url_resolver=resolver,
         )
 
     initial = make_pipeline().run_urls(
@@ -1157,16 +1459,119 @@ def test_ten_item_batch_isolates_failures_reuses_cache_and_deduplicates(tmp_path
     )
 
     assert [item.status for item in results] == [
-        "skipped", "skipped", "skipped", "failed", "failed",
-        "success", "success", "success", "failed", "skipped",
+        "skipped",
+        "skipped",
+        "skipped",
+        "failed",
+        "failed",
+        "success",
+        "success",
+        "success",
+        "failed",
+        "skipped",
     ]
     assert all(Path(path or "").is_file() for path in previous_paths)
     assert len(list(paths.output_dir.glob("*.md"))) == 6
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         completed_ids = ("1", "2", "3", "6", "7", "8")
         assert all(store.is_completed_valid(video_id) for video_id in completed_ids)
-        assert store.get_task("4").error_code == "NETWORK_FAILED"
-        assert store.get_task("5").error_code == "NETWORK_FAILED"
+        assert store.get_task("4").error_code == "CAPTURE_TRANSPORT_FAILED"
+        assert store.get_task("5").error_code == "CAPTURE_TRANSPORT_FAILED"
+
+
+def test_fifty_item_mixed_batch_bounds_service_captures_and_keeps_asr_serial(tmp_path):
+    paths = _paths(tmp_path)
+    state_lock = threading.Lock()
+    capture_barrier = threading.Barrier(2)
+    state = {
+        "capture_calls": 0,
+        "active_captures": 0,
+        "max_captures": 0,
+        "active_asr": 0,
+        "max_asr": 0,
+    }
+
+    def capture(url: str, **_kwargs) -> CapturedMedia:
+        video_id = url.rstrip("/").rsplit("/", 1)[-1]
+        with state_lock:
+            state["capture_calls"] += 1
+            call_number = state["capture_calls"]
+            state["active_captures"] += 1
+            state["max_captures"] = max(state["max_captures"], state["active_captures"])
+        try:
+            if call_number <= 2:
+                capture_barrier.wait(timeout=3)
+            else:
+                time.sleep(0.001)
+            if video_id in {"9", "10", "11"}:
+                raise CaptureClientError(
+                    "CAPTURE_TRANSPORT_FAILED", "simulated service failure"
+                )
+            return _captured_media(paths, video_id)
+        finally:
+            with state_lock:
+                state["active_captures"] -= 1
+
+    class SerialASR:
+        def transcribe(self, _path: Path, *, language: str) -> TranscriptionResult:
+            with state_lock:
+                state["active_asr"] += 1
+                state["max_asr"] = max(state["max_asr"], state["active_asr"])
+            try:
+                time.sleep(0.001)
+                return TranscriptionResult(
+                    (TranscriptSegment(0.0, 1.0, "\u4f60\u597d\u3002"),),
+                    5.0,
+                    language,
+                    "test-model",
+                    "balanced",
+                )
+            finally:
+                with state_lock:
+                    state["active_asr"] -= 1
+
+    def make_pipeline() -> TranscriptionPipeline:
+        return TranscriptionPipeline(
+            paths,
+            max_downloads=2,
+            retries=0,
+            capture_service_client=_CaptureServiceFake(paths, capture_handler=capture),
+            media_validator=_validator,
+            asr_factory=lambda *_args, **_kwargs: SerialASR(),
+        )
+
+    cached = make_pipeline().run_urls(
+        [f"https://www.douyin.com/video/{video_id}" for video_id in range(1, 9)]
+    )
+    assert all(item.status == "success" for item in cached)
+    for key in state:
+        state[key] = 0
+
+    video_ids = [*range(1, 12), *range(12, 49), 9, 12]
+    assert len(video_ids) == 50
+    results = make_pipeline().run_urls(
+        [f"https://www.douyin.com/video/{video_id}" for video_id in video_ids]
+    )
+
+    assert len(results) == 50
+    assert sum(item.status == "skipped" for item in results) == 9
+    assert sum(item.status == "failed" for item in results) == 4
+    assert sum(item.status == "success" for item in results) == 37
+    assert state["capture_calls"] == 40
+    assert state["max_captures"] == 2
+    assert state["max_asr"] == 1
+    assert len(list(paths.output_dir.glob("*.md"))) == 45
+    assert len(list((paths.data_dir / "media-cache").glob("*.m4a"))) == 45
+
+    with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
+        assert len(store.list_tasks()) == 48
+        completed_ids = (*range(1, 9), *range(12, 49))
+        assert all(
+            store.is_completed_valid(str(video_id)) for video_id in completed_ids
+        )
+        assert store.get_task("9").attempt_count == 1
+        assert store.get_task("10").error_code == "CAPTURE_TRANSPORT_FAILED"
+        assert store.get_task("11").error_code == "CAPTURE_TRANSPORT_FAILED"
 
 
 def test_timeline_terminology_expansion_uses_a_finite_character_budget(tmp_path):
@@ -1237,7 +1642,10 @@ def test_url_batch_accepts_50_and_rejects_over_limit_before_consuming_unbounded_
 def test_run_urls_rejects_oversized_batch_before_opening_task_store(tmp_path):
     paths = _paths(tmp_path)
     pipeline = TranscriptionPipeline(paths)
-    urls = [f"https://www.douyin.com/video/{index}" for index in range(MAX_URL_BATCH_ITEMS + 1)]
+    urls = [
+        f"https://www.douyin.com/video/{index}"
+        for index in range(MAX_URL_BATCH_ITEMS + 1)
+    ]
 
     try:
         pipeline.run_urls(urls)

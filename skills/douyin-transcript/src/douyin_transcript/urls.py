@@ -37,6 +37,7 @@ MEDIA_HOST_SUFFIXES = frozenset(
 )
 SHORT_LINK_MAX_REDIRECTS = 5
 SHORT_LINK_TOTAL_TIMEOUT_SECONDS = 30.0
+_PROXY_DNS_RANGE = ipaddress.ip_network("198.18.0.0/15")
 _VIDEO_PATH = re.compile(r"^/video/([0-9]{1,32})/?$")
 _URL_PATTERN = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 _TRAILING_SHARE_PUNCTUATION = ".,;:!?，。；：！？、)]}）】》」』"
@@ -166,18 +167,57 @@ def resolve_input(
     raise UnsupportedUrlError("抖音短链跳转次数超过限制", "TOO_MANY_REDIRECTS")
 
 
+def resolve_direct_input(value: str) -> ResolvedInput:
+    """Resolve a supported direct video URL without performing network I/O.
+
+    Short-link expansion belongs in the isolated capture worker because it
+    requires DNS and HTTPS. Until that worker is available, reject short links
+    here instead of silently resolving them in the caller process.
+    """
+    source_url = extract_url(value)
+    parsed = _parse_supported_host(
+        source_url,
+        allowed_hosts=DOUYIN_WEB_HOSTS | DOUYIN_SHORT_HOSTS,
+    )
+    host = parsed.hostname.lower().rstrip(".") if parsed.hostname else ""
+    if host in DOUYIN_SHORT_HOSTS:
+        raise UnsupportedUrlError(
+            "短链接解析需要由隔离服务执行；当前没有可用的系统隔离服务",
+            "BROWSER_ISOLATION_UNAVAILABLE",
+        )
+    return _direct_input(source_url, parsed)
+
+
+def resolved_short_link(value: str, video_id: str) -> ResolvedInput:
+    """Bind an isolated short-link resolution to a safe local task identity."""
+    if not isinstance(video_id, str) or re.fullmatch(r"[0-9]{1,32}", video_id) is None:
+        raise UnsupportedUrlError("隔离服务返回了无效的视频 ID", "INVALID_RESULT")
+    source_url = extract_url(value)
+    _parse_supported_host(source_url, allowed_hosts=DOUYIN_SHORT_HOSTS)
+    safe_source = urlsplit(source_url)
+    source_without_query = urlunsplit(
+        (safe_source.scheme, safe_source.netloc, safe_source.path, "", "")
+    )
+    return ResolvedInput(
+        source_without_query,
+        f"https://www.douyin.com/video/{video_id}",
+        video_id,
+        "short_link",
+    )
+
+
 def _require_deadline(deadline: float) -> None:
     if time.monotonic() >= deadline:
         raise UnsupportedUrlError("抖音短链解析超过总时限", "TIMEOUT")
 
 
 def resolve_many(values: Iterable[str]) -> list[ResolvedInput]:
-    """Resolve and deduplicate inputs by video ID, preserving first occurrence."""
+    """Resolve direct URLs and deduplicate by video ID without network I/O."""
     results: list[ResolvedInput] = []
     seen: set[str] = set()
     for value in values:
         try:
-            item = resolve_input(value)
+            item = resolve_direct_input(value)
         except UnsupportedUrlError:
             raise
         if item.video_id not in seen:
@@ -199,6 +239,7 @@ def validate_https_url(
     resolve_dns: bool = True,
     deadline: float | None = None,
     cancellation: Any | None = None,
+    allow_proxy_dns: bool = False,
 ) -> tuple[SplitResult, str | None]:
     """Validate an HTTPS URL and optionally resolve it to a public IP address.
 
@@ -246,7 +287,10 @@ def validate_https_url(
     if not resolve_dns:
         return parsed, None
     addresses = resolve_public_addresses(
-        host, deadline=deadline, cancellation=cancellation
+        host,
+        deadline=deadline,
+        cancellation=cancellation,
+        allow_proxy_dns=allow_proxy_dns,
     )
     return parsed, addresses[0]
 
@@ -376,8 +420,9 @@ def resolve_public_addresses(
     *,
     deadline: float | None = None,
     cancellation: Any | None = None,
+    allow_proxy_dns: bool = False,
 ) -> tuple[str, ...]:
-    """Resolve a host within an optional deadline and reject any non-public result."""
+    """Resolve public addresses, optionally accepting a personal proxy's fake-IP range."""
     try:
         records = _getaddrinfo_until(host, deadline, cancellation)
     except UnsupportedUrlError:
@@ -388,8 +433,15 @@ def resolve_public_addresses(
     if not addresses:
         raise UnsupportedUrlError("网络主机无法解析", "DNS_FAILED")
     try:
-        if any(not ipaddress.ip_address(address).is_global for address in addresses):
-            raise UnsupportedUrlError("网络主机解析到非公网地址", "UNSAFE_ADDRESS")
+        for address in addresses:
+            parsed_address = ipaddress.ip_address(address)
+            proxy_dns = (
+                allow_proxy_dns is True
+                and isinstance(parsed_address, ipaddress.IPv4Address)
+                and parsed_address in _PROXY_DNS_RANGE
+            )
+            if not parsed_address.is_global and not proxy_dns:
+                raise UnsupportedUrlError("网络主机解析到非公网地址", "UNSAFE_ADDRESS")
     except ValueError:
         raise UnsupportedUrlError("网络主机解析结果无效", "UNSAFE_ADDRESS") from None
     return addresses
@@ -470,11 +522,7 @@ class _PinnedHTTPSConnection(http.client.HTTPSConnection):
             if remaining <= 0 or self._deadline_expired:
                 raise TimeoutError("HTTPS request exceeded its total deadline")
             timeout = min(timeout, remaining)
-        family = (
-            socket.AF_INET6
-            if ":" in self._validated_ip_address
-            else socket.AF_INET
-        )
+        family = socket.AF_INET6 if ":" in self._validated_ip_address else socket.AF_INET
         sock = socket.socket(family, socket.SOCK_STREAM)
         sock.settimeout(timeout)
         self.sock = sock
@@ -520,8 +568,9 @@ def open_pinned_https(
     timeout: float = 15.0,
     deadline: float | None = None,
     cancellation: Any | None = None,
+    allow_proxy_dns: bool = False,
 ) -> tuple[_PinnedHTTPSConnection, http.client.HTTPResponse]:
-    """Issue a single HTTPS request to a validated public IP without redirects."""
+    """Issue one validated HTTPS request, retaining hostname certificate verification."""
     if deadline is not None and time.monotonic() >= deadline:
         raise TimeoutError("HTTPS request exceeded its total deadline")
     parsed, address = validate_https_url(
@@ -531,6 +580,7 @@ def open_pinned_https(
         resolve_dns=True,
         deadline=deadline,
         cancellation=cancellation,
+        allow_proxy_dns=allow_proxy_dns,
     )
     assert address is not None
     if deadline is not None and time.monotonic() >= deadline:
@@ -606,7 +656,13 @@ def _direct_input(source_url: str, parsed, source_type: str = "direct") -> Resol
     return ResolvedInput(source_without_query, canonical, video_id, source_type)
 
 
-def _request_short_redirect(url: str, *, deadline: float) -> str | None:
+def _request_short_redirect(
+    url: str,
+    *,
+    deadline: float,
+    cancellation: Any | None = None,
+    allow_proxy_dns: bool = False,
+) -> str | None:
     current = url
     for _ in range(SHORT_LINK_MAX_REDIRECTS + 1):
         connection, response = open_pinned_https(
@@ -616,6 +672,8 @@ def _request_short_redirect(url: str, *, deadline: float) -> str | None:
             headers={"User-Agent": "douyin-transcript/0.1", "Range": "bytes=0-0"},
             timeout=10.0,
             deadline=deadline,
+            cancellation=cancellation,
+            allow_proxy_dns=allow_proxy_dns,
         )
         try:
             if response.status not in (301, 302, 303, 307, 308):

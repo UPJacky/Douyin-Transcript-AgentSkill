@@ -7,7 +7,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from .text_safety import strip_display_controls
+from .text_safety import sanitize_error_message, strip_display_controls
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,6 +24,7 @@ class ItemResult:
         result = asdict(self)
         if result["title"] is not None:
             result["title"] = strip_display_controls(result["title"])
+        result["hint"] = sanitize_error_message(result["hint"])
         return result
 
 
@@ -31,7 +32,7 @@ class ItemResult:
 class RunSummary:
     status: str
     items: tuple[ItemResult, ...]
-    output_dir: str
+    output_dir: str | None
 
     def to_dict(self) -> dict[str, Any]:
         counts = {
@@ -40,6 +41,8 @@ class RunSummary:
         }
         return {
             "status": self.status,
+            "result_scope": "raw_asr_only",
+            "llm_review_status": "not_performed_by_cli",
             "total": len(self.items),
             **counts,
             "output_dir": self.output_dir,
@@ -47,7 +50,7 @@ class RunSummary:
         }
 
 
-def make_summary(items: list[ItemResult], output_dir: Path | str) -> RunSummary:
+def make_summary(items: list[ItemResult], output_dir: Path | str | None) -> RunSummary:
     failed = sum(item.status == "failed" for item in items)
     succeeded = sum(item.status in {"success", "skipped"} for item in items)
     if failed == 0:
@@ -57,7 +60,13 @@ def make_summary(items: list[ItemResult], output_dir: Path | str) -> RunSummary:
     else:
         status = "failed"
     return RunSummary(
-        status, tuple(items), str(Path(output_dir).expanduser().resolve(strict=False))
+        status,
+        tuple(items),
+        (
+            str(Path(output_dir).expanduser().resolve(strict=False))
+            if output_dir is not None
+            else None
+        ),
     )
 
 

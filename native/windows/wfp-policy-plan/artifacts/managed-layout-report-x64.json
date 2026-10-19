@@ -1,0 +1,244 @@
+{
+  "ReportKind": "managed-cswin32-layout-only",
+  "Architecture": "X64",
+  "Runtime": ".NET 10.0.12",
+  "CsWin32Package": "Microsoft.Windows.CsWin32 0.3.360",
+  "NativeSdkComparisonPerformed": false,
+  "ValidationLimit": "Marshal.SizeOf/OffsetOf for CsWin32-generated managed declarations only. This is not a sizeof/offsetof comparison against fwpmu.h/fwpmtypes.h compiled by the Windows SDK, and it is not evidence that WFP behavior is correct.",
+  "Structures": [
+    {
+      "Name": "FWPM_FILTER0",
+      "Size": 200,
+      "Fields": [
+        {
+          "Name": "filterKey",
+          "Offset": 0
+        },
+        {
+          "Name": "displayData",
+          "Offset": 16
+        },
+        {
+          "Name": "flags",
+          "Offset": 32
+        },
+        {
+          "Name": "providerKey",
+          "Offset": 40
+        },
+        {
+          "Name": "providerData",
+          "Offset": 48
+        },
+        {
+          "Name": "layerKey",
+          "Offset": 64
+        },
+        {
+          "Name": "subLayerKey",
+          "Offset": 80
+        },
+        {
+          "Name": "weight",
+          "Offset": 96
+        },
+        {
+          "Name": "numFilterConditions",
+          "Offset": 112
+        },
+        {
+          "Name": "filterCondition",
+          "Offset": 120
+        },
+        {
+          "Name": "action",
+          "Offset": 128
+        },
+        {
+          "Name": "Anonymous",
+          "Offset": 152
+        },
+        {
+          "Name": "reserved",
+          "Offset": 168
+        },
+        {
+          "Name": "filterId",
+          "Offset": 176
+        },
+        {
+          "Name": "effectiveWeight",
+          "Offset": 184
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_FILTER_CONDITION0",
+      "Size": 40,
+      "Fields": [
+        {
+          "Name": "fieldKey",
+          "Offset": 0
+        },
+        {
+          "Name": "matchType",
+          "Offset": 16
+        },
+        {
+          "Name": "conditionValue",
+          "Offset": 24
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_ACTION0",
+      "Size": 20,
+      "Fields": [
+        {
+          "Name": "type",
+          "Offset": 0
+        },
+        {
+          "Name": "Anonymous",
+          "Offset": 4
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_ACTION0.Anonymous",
+      "Size": 16,
+      "Fields": [
+        {
+          "Name": "filterType",
+          "Offset": 0
+        },
+        {
+          "Name": "calloutKey",
+          "Offset": 0
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_SESSION0",
+      "Size": 72,
+      "Fields": [
+        {
+          "Name": "sessionKey",
+          "Offset": 0
+        },
+        {
+          "Name": "displayData",
+          "Offset": 16
+        },
+        {
+          "Name": "flags",
+          "Offset": 32
+        },
+        {
+          "Name": "txnWaitTimeoutInMSec",
+          "Offset": 36
+        },
+        {
+          "Name": "processId",
+          "Offset": 40
+        },
+        {
+          "Name": "sid",
+          "Offset": 48
+        },
+        {
+          "Name": "username",
+          "Offset": 56
+        },
+        {
+          "Name": "kernelMode",
+          "Offset": 64
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_PROVIDER0",
+      "Size": 64,
+      "Fields": [
+        {
+          "Name": "providerKey",
+          "Offset": 0
+        },
+        {
+          "Name": "displayData",
+          "Offset": 16
+        },
+        {
+          "Name": "flags",
+          "Offset": 32
+        },
+        {
+          "Name": "providerData",
+          "Offset": 40
+        },
+        {
+          "Name": "serviceName",
+          "Offset": 56
+        }
+      ]
+    },
+    {
+      "Name": "FWPM_SUBLAYER0",
+      "Size": 72,
+      "Fields": [
+        {
+          "Name": "subLayerKey",
+          "Offset": 0
+        },
+        {
+          "Name": "displayData",
+          "Offset": 16
+        },
+        {
+          "Name": "flags",
+          "Offset": 32
+        },
+        {
+          "Name": "providerKey",
+          "Offset": 40
+        },
+        {
+          "Name": "providerData",
+          "Offset": 48
+        },
+        {
+          "Name": "weight",
+          "Offset": 64
+        }
+      ]
+    },
+    {
+      "Name": "FWP_CONDITION_VALUE0",
+      "Size": 16,
+      "Fields": [
+        {
+          "Name": "type",
+          "Offset": 0
+        },
+        {
+          "Name": "Anonymous",
+          "Offset": 8
+        }
+      ]
+    },
+    {
+      "Name": "FWP_VALUE0",
+      "Size": 16,
+      "Fields": [
+        {
+          "Name": "type",
+          "Offset": 0
+        },
+        {
+          "Name": "Anonymous",
+          "Offset": 8
+        }
+      ]
+    }
+  ]
+}

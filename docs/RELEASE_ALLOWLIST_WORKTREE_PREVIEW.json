@@ -1,0 +1,1677 @@
+{
+  "schema_version": 1,
+  "status": "PRELIMINARY_WORKTREE_PREVIEW_NOT_APPROVED",
+  "generated_at_utc": "2026-10-15T13:09:29Z",
+  "repository_name": "Douyin-Transcript-AgentSkill",
+  "head": "b166778ee5283591a1b799535b746ba198e38653",
+  "allowlist": {
+    "path": "docs/RELEASE_ALLOWLIST_CANDIDATE.txt",
+    "sha256": "c73a091d5f1b2936dee3adb26b619c1bd2da5263af463103b78b20a2373bb0e2"
+  },
+  "scope": "Input snapshot at generation: Git-visible tracked files plus nonignored untracked regular files. The preview JSON was written after enumeration and is excluded by the docs/** rule. Not a materialized or approved release tree.",
+  "counts": {
+    "git_visible_paths_including_missing_tracked": 282,
+    "tracked_paths": 88,
+    "nonignored_untracked_paths": 194,
+    "missing_tracked_paths": 0,
+    "existing_visible_paths": 282,
+    "include_rule_count": 91,
+    "include_rule_hit_total_with_overlaps": 225,
+    "include_matched_unique_paths_before_exclusions": 225,
+    "exclude_rule_count": 38,
+    "exclude_rule_hit_total_with_overlaps": 58,
+    "exclude_matched_unique_paths": 54,
+    "selected_paths": 225,
+    "missing_literal_include_paths": 0,
+    "zero_hit_include_rules": 0
+  },
+  "include_rule_hits": [
+    {
+      "rule": ".editorconfig",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".gitignore",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".python-version",
+      "matched_paths": 1
+    },
+    {
+      "rule": "CHANGELOG.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "CONTRIBUTING.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "SECURITY.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "pytest.ini",
+      "matched_paths": 1
+    },
+    {
+      "rule": "examples/sample_output.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "examples/sample_summary.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "examples/urls.example.txt",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".github/workflows/ci.yml",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "matched_paths": 1
+    },
+    {
+      "rule": ".codex/skills/douyin-transcript/SKILL.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "THIRD_PARTY_NOTICES.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "THIRD_PARTY_LICENSES/CC-BY-3.0.txt",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/scripts/run.cmd",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/scripts/run.sh",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/scripts/doctor.py",
+      "matched_paths": 1
+    },
+    {
+      "rule": "scripts/**/*.py",
+      "matched_paths": 19
+    },
+    {
+      "rule": "scripts/nuget_content_hash/NuGet.Config",
+      "matched_paths": 1
+    },
+    {
+      "rule": "scripts/nuget_content_hash/NuGetContentHash.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "scripts/nuget_content_hash/Program.cs",
+      "matched_paths": 1
+    },
+    {
+      "rule": "scripts/nuget_content_hash/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "scripts/schemas/spdx-2.3.schema.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "tools/spdx-schema-check/pyproject.toml",
+      "matched_paths": 1
+    },
+    {
+      "rule": "tools/spdx-schema-check/uv.lock",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/SKILL.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/pyproject.toml",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/uv.lock",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/.python-version",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/src/douyin_transcript/**/*.py",
+      "matched_paths": 30
+    },
+    {
+      "rule": "skills/douyin-transcript/references/*.md",
+      "matched_paths": 4
+    },
+    {
+      "rule": "skills/douyin-transcript/references/capture-ipc-v1.schema.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/assets/config.example.toml",
+      "matched_paths": 1
+    },
+    {
+      "rule": "skills/douyin-transcript/assets/corrections.example.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "tests/**/*.py",
+      "matched_paths": 45
+    },
+    {
+      "rule": "README.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "README_EN.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/capture-pipe/*.cs",
+      "matched_paths": 21
+    },
+    {
+      "rule": "native/windows/capture-pipe/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/capture-pipe/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/capture-pipe/README.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/shared/PublicUnicastAddressPolicy.cs",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-core/*.cs",
+      "matched_paths": 2
+    },
+    {
+      "rule": "native/windows/wfp-policy-core/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-core/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-core/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/*.cs",
+      "matched_paths": 7
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/tests/*.cs",
+      "matched_paths": 3
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/tests/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-runtime/DYNAMIC_LEASE_SCOPE_LIMITATIONS.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/*.cs",
+      "matched_paths": 5
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/*.txt",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/*.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/tests/*.cs",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/tests/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-native-readback/tests/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/*.cs",
+      "matched_paths": 5
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/*.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/.editorconfig",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/.gitattributes",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/.gitignore",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/global.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/packages.lock.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/NativeMethods.txt",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/tests/*.cs",
+      "matched_paths": 4
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/tests/*.csproj",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/artifacts/native-filter-plan.example.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/README.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ScopedNetworkWfpSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/AppContainerIdentitySmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ChromiumAsUserTokenSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ChromiumInteractiveHeadlessSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/GrantInteractiveDesktopAccess.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ProcessSingletonApiProbe.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.cmd",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeSandboxSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/UserSidChromiumSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/dotnet-windows-build-bom.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/third-party-license-evidence.json",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/third-party-sbom.spdx.json",
+      "matched_paths": 1
+    }
+  ],
+  "exclude_rule_hits": [
+    {
+      "rule": "LICENSE",
+      "matched_paths": 0
+    },
+    {
+      "rule": "Examples rule: only the three explicit examples may be included",
+      "matched_paths": 0
+    },
+    {
+      "rule": "Documentation rule: only the three explicit docs JSON paths may be included",
+      "matched_paths": 45
+    },
+    {
+      "rule": "docs/ACCEPTANCE.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/ARCHITECTURE.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/BENCHMARK.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "docs/RELEASE_CHECKLIST.md",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/CapabilitySmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ChromiumContextBaseline.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/HoldChromiumProcessSingletonMutex.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/NetworkWfpWriteSmoke.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ProbeInteractiveDesktopAcl.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/ProbeInteractiveSession.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/StageChromiumForDiagnostic.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox/StageChromiumForInteractiveUser.ps1",
+      "matched_paths": 1
+    },
+    {
+      "rule": "native/windows/wfp-policy-plan/sandbox-results/**",
+      "matched_paths": 1
+    },
+    {
+      "rule": "**/bin/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/obj/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/__pycache__/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/*.pyc",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/*.pyo",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/*.dll",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/*.exe",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/.venv*/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/.pytest_cache/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/.ruff_cache/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/cache/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/models/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/media/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/outputs/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "**/*profile*results*/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": ".audit-clean-skill-temp/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": ".venv-audit-py311/**",
+      "matched_paths": 0
+    },
+    {
+      "rule": "MEMORY.md",
+      "matched_paths": 0
+    },
+    {
+      "rule": "给执行Agent的启动指令.md",
+      "matched_paths": 0
+    },
+    {
+      "rule": "Douyin-Transcript-AgentSkill-完整项目实施方案-V2.md",
+      "matched_paths": 0
+    },
+    {
+      "rule": "Douyin-Transcript-AgentSkill-项目执行资料包.zip",
+      "matched_paths": 0
+    },
+    {
+      "rule": "toolchain-smoke.obj",
+      "matched_paths": 0
+    }
+  ],
+  "missing_literal_include_paths": [],
+  "zero_hit_include_rules": [],
+  "files": [
+    {
+      "path": ".codex/skills/douyin-transcript/SKILL.md",
+      "size_bytes": 1029,
+      "sha256": "658250a37b91b11416ca8fd3223a56f5d826b67605d0138b01b387d7065febb0"
+    },
+    {
+      "path": ".editorconfig",
+      "size_bytes": 209,
+      "sha256": "09182b75cbdef9dbab4cbfc1a118fd2f3473a3d0bcdba94d7b26b8354d87451d"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "size_bytes": 2252,
+      "sha256": "a29ee19a9f2ad5a281a8240ccbf5e48e7cf61e1689326f14c7bcf98fcc68c66e"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "size_bytes": 1001,
+      "sha256": "33b2e03d06f374bf4d1adfbc1078269c49108a3d881fac18d707a676f81938fb"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "size_bytes": 13044,
+      "sha256": "37c1bb56589de5a7ac53a45f84d376322c788ef522f55c6dbd769b874db53f3a"
+    },
+    {
+      "path": ".gitignore",
+      "size_bytes": 1001,
+      "sha256": "9828da733c82db7a47d3fd6b5790e67a5e6e2a5b875fcf5c73ea0d2664bb72a3"
+    },
+    {
+      "path": ".python-version",
+      "size_bytes": 5,
+      "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size_bytes": 5557,
+      "sha256": "56267e7dddebb2c13da8d523ac00ec6ed48a171a6c12e5f5e507a37f1fe42143"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size_bytes": 1130,
+      "sha256": "2f8e19b4297f9375ff02d3bfcc824ba4c13267dd2956038774bf6d96b25e66cf"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 17723,
+      "sha256": "10ef7650fd92c6b3eac23ef213c52ad0cbcfd532a66ed446398cb3c5fcb29eb6"
+    },
+    {
+      "path": "README_EN.md",
+      "size_bytes": 12176,
+      "sha256": "2569e618a2214ba897aea738c88ef9e3b03f47674fc668aafd9fdbf8a9b31ccd"
+    },
+    {
+      "path": "SECURITY.md",
+      "size_bytes": 2073,
+      "sha256": "d5290a43adf1ffbd4d6dbca40d824a7b618b801348c64885fd4677a324981966"
+    },
+    {
+      "path": "THIRD_PARTY_LICENSES/CC-BY-3.0.txt",
+      "size_bytes": 19467,
+      "sha256": "e6bc9e9c474700b708f568bac9e5a8a9bcb2b1dad53442f5ba449fcb848b8e76"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size_bytes": 3407,
+      "sha256": "4d28aa0ebd0f0fba7839a278e43d3426db33f9a4e1e7adf2865b984954f00bf2"
+    },
+    {
+      "path": "docs/dotnet-windows-build-bom.json",
+      "size_bytes": 80329,
+      "sha256": "8e0c281718fd439e9d5edc2bddf1e243b67fdaaa1d45633853ba84b43ab0a2a8"
+    },
+    {
+      "path": "docs/third-party-license-evidence.json",
+      "size_bytes": 702252,
+      "sha256": "3e065dbd1df88250da0fb9ab5b63c18d3f37ac91b1b894f73c20ece1ab439ed4"
+    },
+    {
+      "path": "docs/third-party-sbom.spdx.json",
+      "size_bytes": 169179,
+      "sha256": "e8bb1a6ab632a451dbfe1adfc07a0a460d134aacb8df03908d5811f7eab09f5c"
+    },
+    {
+      "path": "examples/sample_output.md",
+      "size_bytes": 491,
+      "sha256": "234bf8c8563cea196da8fff9df441796b405e0eaf1cc72ded69edcd8612257dd"
+    },
+    {
+      "path": "examples/sample_summary.json",
+      "size_bytes": 495,
+      "sha256": "d935fe54403d00f6e3e3fd6f1660d5b4582d83a25a7af9c72153098794c8db1d"
+    },
+    {
+      "path": "examples/urls.example.txt",
+      "size_bytes": 150,
+      "sha256": "9ae9a76f596dc7d85b90a4870e0c3ab0f1c7a673942b7122a421d8c68cabee7c"
+    },
+    {
+      "path": "native/windows/capture-pipe/CapturePipe.csproj",
+      "size_bytes": 528,
+      "sha256": "29af91974c307d2cd531cdbcf7b9c04a6aac27ae9c006d9301f62765a8871f16"
+    },
+    {
+      "path": "native/windows/capture-pipe/CapturePipeClient.cs",
+      "size_bytes": 4527,
+      "sha256": "14cd4cabae2bb5e949323caf883ff00400cf71d701249b88944022fbbf1d4826"
+    },
+    {
+      "path": "native/windows/capture-pipe/CapturePipeHost.cs",
+      "size_bytes": 10631,
+      "sha256": "6fc14bc38d662b325abe01aff7d3c70cb8d9a26fda6d48cfc0df5f359226dbd9"
+    },
+    {
+      "path": "native/windows/capture-pipe/CaptureProtocol.cs",
+      "size_bytes": 17179,
+      "sha256": "a4e82716d695aff0919d172f8b45d94556263d4938df0b5a1689680356ef1db0"
+    },
+    {
+      "path": "native/windows/capture-pipe/CaptureServiceConfiguration.cs",
+      "size_bytes": 9267,
+      "sha256": "bc6d1f84f8557e12c7770f09ad37dee51c88c79afaefb4a303cdbc95c972c022"
+    },
+    {
+      "path": "native/windows/capture-pipe/CaptureWorker.cs",
+      "size_bytes": 8296,
+      "sha256": "e817585622951beadea1a1283ca52cb97ffe19fc5e5744d8872f21dda21aa24c"
+    },
+    {
+      "path": "native/windows/capture-pipe/DnsWireCodec.cs",
+      "size_bytes": 12923,
+      "sha256": "a781265f7815ca220bd8f380ef101724bcae7f9cf3ac592ee6366c4a5dce6f9a"
+    },
+    {
+      "path": "native/windows/capture-pipe/HttpsConnectTunnel.cs",
+      "size_bytes": 18274,
+      "sha256": "e75da5aa2d8ed9341a45a7b0c1d0c216d8b55934ff90b4efed0c161970d092ca"
+    },
+    {
+      "path": "native/windows/capture-pipe/HttpsConnectTunnelHarness.cs",
+      "size_bytes": 19090,
+      "sha256": "8dcb1691945116c77cbacbd07c3730fd68380c52cd00f2e3534708712f5aa6f3"
+    },
+    {
+      "path": "native/windows/capture-pipe/LeaseEgressPolicy.cs",
+      "size_bytes": 17465,
+      "sha256": "1acb5d0597114256981b177fc94335a0ce91d1db8d543a9aef1295a763efc3fa"
+    },
+    {
+      "path": "native/windows/capture-pipe/LeaseProcessJob.cs",
+      "size_bytes": 20863,
+      "sha256": "d4b4f967f938ba32bf6e4ac22d783c5ffc1aeb7c753454f9cbd7299cacfa0cde"
+    },
+    {
+      "path": "native/windows/capture-pipe/LeaseProcessJobHarness.cs",
+      "size_bytes": 17507,
+      "sha256": "e7f52c2f8013b4d5f922915757cae99b18fa3e13ee0da1b890befb17e1ea14d9"
+    },
+    {
+      "path": "native/windows/capture-pipe/LeaseTcpConnector.cs",
+      "size_bytes": 8283,
+      "sha256": "7f23a7ecb3543d3c0da58200b65750833cd366cefbad1d76daf40d3de267957d"
+    },
+    {
+      "path": "native/windows/capture-pipe/LocalHarness.cs",
+      "size_bytes": 80236,
+      "sha256": "fb5970c3e1c39060f76a777c2806f0cdedc10e3606f2814012133fb67683011d"
+    },
+    {
+      "path": "native/windows/capture-pipe/NativeMethods.cs",
+      "size_bytes": 8238,
+      "sha256": "fedba9b030f7944dbed78c7207a50a69bdb9b73237caea6301afea3a627bb6d8"
+    },
+    {
+      "path": "native/windows/capture-pipe/NumericDnsQuestioner.cs",
+      "size_bytes": 8313,
+      "sha256": "a59987957adb134ea4ad699909bd07a0a37d413654dcb6f24dcaefbeb68f3060"
+    },
+    {
+      "path": "native/windows/capture-pipe/PeerIdentity.cs",
+      "size_bytes": 15956,
+      "sha256": "aa4cd98494100859171368cea914bc016b6619aa975833463f840867af0c69c2"
+    },
+    {
+      "path": "native/windows/capture-pipe/PipeFrames.cs",
+      "size_bytes": 3300,
+      "sha256": "f46d59034d517a8f2f179b963afc4a4dd0eff3d9c5865eea652e3c65a238c201"
+    },
+    {
+      "path": "native/windows/capture-pipe/Program.cs",
+      "size_bytes": 1668,
+      "sha256": "44445f8c756823380bb0dea029db06399da109136e1fb21e93d6803936f8aeab"
+    },
+    {
+      "path": "native/windows/capture-pipe/ProtocolLimits.cs",
+      "size_bytes": 945,
+      "sha256": "0022c444cf8c1fc9702661ab4b6d9ee42753aecf08dca284a160503a4b7dd816"
+    },
+    {
+      "path": "native/windows/capture-pipe/README.md",
+      "size_bytes": 13792,
+      "sha256": "3eb4cc4d9558c79971b8913a2431201396d968a5ae93cb7fe5c2b3a5c40bb9ee"
+    },
+    {
+      "path": "native/windows/capture-pipe/ServiceLifecycleHarness.cs",
+      "size_bytes": 20789,
+      "sha256": "29d117854a8d81fed79fe03aa855da3016189de8344d33e41cf1afce7e6e9c19"
+    },
+    {
+      "path": "native/windows/capture-pipe/WindowsServiceBootstrap.cs",
+      "size_bytes": 13607,
+      "sha256": "6fe2b385e5c451218faec84d338ecd352a16074f1c1f5a2c382c476c2a6551a3"
+    },
+    {
+      "path": "native/windows/capture-pipe/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "native/windows/shared/PublicUnicastAddressPolicy.cs",
+      "size_bytes": 3084,
+      "sha256": "e4d5ccb210a752e514a10fdc15d951a795c29468d064f57747092a0a6c4556d6"
+    },
+    {
+      "path": "native/windows/wfp-policy-core/AssemblyInfo.cs",
+      "size_bytes": 200,
+      "sha256": "25ee4b787d1ad936efe2ed60be37165c46eafed051cfeac01a71533adc807b07"
+    },
+    {
+      "path": "native/windows/wfp-policy-core/LeasePolicyCompiler.cs",
+      "size_bytes": 34710,
+      "sha256": "a05b2af6ea04ef87a4aad8db2c5c795c1e6301e0e659a66ab03ceaafd15b3400"
+    },
+    {
+      "path": "native/windows/wfp-policy-core/WfpPolicy.Core.csproj",
+      "size_bytes": 504,
+      "sha256": "80fc928ad755a22453fd1d0fd3a29106c140a4c0f22ed646c3cd05576df0754e"
+    },
+    {
+      "path": "native/windows/wfp-policy-core/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "native/windows/wfp-policy-core/packages.lock.json",
+      "size_bytes": 66,
+      "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/AssemblyInfo.cs",
+      "size_bytes": 167,
+      "sha256": "e3ed73591f04f9fb54fd36d2c3ae81715ad934a8cde68e9e36e59c5c493d286d"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/NativeMethods.txt",
+      "size_bytes": 4448,
+      "sha256": "b0105ae89eb50b780ea3a4a4a872f7a98bd0d0fc8b26067251b79ebaa530524c"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/NativeObjectDecoder.cs",
+      "size_bytes": 25074,
+      "sha256": "42e756c1c103b920d3eacd49438e64c2b65b7e5f843b453dfc6d9d79caeb56ea"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/README.md",
+      "size_bytes": 9062,
+      "sha256": "6e72ea0cd1b5d8400be08e8311a7c045f2d72d62b8a8408df04cb947cd683a4a"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/SecurityDescriptorNormalizer.cs",
+      "size_bytes": 2393,
+      "sha256": "dd7b9c7f6d46f18f6169b225f5340a8dded1cf266d3f64f9383e5eb9e9e51189"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/SnapshotModels.cs",
+      "size_bytes": 12209,
+      "sha256": "1516e1297f14ab878d4402d383b7576d1c310a2228fe49a169a958fb80671343"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/WfpNativeReadbackReader.cs",
+      "size_bytes": 46744,
+      "sha256": "b25b85604bc941e73ebe6c2479d099221df05e2d65228eb6206b4e330494f886"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/WfpPolicy.NativeReadback.csproj",
+      "size_bytes": 814,
+      "sha256": "f378f46f7d7874f4ee9a695f0860622d769e2af2e2d0f298de9670e7e58d8f28"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
+      "size_bytes": 1460,
+      "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/tests/Program.cs",
+      "size_bytes": 77359,
+      "sha256": "6d11de290779da9ab3a4d40b1a10c9d22819665cfe2ed8946fb55515a53e9a1e"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/tests/WfpPolicy.NativeReadback.Harness.csproj",
+      "size_bytes": 683,
+      "sha256": "0e65fbf26787dde60d4aa1c8ed235cc9fd13fe599615f2a5dafe82ca6a5ef296"
+    },
+    {
+      "path": "native/windows/wfp-policy-native-readback/tests/packages.lock.json",
+      "size_bytes": 186,
+      "sha256": "02dd7b95a61b674bb4b04565ce6b2e7ec641ae4d7892dd9aa6ee665475149655"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/.editorconfig",
+      "size_bytes": 118,
+      "sha256": "4dab0013f5db46a7539149f52b080b23dc621e98d4946ad560747dc56abce80e"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/.gitattributes",
+      "size_bytes": 17,
+      "sha256": "309421a8f7f95726de27d200a77f487acea3e2923d6d09bdfc317daa68bde53f"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/.gitignore",
+      "size_bytes": 59,
+      "sha256": "ca873ca7305af74c9c178214ae3681489bdc7b65f7882cb4f99bdca10f49590a"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/ManagedLayoutReport.cs",
+      "size_bytes": 3306,
+      "sha256": "c710f5dcdacee8bd2ce21753f5baccafbfb06381aaedbeeae0d5bee7b056758c"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/NativeFilterPlan.cs",
+      "size_bytes": 16074,
+      "sha256": "806baa12a7b843e7f50da5114e66ce7d2f041333e76ce685b6f197fe8bd2bd4e"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/NativeMethods.txt",
+      "size_bytes": 2178,
+      "sha256": "72f14aa6646cd3a97e130dbdf4db7bc47f5ce5ba2deedc0a094acf1f5db0ddc7"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/PolicyPlan.cs",
+      "size_bytes": 14968,
+      "sha256": "a79449d9179e2111946b11412321d2b84963b658b67f5897601ad0b57d705ada"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/Program.cs",
+      "size_bytes": 1566,
+      "sha256": "00eaf19d5abeb69421d5e1ba52e4d2926f0ce959adbc26e69b7e586119e6cb44"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/README.md",
+      "size_bytes": 17062,
+      "sha256": "53b04344412056fd00f88712b4704729220e88ba7c90cbae4572a33391a2d8bd"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/VerifyFilterPlanArtifact.ps1",
+      "size_bytes": 1631,
+      "sha256": "d13288113ee95524a866f32e7a3d5d30a95bff12087daed73ced438034716ae7"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/WfpFilterMaterializer.cs",
+      "size_bytes": 37318,
+      "sha256": "077d5a60ab7998a525f103cf76a22b3d7fa48ba52c118ca593a8f9ddd74d1bd8"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/WfpPolicyPlan.csproj",
+      "size_bytes": 847,
+      "sha256": "50630f71586987aa561a9196dc165ba4da58d13664ebe959d955c2bef6693026"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/artifacts/native-filter-plan.example.json",
+      "size_bytes": 9428,
+      "sha256": "51bf789b93e250a431b4c0ca756b4b86ad69d0a161a02bb561fd51a2a6553f0d"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/packages.lock.json",
+      "size_bytes": 1502,
+      "sha256": "07d11b1b03db7621602ac37b65cf8f7c4ae92329d08d9e0a1fcb3a75b1ea22ad"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/AppContainerIdentitySmoke.ps1",
+      "size_bytes": 63636,
+      "sha256": "65c6bb1f378dd6fe80f47e0c770a861640e7c62a61fc531c6a9c2aea3de6406b"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/ChromiumAsUserTokenSmoke.ps1",
+      "size_bytes": 964,
+      "sha256": "523fdd7350c536eb74329ca9dad125526e7c7c1623ed7054f1f8074dcc9cf5c9"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/ChromiumInteractiveHeadlessSmoke.ps1",
+      "size_bytes": 8020,
+      "sha256": "77008ac8070fc04f9827e78d7ad44ebefc977e4c4bfb220e08c9a28375c20da2"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/GrantInteractiveDesktopAccess.ps1",
+      "size_bytes": 324,
+      "sha256": "32f8fb01fdde4cec284b4f13a74dc6998aef8b4f73360b78f0286f966ca7f8ee"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/ProcessSingletonApiProbe.ps1",
+      "size_bytes": 38818,
+      "sha256": "0d0264317ec03312ec73c3eb5cb7cc5d153e3f26dc084ef8884e547a1958c0fb"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.cmd",
+      "size_bytes": 63,
+      "sha256": "d542936d508908c6376aff1533cb9a6446bed25434e365fdaba66fd19b3a91b3"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeProbe.ps1",
+      "size_bytes": 171,
+      "sha256": "f1eafcd62135d2084edaf188d2d54cd4ad064c848aaa8e5b9692650ed049a9ab"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/RunMaterializerBfeSandboxSmoke.ps1",
+      "size_bytes": 160,
+      "sha256": "8e0da06b1e65e3cb46281af31e115131488fa05e893d4ef673459b12482a62fc"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/ScopedNetworkWfpSmoke.ps1",
+      "size_bytes": 277,
+      "sha256": "fdde87443ab650f1f969fb74a02a10c764e00ec1a832815042331d11a1ce13fb"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/sandbox/UserSidChromiumSmoke.ps1",
+      "size_bytes": 180,
+      "sha256": "f3aa0aa0cd39a8d99658589bcd75f5942f2f1e5f0670437301791b2eb0570a59"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/tests/LeasePolicyCompiler.Tests.csproj",
+      "size_bytes": 467,
+      "sha256": "ab3cbd8e2cae9a49324836d050297676cc75e8f7755d4a592c5feef0afa93132"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/tests/Program.cs",
+      "size_bytes": 40216,
+      "sha256": "0794796b2d287f2251051d55bd7a5e8cdf00955607e970dc4cb68765c17ad57f"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/tests/SandboxBfeSmoke.cs",
+      "size_bytes": 375,
+      "sha256": "bff74d5c016b0ef7d5fd7b12f793c087d4f401d6c254e696866ab188082a6404"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/tests/SandboxProbeClient.cs",
+      "size_bytes": 482,
+      "sha256": "18e46331701905fd9f73b894c2b0aca0e0c51dbacb414d233709ff76ba4bc2fc"
+    },
+    {
+      "path": "native/windows/wfp-policy-plan/tests/SandboxProbeSupervisor.cs",
+      "size_bytes": 14820,
+      "sha256": "b3309d63f404b124108ea5ee848de856ce7c74fb25d7f3a27695174694fd9d0e"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/AssemblyInfo.cs",
+      "size_bytes": 100,
+      "sha256": "7cc178bd8a870c1c82ad861e786e5cfa808c3c0a66bfbe06990ebdc62ee333dc"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/BaselineCoordinator.cs",
+      "size_bytes": 22005,
+      "sha256": "ac7d5f0cbbd7a79ff46e7f2a611ed14a6fe8025d0f0a4381414f6ba34722b515"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/DYNAMIC_LEASE_SCOPE_LIMITATIONS.md",
+      "size_bytes": 9772,
+      "sha256": "101013b96a81a42e6254fdcdc62184b7071f3f7e474bb08093d1c1acff149c0f"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/DynamicLeaseCoordinator.cs",
+      "size_bytes": 33664,
+      "sha256": "7fab11bdfa385bb8efc08fdc5c567a7a278d76f7c4fb786781f19ad8cf90a931"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/NativeWfpPolicyStoreAdapter.cs",
+      "size_bytes": 29747,
+      "sha256": "1c886d2f06bff32a1c2911208258659aa9965e985c469883bd5f1cda501bcc22"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/SharedSublayerReadbackContract.cs",
+      "size_bytes": 11667,
+      "sha256": "6700246f909ee4c700fcf7fc79b7d1cc64d4a681330744760c45fe3678b56301"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/WfpNativeObjectProjection.cs",
+      "size_bytes": 12553,
+      "sha256": "ee494d950c0c8ed79ea72072410c88f03fd2ed53136fa96e5a25d3a4e7f728d7"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/WfpNativeReadbackAdapter.cs",
+      "size_bytes": 20940,
+      "sha256": "970d1eb1374847b34466483003e754659716b200dfa6bb8e40f8ea5559e357bf"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/WfpPolicy.Runtime.csproj",
+      "size_bytes": 651,
+      "sha256": "9dbfe87c87331489323b37e8612c87f8c7604b4908779570eebc3249963497fa"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/packages.lock.json",
+      "size_bytes": 220,
+      "sha256": "40373c99adf9ef6c8bd0d7b4ccead84a2a77074fee40f031b7606dbfa43855ba"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/tests/DynamicLeaseCoordinatorHarness.cs",
+      "size_bytes": 39761,
+      "sha256": "bc368e3749ccc25a277f085a0465cb6372f89961443a3af3c2da1ddac05ce11e"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/tests/NativeWfpPolicyStoreAdapterHarness.cs",
+      "size_bytes": 24867,
+      "sha256": "1562b95dc700ae9ae3c7d0a6c6b359c19e7bb5d98f5d59eb1657d78682eb157b"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/tests/Program.cs",
+      "size_bytes": 31363,
+      "sha256": "5c7f53ecebe1848b7c155eb194cc790e9ac61cff84a2f285612fac7fc22d0ff6"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/tests/WfpPolicy.Runtime.Harness.csproj",
+      "size_bytes": 597,
+      "sha256": "d110b7bd37373225e85522b41dda880b1f4aa4967f467291686a2efe502b845d"
+    },
+    {
+      "path": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
+      "size_bytes": 458,
+      "sha256": "66bf3e109975270ede8108bcb6401aab048d462313a8497af49063735588730e"
+    },
+    {
+      "path": "pytest.ini",
+      "size_bytes": 41,
+      "sha256": "6a96ba0e2d5a8296fb90f474da9d2f0173d3e41eba18965513f711104155f913"
+    },
+    {
+      "path": "scripts/check_clean_skill_install.py",
+      "size_bytes": 7438,
+      "sha256": "7ceb2039e8d3e36c48d6e64412d413600f0fea8bb1f46e68595196eb3b8226b8"
+    },
+    {
+      "path": "scripts/check_dotnet_build_bom_outputs.py",
+      "size_bytes": 5709,
+      "sha256": "0511347dce54b00c35841548c0a8746646eb233fb60a5ecdaf59b88a9c763ce5"
+    },
+    {
+      "path": "scripts/check_sensitive_files.py",
+      "size_bytes": 18632,
+      "sha256": "51f5c991e489a0191fe72eb9f9b62cee987077a2161a354583991500dd900d2d"
+    },
+    {
+      "path": "scripts/check_spdx_sbom_freshness.py",
+      "size_bytes": 12876,
+      "sha256": "cd94533ec26755cd452d4fa155ad6710c00c70697e019f0ca6c1ca394dd42fdc"
+    },
+    {
+      "path": "scripts/check_spdx_schema.py",
+      "size_bytes": 6445,
+      "sha256": "8aae9e77eb92ea292fc479667d9003000bd6a7d2f240fca92494cb1d318d0653"
+    },
+    {
+      "path": "scripts/generate_dotnet_build_bom.py",
+      "size_bytes": 42603,
+      "sha256": "be50341a8c856352861b911b4f2736e7e3c73da8aee6c5a5124f2641cc4cd83f"
+    },
+    {
+      "path": "scripts/generate_spdx_sbom.py",
+      "size_bytes": 56322,
+      "sha256": "49fcf66ae7a8c26e3480c5b578490d670eecee6d1c5597044d735269d6f3bdbd"
+    },
+    {
+      "path": "scripts/hash_locked_license_candidates.py",
+      "size_bytes": 23902,
+      "sha256": "3eabc5d6d8154467a9da07361557aa4f4cb68f8999d1e9e952109e1cc073719c"
+    },
+    {
+      "path": "scripts/inventory_locked_artifact_members.py",
+      "size_bytes": 27323,
+      "sha256": "1898243e71b1e32f6a3c83f5ec5194aa9f653a4473cacdb82ccbe8907221b43c"
+    },
+    {
+      "path": "scripts/inventory_locked_artifact_members_batched.py",
+      "size_bytes": 23571,
+      "sha256": "0fcdecdb1ee9645ee01fbfc25fa7e04b14c20eeaa3340b0bb15b61f19968eadc"
+    },
+    {
+      "path": "scripts/inventory_locked_pe_imports.py",
+      "size_bytes": 32063,
+      "sha256": "5ff379b3869107404897482368a2823f9dfb0546679c611ed072ea709c6b9993"
+    },
+    {
+      "path": "scripts/inventory_numpy_native_members.py",
+      "size_bytes": 15286,
+      "sha256": "397ff39955c9cdb5d01f34a2439fa87bde8b739a27e9ba756a4f050505df8eb8"
+    },
+    {
+      "path": "scripts/inventory_pyav_ffmpeg_build_config.py",
+      "size_bytes": 13210,
+      "sha256": "075eae881d5699eec51abfd9e91470ef89cfd81dbb84a91f5fb973719c4274c8"
+    },
+    {
+      "path": "scripts/map_locked_pe_import_edges.py",
+      "size_bytes": 22748,
+      "sha256": "650377b6607ae719f84d743c9a84b20ae249ce64169bc671c755f06e2fed617a"
+    },
+    {
+      "path": "scripts/nuget_content_hash/NuGet.Config",
+      "size_bytes": 125,
+      "sha256": "5256a7e3e07d2c5c94f7a1e6c45f39aab011c659c5e2d53e452dea525ce04575"
+    },
+    {
+      "path": "scripts/nuget_content_hash/NuGetContentHash.csproj",
+      "size_bytes": 759,
+      "sha256": "f198e514f557a833e197706e4c9542b2e4aa972639586ca547a71f327c519429"
+    },
+    {
+      "path": "scripts/nuget_content_hash/Program.cs",
+      "size_bytes": 1243,
+      "sha256": "93ba511da7979a8dc44c65e6eb06516555781e12012fa75229bcea2a02bcf909"
+    },
+    {
+      "path": "scripts/nuget_content_hash/global.json",
+      "size_bytes": 109,
+      "sha256": "ce61f5ae207d33d00594c77c5999c7f0dc66434e85a85f38090335d588438974"
+    },
+    {
+      "path": "scripts/safe_output.py",
+      "size_bytes": 16354,
+      "sha256": "dede02cc5e1a5e76764442876d7c21056e2734bec514d4be8e7d4a0917b1993f"
+    },
+    {
+      "path": "scripts/schemas/spdx-2.3.schema.json",
+      "size_bytes": 47602,
+      "sha256": "4126dc29f15e92feec92e9622f4939131ad58b125d6f578aa93e980a6e6f3212"
+    },
+    {
+      "path": "scripts/spdx_terminal_safety.py",
+      "size_bytes": 1216,
+      "sha256": "332de867149439a78835fe89e611a192633ec3e47ed705976e614f401981f3ab"
+    },
+    {
+      "path": "scripts/verify_locked_artifact_cache.py",
+      "size_bytes": 9739,
+      "sha256": "1d6069fa1ece8a5088e403c48b4b09afdf1ee2ead264d487f942659c4442cb6e"
+    },
+    {
+      "path": "scripts/verify_locked_wheel_metadata_audit.py",
+      "size_bytes": 22183,
+      "sha256": "fb98e5c9381354652a7f96c56fdfb68ba460e7a4795844fbdcf39cb597268ad7"
+    },
+    {
+      "path": "scripts/verify_spdx_evidence.py",
+      "size_bytes": 52680,
+      "sha256": "e04d54bfa80648cb7310f0a8f07c0621e928bc8e41b800e7e0a131103fe8f688"
+    },
+    {
+      "path": "skills/douyin-transcript/.python-version",
+      "size_bytes": 5,
+      "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+    },
+    {
+      "path": "skills/douyin-transcript/SKILL.md",
+      "size_bytes": 13513,
+      "sha256": "c2822567fbcb873762123e3de31390e6d4c46ea49702fbdfc8000407fc8b68d4"
+    },
+    {
+      "path": "skills/douyin-transcript/assets/config.example.toml",
+      "size_bytes": 617,
+      "sha256": "5a7cec226720f8087f19877386af2cd0c1acf148d50df24699c5a0024dd5aaff"
+    },
+    {
+      "path": "skills/douyin-transcript/assets/corrections.example.json",
+      "size_bytes": 165,
+      "sha256": "46b78128ed41e4a506f9daaa381e462a04826075dae295594915945e06b6cad1"
+    },
+    {
+      "path": "skills/douyin-transcript/pyproject.toml",
+      "size_bytes": 988,
+      "sha256": "c90c0735463fd28b096072d5ef8a6ea27d38830b0b78f51182c59190de1b74da"
+    },
+    {
+      "path": "skills/douyin-transcript/references/CLI_REFERENCE.md",
+      "size_bytes": 10203,
+      "sha256": "3b662a7db7fe2feed79ce1cf033b74db921dda8a467e21ddb744a586598c8bd8"
+    },
+    {
+      "path": "skills/douyin-transcript/references/INSTALL.md",
+      "size_bytes": 9719,
+      "sha256": "86dcb241eb70a30f7b86ff9290ac4833b8089f8a86c650786f93d557079ec22d"
+    },
+    {
+      "path": "skills/douyin-transcript/references/MODEL_PROVENANCE.md",
+      "size_bytes": 1972,
+      "sha256": "2b820d14f8c494e1fbc62c217239324956d4e8e400e217b716693af622120799"
+    },
+    {
+      "path": "skills/douyin-transcript/references/TROUBLESHOOTING.md",
+      "size_bytes": 4084,
+      "sha256": "75b96c2553f3b6318734928179cd7432b99107deee644ea119b15b009fa0a439"
+    },
+    {
+      "path": "skills/douyin-transcript/references/capture-ipc-v1.schema.json",
+      "size_bytes": 8859,
+      "sha256": "e2bac0b89a810d9978ca777e14f42f52277ad89643af6dcd3befef6af1e8d640"
+    },
+    {
+      "path": "skills/douyin-transcript/scripts/doctor.py",
+      "size_bytes": 207,
+      "sha256": "41ee1e17ed4b015eb2fe1517f07d5a41ce17b13d41288f730ac3dfba215157a3"
+    },
+    {
+      "path": "skills/douyin-transcript/scripts/run.cmd",
+      "size_bytes": 107,
+      "sha256": "121247b66b4dc59f19c40b6a3ceccfa4c7bc012f19e9421356ca649e7e20f863"
+    },
+    {
+      "path": "skills/douyin-transcript/scripts/run.sh",
+      "size_bytes": 161,
+      "sha256": "6f32491e520e4bb5574eb7302ae972c2d99243e85c3786f6fa7d8c49e55a539d"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/__init__.py",
+      "size_bytes": 68,
+      "sha256": "a90cc4a0717eb034f0ae71e4af7401a27059f2eb7e2543255bf67584098e8cc8"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/__main__.py",
+      "size_bytes": 155,
+      "sha256": "23a0e772934d585c46edf203b6eea2a6c83ef3bcf74fe21d79cdfd5922aa41ae"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/asr.py",
+      "size_bytes": 9626,
+      "sha256": "94038b97677d09d273fbd35a2d934f9310493457f13a13e3f89340da045b6ca5"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/browser_proxy.py",
+      "size_bytes": 15464,
+      "sha256": "7e80cd4ea661457e67f4c677faae65d793543e07d2a31771935527d40f33380b"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/cache.py",
+      "size_bytes": 27341,
+      "sha256": "668a960463f238a2ed96332d8f50bef67bbc6786edd1816cec05c972ba1ff6de"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/capture.py",
+      "size_bytes": 32678,
+      "sha256": "ebf4f821153c62c7e53a1a02b76fd4aaedb12dcb14741e7e46a543bbafe0ecd5"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/capture_artifacts.py",
+      "size_bytes": 7778,
+      "sha256": "1cdcabd6036fd8f7edc4a53e44501e418b89a69c735cd008263a7ceeddc6f035"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/capture_client.py",
+      "size_bytes": 13128,
+      "sha256": "f955b7e7612219405137d00598b88f26d6bf46c7e28d606c7f74753a6f3d3ee6"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/capture_ipc.py",
+      "size_bytes": 29661,
+      "sha256": "5a30b333077f1ef1f537072dd26d3a1acac499c1cc2715f96d817b6caa46cc63"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/capture_pipe_windows.py",
+      "size_bytes": 28990,
+      "sha256": "f97e1be1eaf268399c2399be7929bc5bb8730dbf1656d4fa2baa63d354944efb"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/cli.py",
+      "size_bytes": 63247,
+      "sha256": "bc7f18856dd65228ca5ad749874f1aee4f79c0e387a180bd9903748bcf7b6954"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/config.py",
+      "size_bytes": 6502,
+      "sha256": "7b9934f9c5c81502620138e406ae585a2fde297f7e1186bdb81dc3048129bb93"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/corrections.py",
+      "size_bytes": 11910,
+      "sha256": "90ecb11a68ca167a4fde09c840b54e98ae77975aa64f4669eee1e7a1fa09b060"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/doctor.py",
+      "size_bytes": 13991,
+      "sha256": "ceb685c297d90edd7ec9862ec636ac71cb8fa4415a547ed2c7d95c7703d5c8da"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/downloader.py",
+      "size_bytes": 34694,
+      "sha256": "a5f475f479222f6867660d39ec2c298f3df1850f3a31e63ffc763391676f0c52"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/errors.py",
+      "size_bytes": 1217,
+      "sha256": "8af245d23e8077c5b185f9c0b43ee6bbd45c486dab4e6d3791a3eb5440a0b730"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/isolation_broker.py",
+      "size_bytes": 3125,
+      "sha256": "2421e43cbc12704bb1736a4c049fa04e198472afa72e52040a49949ff6191eea"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/limits.py",
+      "size_bytes": 3097,
+      "sha256": "f15f02c7da56bbd9dff9b13793b00cdb316e0b0979d099610180885ccf329050"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/markdown.py",
+      "size_bytes": 18753,
+      "sha256": "056e4abf815ecefbb48656f35d206406a51237b41215d3aaa37bd038bc341cbd"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/models.py",
+      "size_bytes": 15667,
+      "sha256": "aafad739238135822d9cf226b9d88627fa85ca444e56450043f20ffa2e59d77f"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/naming.py",
+      "size_bytes": 4477,
+      "sha256": "18c4be178d3ef6d27f096a6ec4777c262296657e8a19926cdda4e57c7c0c498e"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/normalize.py",
+      "size_bytes": 5322,
+      "sha256": "b616e9745985e96e27e398e98d89fe8f9e9e2f7fc9e2f96b19538b3eb3fb96f2"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/output.py",
+      "size_bytes": 2440,
+      "sha256": "20e9a9b53041bd8e354ea27a82f064e4edcb88690b10de5ab128d5354d46a64a"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/pipeline.py",
+      "size_bytes": 57164,
+      "sha256": "dee4103b222b22649447c760066497e3648e03cfdaeaa1a08e5ed7ba3be0fd03"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/processing.py",
+      "size_bytes": 14342,
+      "sha256": "401fe732fbeb8201c6317943b7c6b9e63da60937a440e8e34c48820c2d9f9a53"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/processing_worker.py",
+      "size_bytes": 7826,
+      "sha256": "c41aea45e5f64f39ba74239bb5dab5347ffb8c209cd1a9416a11b32e1fae76af"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/storage_security.py",
+      "size_bytes": 50672,
+      "sha256": "496e5bbd9867eac0891e0f4b87608678006966805da5027a9951016db8c744b8"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/tasks.py",
+      "size_bytes": 76887,
+      "sha256": "41c3ca2cff48c57c5951e513370d076b887cb30d0831e6eb17cc98aca40e813c"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/text_safety.py",
+      "size_bytes": 2204,
+      "sha256": "2ff5e3c4c6f950cac93dcf9a42af5b7b04917f636a612e0e4f8f93d871c39a86"
+    },
+    {
+      "path": "skills/douyin-transcript/src/douyin_transcript/urls.py",
+      "size_bytes": 25223,
+      "sha256": "4ab7c2d18771d73eb6f4f40c8cd5c42bb624988b873b88a229d65bdcc2e5efd6"
+    },
+    {
+      "path": "skills/douyin-transcript/uv.lock",
+      "size_bytes": 81292,
+      "sha256": "f4fc838d6f52555ca03ccf378c67e2a988666928904ff14bfab6d4af7c88f31b"
+    },
+    {
+      "path": "tests/conftest.py",
+      "size_bytes": 880,
+      "sha256": "2972348004a1bba7683889467bfc2e868ce0fd1628f16c547af6e2bc44f180fa"
+    },
+    {
+      "path": "tests/fixtures/pipeline_crash_worker.py",
+      "size_bytes": 4512,
+      "sha256": "5ab09e8e320a22a48879f48f394368ca88c32d449ba56879c6d8a7ca0792fb9a"
+    },
+    {
+      "path": "tests/integration/test_windows_capture_pipe.py",
+      "size_bytes": 6024,
+      "sha256": "c1409104fbfed1b1d4a8c79b924b7dc921771218a3d5562215fd910f756d60b3"
+    },
+    {
+      "path": "tests/integration/test_windows_socket_handoff.py",
+      "size_bytes": 4176,
+      "sha256": "9a90936ed32f0fe429dff7264593d12dd895721247fd0ca2298208239ee750d0"
+    },
+    {
+      "path": "tests/test_doctor.py",
+      "size_bytes": 19085,
+      "sha256": "4770e086b01f0dd450ccd6bbfefd12f5b9e195267327c3514c5e7c7055042f0d"
+    },
+    {
+      "path": "tests/unit/test_artifact_member_inventory.py",
+      "size_bytes": 11705,
+      "sha256": "8237217418116b47ef8fcb9e838a0e5d123a78027dec1b8fbabd973faa456005"
+    },
+    {
+      "path": "tests/unit/test_asr.py",
+      "size_bytes": 11962,
+      "sha256": "3c9d91071ee4dc5a5f63ff34c26e6ece9751e280da99b2e7cd322e51f5dfd0c6"
+    },
+    {
+      "path": "tests/unit/test_batch_acceptance.py",
+      "size_bytes": 5105,
+      "sha256": "ae2a0f534e4e2910023b12248ea6a06887bec91022956a8a20dfdd56336f9dd1"
+    },
+    {
+      "path": "tests/unit/test_bounded_lock_readers.py",
+      "size_bytes": 4492,
+      "sha256": "63908d9d554ae816a7ff69d8e62590dfd09411918ac61586971b761125e9b726"
+    },
+    {
+      "path": "tests/unit/test_browser_proxy.py",
+      "size_bytes": 13003,
+      "sha256": "7554bd9cbff16e3be5e7c3ff439ffd7aaaddc18e67d23d29a4fd2ff38e463916"
+    },
+    {
+      "path": "tests/unit/test_cache.py",
+      "size_bytes": 11847,
+      "sha256": "a8fb001d80c0cac7b01d2869e037c41f562ba777640689b272d7032c7ae28452"
+    },
+    {
+      "path": "tests/unit/test_capture_client.py",
+      "size_bytes": 10357,
+      "sha256": "1c93f1d02302637feff41cfd1aef3fa97ea611197e5cba2fb5e0b5e7457d01ae"
+    },
+    {
+      "path": "tests/unit/test_capture_ipc.py",
+      "size_bytes": 15506,
+      "sha256": "10624da1ac758a445ee3eedf4497a0c650103ec2e917d4c5b791d5a62621e21a"
+    },
+    {
+      "path": "tests/unit/test_capture_pipe_windows.py",
+      "size_bytes": 3983,
+      "sha256": "d828523ab81560d415b9ec08e204a866a2bd8f2f8a97bed2e37d06cb3f4b889f"
+    },
+    {
+      "path": "tests/unit/test_cli.py",
+      "size_bytes": 90129,
+      "sha256": "4a5221ef3f5825191e5e35ce9ef5b5a8f081788f25cd0aa96d5a93663b3f7702"
+    },
+    {
+      "path": "tests/unit/test_config.py",
+      "size_bytes": 5938,
+      "sha256": "df8b0c8375ba98f61661c8009cfb66e1b93535408102262a3138a8af5fc623b7"
+    },
+    {
+      "path": "tests/unit/test_corrections.py",
+      "size_bytes": 8034,
+      "sha256": "604fc3d15bd2ea44ad0bd7f380b1c6ec9350d1a90e7c5b7cd0771ef65d5cae72"
+    },
+    {
+      "path": "tests/unit/test_dotnet_build_bom.py",
+      "size_bytes": 14675,
+      "sha256": "58501f35deb68f8c1abfc64665169eca62327e217b278c036c851ce2c339ca1b"
+    },
+    {
+      "path": "tests/unit/test_dotnet_build_bom_output_verifier.py",
+      "size_bytes": 2527,
+      "sha256": "794b251f9feed2c8c44da79b1a3addd93e23a084d155e1d86346436aff03f422"
+    },
+    {
+      "path": "tests/unit/test_evidence_writer_paths.py",
+      "size_bytes": 6169,
+      "sha256": "43dffd9fccc3a932bad3f68a23285555b9332af76809db79dcd4136fb7d685a9"
+    },
+    {
+      "path": "tests/unit/test_license_candidate_hashing.py",
+      "size_bytes": 1707,
+      "sha256": "fdb17326eb9e1653757726fbce4f15837df47d8f471d38d6dbbc666b65135b99"
+    },
+    {
+      "path": "tests/unit/test_locked_artifact_cache.py",
+      "size_bytes": 3233,
+      "sha256": "04fc70b8ef51d7c8cd594f1a16a5acd5e04907deb8088fbfda5808aea606fd72"
+    },
+    {
+      "path": "tests/unit/test_locked_metadata_audit.py",
+      "size_bytes": 6613,
+      "sha256": "ace8f06e9e549587095db38068b85e00d201048456f1e68da459eba602f6b940"
+    },
+    {
+      "path": "tests/unit/test_locked_pe_imports.py",
+      "size_bytes": 25682,
+      "sha256": "5a6c4f47c241583a1192f2f57522885d1a7067ead9773a66f867bf1e828f965b"
+    },
+    {
+      "path": "tests/unit/test_markdown.py",
+      "size_bytes": 13481,
+      "sha256": "278b14505fa67b4971cbde5b650fd96373e5755aa39324668b16205534eb1d85"
+    },
+    {
+      "path": "tests/unit/test_models.py",
+      "size_bytes": 12062,
+      "sha256": "eee434c4088b1d949e9293546c2f9882fd9b4b481d63a8a22f03b2859c709e11"
+    },
+    {
+      "path": "tests/unit/test_naming.py",
+      "size_bytes": 3082,
+      "sha256": "047a5ee09a796201215b1f28e8194672a2c33f9315b3b0a63cc0f74a17d83a22"
+    },
+    {
+      "path": "tests/unit/test_normalize.py",
+      "size_bytes": 2959,
+      "sha256": "b4a9bc731f439fd53f441947452f614b59c6cc0183deb4d5431bc1aabf7f92aa"
+    },
+    {
+      "path": "tests/unit/test_numpy_native_member_inventory.py",
+      "size_bytes": 2984,
+      "sha256": "d8d40f2cbf4a15b86c25bee7c2380d76310d3bb98302c40c6432603b8b88cb63"
+    },
+    {
+      "path": "tests/unit/test_p2_capture.py",
+      "size_bytes": 32708,
+      "sha256": "432c8d270b523afbef8543e1ff8044a28bb8c698b325792bef2a5a0b905182db"
+    },
+    {
+      "path": "tests/unit/test_p2_downloader.py",
+      "size_bytes": 46598,
+      "sha256": "fa56743eea2f9154570ed12389329fdc7e66abbbe38be5c48b80c7ef43d609fa"
+    },
+    {
+      "path": "tests/unit/test_p2_urls.py",
+      "size_bytes": 10853,
+      "sha256": "ca00260755e6fd374d69aefbb9347fa6b3adc5edd8b79cf62c3e896540d56399"
+    },
+    {
+      "path": "tests/unit/test_pipeline.py",
+      "size_bytes": 59257,
+      "sha256": "bb1f544fd4283308e11ee7056ce792fd45e5c67d12366774c30cc97d92d63bd6"
+    },
+    {
+      "path": "tests/unit/test_processing.py",
+      "size_bytes": 6111,
+      "sha256": "9025e53e362213e5bc71498ccb078bbed79877608007a88f50f101dace4142c8"
+    },
+    {
+      "path": "tests/unit/test_pyav_build_config_inventory.py",
+      "size_bytes": 5814,
+      "sha256": "7fe3ac91421791c16e2330f3b20cf890dd4d6ca46fe6a474622a275c404e5491"
+    },
+    {
+      "path": "tests/unit/test_safe_output.py",
+      "size_bytes": 6619,
+      "sha256": "8e905011319cdb4e96bdf8dbae8c112990a95145fa193b55667dbe7132caa249"
+    },
+    {
+      "path": "tests/unit/test_sandbox_cleanup_ownership.py",
+      "size_bytes": 4274,
+      "sha256": "49265dce43edb44783006cf19f8b226558494b95602dda6b9f04ee2b502a6abf"
+    },
+    {
+      "path": "tests/unit/test_sensitive_files.py",
+      "size_bytes": 9178,
+      "sha256": "53f21a6d2bce2d2265d078c166eef67473da14403b2ca1db6c61cc53db4bd85c"
+    },
+    {
+      "path": "tests/unit/test_skill_install.py",
+      "size_bytes": 4099,
+      "sha256": "f5c2f0feb352bbfaf0fc3817664e9ef6963b320928a616c23a48a918d73f4269"
+    },
+    {
+      "path": "tests/unit/test_spdx_evidence_verifier.py",
+      "size_bytes": 21162,
+      "sha256": "6e74296b8be1c509dfeb9dc1657969507822e7309fef23544b69144e6640e290"
+    },
+    {
+      "path": "tests/unit/test_spdx_sbom.py",
+      "size_bytes": 28984,
+      "sha256": "274a24283d61702762fa8bfd4cdad6737c8527c2a27aa8ca179f826c588aed16"
+    },
+    {
+      "path": "tests/unit/test_spdx_sbom_freshness.py",
+      "size_bytes": 8651,
+      "sha256": "d9cc3551cab917c69c119bebb1474aed69e40282caf4e1422b03907383a1d5c3"
+    },
+    {
+      "path": "tests/unit/test_spdx_schema.py",
+      "size_bytes": 3404,
+      "sha256": "2821eb2c494d158ed8cda06f0b518220e0944de7806469d9ff13f357596e11b8"
+    },
+    {
+      "path": "tests/unit/test_storage_security.py",
+      "size_bytes": 19706,
+      "sha256": "daf3df519521a2f5c040c3ce9ee44245b00e417964fc4a84d3fe15f5149d1f02"
+    },
+    {
+      "path": "tests/unit/test_tasks.py",
+      "size_bytes": 53571,
+      "sha256": "1ee40b0b9acef9390a17829ab5a014f4ec9416ae978b19424dee4b18f8dff7fe"
+    },
+    {
+      "path": "tools/spdx-schema-check/pyproject.toml",
+      "size_bytes": 239,
+      "sha256": "a83a3385a4ff1037cd44195e008df1077256bbeb17388cadf912454ef2d1da05"
+    },
+    {
+      "path": "tools/spdx-schema-check/uv.lock",
+      "size_bytes": 22252,
+      "sha256": "6b905fab59d78459be50535e5a301d8433609528c65ffaf33b8b30ebd3a72cfd"
+    }
+  ]
+}

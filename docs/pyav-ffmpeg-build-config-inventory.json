@@ -1,0 +1,844 @@
+{
+  "schema_version": 1,
+  "package": "av",
+  "version": "15.1.0",
+  "lockfile": "uv.lock",
+  "lockfile_sha256": "f4fc838d6f52555ca03ccf378c67e2a988666928904ff14bfab6d4af7c88f31b",
+  "wheel_count": 14,
+  "wheel_bytes": 478395975,
+  "native_member_bytes_scanned": 1328624710,
+  "observed_configuration_member_count": 98,
+  "wheels": [
+    {
+      "filename": "av-15.1.0-cp311-cp311-macosx_13_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/47/58/4e44cf6939be7aba96a4abce024e1be11ba7539ecac74d09369b8c03aa05/av-15.1.0-cp311-cp311-macosx_13_0_arm64.whl",
+      "sha256": "b785948762a8d45fc58fc24a20251496829ace1817e9a7a508a348d6de2182c3",
+      "size": 21767323,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av/.dylibs/libavcodec.61.19.101.dylib",
+          "member_size": 12767168,
+          "member_sha256": "1be4cc86892a5007b83092e56559eaaab04d3d6fc50886bf397092841e6be27a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavdevice.61.3.100.dylib",
+          "member_size": 117376,
+          "member_sha256": "7fa5b8643fa63d1df28274320a2252aca1bef7f5ac833b73f7911f2c696ef64a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavfilter.10.4.100.dylib",
+          "member_size": 3642464,
+          "member_sha256": "a55057f5b0c3ab8d9a3f8781e4947442d3178fbdc7f597ec57e9976e75749016",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavformat.61.7.100.dylib",
+          "member_size": 2474272,
+          "member_sha256": "ad8b450c72838e0d325c8f9ff5a70723abfd7503f1dc0745fa0d2dbfc8cf2b63",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswresample.5.3.100.dylib",
+          "member_size": 121632,
+          "member_sha256": "bac83ed612e2765d3742b301856a1b53aa5eb0a3d94a8f618ca73fd858f122e5",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavutil.59.39.100.dylib",
+          "member_size": 742400,
+          "member_sha256": "0799121f99ecd867b83cb4b73d5d33abc789cd569197b726fa118c3630c524cf",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswscale.8.3.100.dylib",
+          "member_size": 717920,
+          "member_sha256": "30254ebb62d5c9715597089af7aa73987a7d2773a708f31d09c4242273711086",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-macosx_13_0_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/9b/f6/a946544cdb49f6d892d2761b1d61a8bc6ce912fe57ba06769bdc640c0a7f/av-15.1.0-cp311-cp311-macosx_13_0_x86_64.whl",
+      "sha256": "9c7131494a3a318612b4ee4db98fe5bc50eb705f6b6536127c7ab776c524fd8b",
+      "size": 26946268,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av/.dylibs/libavcodec.61.19.101.dylib",
+          "member_size": 15899312,
+          "member_sha256": "692070c0d39f36c99ee0f2864a4b44c03a614993247cd86f762aa7e1ca2aae2d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavdevice.61.3.100.dylib",
+          "member_size": 117392,
+          "member_sha256": "997953d60ce30b213f7ceb2596bf948a6b13df0caecea3cd18ec1aa277e03607",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavfilter.10.4.100.dylib",
+          "member_size": 4503552,
+          "member_sha256": "1585d1cddf5440004ab343b97e90f5ebc9d2f36bcad9c2e935415793a72fdc8e",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavformat.61.7.100.dylib",
+          "member_size": 2425952,
+          "member_sha256": "cae93d7e10d237a0d03b0b539fa037bfaafc3e8319d75b2bb9e0891db5a642f3",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswresample.5.3.100.dylib",
+          "member_size": 171808,
+          "member_sha256": "6fffeb85b2f030a0acbe1c60b15f4dcd0bb260ff9003e071201d80caa5bf75bc",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavutil.59.39.100.dylib",
+          "member_size": 891776,
+          "member_sha256": "bb32d4bf0449d7e21a76761168f0a55ee2a5740ac0c3e076857b5dc10d41078a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswscale.8.3.100.dylib",
+          "member_size": 1066448,
+          "member_sha256": "fc4a41a337fb6ae14949031c0a9585032742375218d09c9802addaad4cf92187",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-manylinux_2_28_aarch64.whl",
+      "url": "https://files.pythonhosted.org/packages/70/7c/b33513c0af73d0033af59a98f035b521c5b93445a6af7e9efbf41a6e8383/av-15.1.0-cp311-cp311-manylinux_2_28_aarch64.whl",
+      "sha256": "2b9623ae848625c59213b610c8665817924f913580c7c5c91e0dc18936deb00d",
+      "size": 38062118,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-b09587ce.so.61.19.101",
+          "member_size": 13122537,
+          "member_sha256": "dfc0537955045dfe96f5c08f5d15a57c16aed136abf4b5853ff9f5d92bf85a48",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-0a2ef5e6.so.61.3.100",
+          "member_size": 332697,
+          "member_sha256": "a03a119f4cd13875bb711b093fcfe065d35df76356bdb0367653aa624fcf2e23",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-76429107.so.10.4.100",
+          "member_size": 4071033,
+          "member_sha256": "7823895ba046c3fcdb598b97dc3e18423a29bd537a4197018ad207ede0a970ed",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-bdb5daae.so.61.7.100",
+          "member_size": 2896529,
+          "member_sha256": "e33a20c3145a4dbe7a66644c449915ad44716832ecdf5bc8f5698a9683b263d8",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-2a27f4d8.so.59.39.100",
+          "member_size": 996049,
+          "member_sha256": "43d24e2dcba3a36232202b5ef27de89c1cb10dbef2a0a9525d5147ccdbf929b2",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-e8b21d30.so.5.3.100",
+          "member_size": 328953,
+          "member_sha256": "d0cf7f195b8b7d0b053efcb4910b53526f408f56f9b729c47d18e722073cf4ae",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-53858ebe.so.8.3.100",
+          "member_size": 656753,
+          "member_sha256": "49663f356712610a1a96853be0274f92b665b1e0ee7a10a0784b069e8f897dbb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/5e/95/31b7fb34f9fea7c7389240364194f4f56ad2d460095038cc720f50a90bb3/av-15.1.0-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "sha256": "c8ef597087db560514617143532b1fafc4825ebb2dda9a22418f548b113a0cc7",
+      "size": 39571086,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-7ee0753d.so.61.19.101",
+          "member_size": 15457321,
+          "member_sha256": "ea371be1b2711cf7f1b38a6f97beab079cbf932b691f0a2d480fcf73d53b842a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-0a717e7d.so.61.3.100",
+          "member_size": 111513,
+          "member_sha256": "431b66d130a55e3c9ed6ad19ddc7b3d57f705173b5562a5f10ea38a8e41deffb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-7ceaa51a.so.10.4.100",
+          "member_size": 4509361,
+          "member_sha256": "4bbf737a05eb9ecccc080861b6204d4b115569b2d37000495311d1e213b212f0",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-f6caa08d.so.61.7.100",
+          "member_size": 2777777,
+          "member_sha256": "ff4c0c69c5a2ecfb60cee596dc79a5501edb6dc3056ec40e7662944eaf9c4382",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-a63ffd27.so.59.39.100",
+          "member_size": 1053481,
+          "member_sha256": "58199bb31a37f51b4fc50ba28275a3a3bf2eefe11d515d6a903ff939682b304d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-f1bdf0d4.so.5.3.100",
+          "member_size": 132361,
+          "member_sha256": "69ed02c6961b52aab847fe87ea0879c866fb5f0977d1ac27b485c43972971470",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-5efb2ca5.so.8.3.100",
+          "member_size": 644497,
+          "member_sha256": "bce7ad4ae62bd14fedf353b5616dc4004c2fe4668d092a32f72414cd91bda79d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-musllinux_1_2_aarch64.whl",
+      "url": "https://files.pythonhosted.org/packages/e7/b0/7b0b45474a4e90c35c11d0032947d8b3c7386872957ce29c6f12add69a74/av-15.1.0-cp311-cp311-musllinux_1_2_aarch64.whl",
+      "sha256": "08eac47a90ebae1e2bd5935f400dd515166019bab4ff5b03c4625fa6ac3a0a5e",
+      "size": 40112634,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-75605b14.so.61.19.101",
+          "member_size": 13253601,
+          "member_sha256": "f71904a4765c9e83929e031e6beb7b4f04a6e29ea0e146d6d42e1c7388d3ee38",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-d134ac6e.so.61.3.100",
+          "member_size": 272881,
+          "member_sha256": "15e1f86cebf77a1fd9c0a469d01d0c5781a0aab3909cd088b6414e2e81429acd",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-2b333401.so.10.4.100",
+          "member_size": 4005529,
+          "member_sha256": "50b4e0e58ddec2855592ebd10089565d5221b9d37bc6ba148eabc2d2e809c1ad",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-06899618.so.61.7.100",
+          "member_size": 2896617,
+          "member_sha256": "59efe2989b8b114847152ee0f62f6322ee4d74d597869bdaacdc0afa9f3699fb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-6f5212e1.so.59.39.100",
+          "member_size": 996049,
+          "member_sha256": "0ce1239c81e30e4e8b85ae72e94c0e1acb2c1b8e48252fd24e563c037cb63a24",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-e0f3b26e.so.5.3.100",
+          "member_size": 263473,
+          "member_sha256": "82d732491c35362abceaf7376377177f643c5d36e561ebac14566e1efe01185b",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-0fc0e72b.so.8.3.100",
+          "member_size": 591249,
+          "member_sha256": "3b4d6294eb864d79a4aa20045b52a425f44d5e1af56f12b742a96ee761e516d8",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-musllinux_1_2_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/aa/04/038b94bc9a1ee10a451c867d4a2fc91e845f83bfc2dae9df25893abcb57f/av-15.1.0-cp311-cp311-musllinux_1_2_x86_64.whl",
+      "sha256": "d3f66ff200ea166e606cb3c5cb1bd2fc714effbec2e262a5d67ce60450c8234a",
+      "size": 40878695,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-3c3286b2.so.61.19.101",
+          "member_size": 15612921,
+          "member_sha256": "1ddc828b3262b2dbd714fae4133ac957ff7fc9c8381ed341e1070801c073a0e2",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-b2d08d36.so.61.3.100",
+          "member_size": 117113,
+          "member_sha256": "48e5a1395fc260681e202e96eefa7f0454f05ab199b3879a85e1f3d6b9a67f8a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-f49efc42.so.10.4.100",
+          "member_size": 4533921,
+          "member_sha256": "8eef816724e9e5d825376d9cc0dfa71daa35bbd400a3b8e6a64ee4aa50cf0439",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-fb394167.so.61.7.100",
+          "member_size": 2810585,
+          "member_sha256": "05eaf80ae235208fd34d92dc8bca339458b0157d14b2201bcff185b632ef3bdb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-7247585e.so.59.39.100",
+          "member_size": 1061577,
+          "member_sha256": "d10fab4f47e7ad22f7b30e358a41c06dc18f24325396de25d9bfe2d3e03db889",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-9e6f42ea.so.5.3.100",
+          "member_size": 132385,
+          "member_sha256": "447145a9757b91f2181a0f193edfb8cc65e2d49795e1fc522e2d467181f936d7",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-827af3b5.so.8.3.100",
+          "member_size": 644505,
+          "member_sha256": "b77fda598a5f3c0138e34a1dbcd1d51a9f064b5ca998cbcf4f0bbcd58c4aa044",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp311-cp311-win_amd64.whl",
+      "url": "https://files.pythonhosted.org/packages/1d/3d/9f8f96c0deeaaf648485a3dbd1699b2f0580f2ce8a36cb616c0138ba7615/av-15.1.0-cp311-cp311-win_amd64.whl",
+      "sha256": "57b99544d91121b8bea570e4ddf61700f679a6b677c1f37966bc1a22e1d4cd5c",
+      "size": 31335683,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/avcodec-61-1306a7df8fab62262dd7797a8fb9f1cc.dll",
+          "member_size": 15509504,
+          "member_sha256": "86b100542ee64b8809704c0229cc2680c785102dfe1acce48fddb6216ebd4dd3",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avdevice-61-e0c82e5e3858696da14be9b630536084.dll",
+          "member_size": 152576,
+          "member_sha256": "18b38b33cfca2c355bc4ccdfc9f6f32a26f8171d9d066bb0918b2ed809675608",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avfilter-10-5bb04f06744e3b5f87175efe782a982e.dll",
+          "member_size": 4411392,
+          "member_sha256": "e4fee3ed637edf3f6ccbbee6d3e7f59ff69ba05de42bd91f6ffdbc131c6a2b5e",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avformat-61-acf30bd58e2953bb891c8d1e8a95ef10.dll",
+          "member_size": 2638848,
+          "member_sha256": "4f119f37d8d7ec410cb238bc26e05ba1b292a46b7c305cc42412238ed7ee2be7",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avutil-59-7a7ccc29eb93e5eb7c701b6318a81c68.dll",
+          "member_size": 1089536,
+          "member_sha256": "dc671467a8bf479b5a55456fac81fa2ff482c21da82e069ff14b8ff989ca5744",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/swresample-5-bbeb9e2dd6ddd813d957e3c146229694.dll",
+          "member_size": 125952,
+          "member_sha256": "fb892075110831e1d4551b3d3e2ce7da1c4c0181641f76402af7f83247b395ec",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/swscale-8-116e15521dab35ea4f71b8893caad3ac.dll",
+          "member_size": 671232,
+          "member_sha256": "74f0d8627a144bbef5ac91dd521bbdfe1909625bdde4f08c948229c105e0dc03",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-macosx_13_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/d1/58/de78b276d20db6ffcd4371283df771721a833ba525a3d57e753d00a9fe79/av-15.1.0-cp312-cp312-macosx_13_0_arm64.whl",
+      "sha256": "40c5df37f4c354ab8190c6fd68dab7881d112f527906f64ca73da4c252a58cee",
+      "size": 21760991,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av/.dylibs/libavcodec.61.19.101.dylib",
+          "member_size": 12767168,
+          "member_sha256": "1be4cc86892a5007b83092e56559eaaab04d3d6fc50886bf397092841e6be27a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavdevice.61.3.100.dylib",
+          "member_size": 117376,
+          "member_sha256": "7fa5b8643fa63d1df28274320a2252aca1bef7f5ac833b73f7911f2c696ef64a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavfilter.10.4.100.dylib",
+          "member_size": 3642464,
+          "member_sha256": "a55057f5b0c3ab8d9a3f8781e4947442d3178fbdc7f597ec57e9976e75749016",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavformat.61.7.100.dylib",
+          "member_size": 2474272,
+          "member_sha256": "ad8b450c72838e0d325c8f9ff5a70723abfd7503f1dc0745fa0d2dbfc8cf2b63",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswresample.5.3.100.dylib",
+          "member_size": 121632,
+          "member_sha256": "bac83ed612e2765d3742b301856a1b53aa5eb0a3d94a8f618ca73fd858f122e5",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavutil.59.39.100.dylib",
+          "member_size": 742400,
+          "member_sha256": "0799121f99ecd867b83cb4b73d5d33abc789cd569197b726fa118c3630c524cf",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswscale.8.3.100.dylib",
+          "member_size": 717920,
+          "member_sha256": "30254ebb62d5c9715597089af7aa73987a7d2773a708f31d09c4242273711086",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-macosx_13_0_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/56/cc/45f85775304ae60b66976360d82ba5b152ad3fd91f9267d5020a51e9a828/av-15.1.0-cp312-cp312-macosx_13_0_x86_64.whl",
+      "sha256": "af455ce65ada3d361f80c90c810d9bced4db5655ab9aa513024d6c71c5c476d5",
+      "size": 26953097,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av/.dylibs/libavcodec.61.19.101.dylib",
+          "member_size": 15899312,
+          "member_sha256": "692070c0d39f36c99ee0f2864a4b44c03a614993247cd86f762aa7e1ca2aae2d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavdevice.61.3.100.dylib",
+          "member_size": 117392,
+          "member_sha256": "997953d60ce30b213f7ceb2596bf948a6b13df0caecea3cd18ec1aa277e03607",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavfilter.10.4.100.dylib",
+          "member_size": 4503552,
+          "member_sha256": "1585d1cddf5440004ab343b97e90f5ebc9d2f36bcad9c2e935415793a72fdc8e",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavformat.61.7.100.dylib",
+          "member_size": 2425952,
+          "member_sha256": "cae93d7e10d237a0d03b0b539fa037bfaafc3e8319d75b2bb9e0891db5a642f3",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswresample.5.3.100.dylib",
+          "member_size": 171808,
+          "member_sha256": "6fffeb85b2f030a0acbe1c60b15f4dcd0bb260ff9003e071201d80caa5bf75bc",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libavutil.59.39.100.dylib",
+          "member_size": 891776,
+          "member_sha256": "bb32d4bf0449d7e21a76761168f0a55ee2a5740ac0c3e076857b5dc10d41078a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av/.dylibs/libswscale.8.3.100.dylib",
+          "member_size": 1066448,
+          "member_sha256": "fc4a41a337fb6ae14949031c0a9585032742375218d09c9802addaad4cf92187",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-videotoolbox --enable-audiotoolbox --extra-ldflags='-Wl,-ld_classic' --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "url": "https://files.pythonhosted.org/packages/f3/f8/2d781e5e71d02fc829487e775ccb1185e72f95340d05f2e84eb57a11e093/av-15.1.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "sha256": "86226d2474c80c3393fa07a9c366106029ae500716098b72b3ec3f67205524c3",
+      "size": 38319710,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-b09587ce.so.61.19.101",
+          "member_size": 13122537,
+          "member_sha256": "dfc0537955045dfe96f5c08f5d15a57c16aed136abf4b5853ff9f5d92bf85a48",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-0a2ef5e6.so.61.3.100",
+          "member_size": 332697,
+          "member_sha256": "a03a119f4cd13875bb711b093fcfe065d35df76356bdb0367653aa624fcf2e23",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-76429107.so.10.4.100",
+          "member_size": 4071033,
+          "member_sha256": "7823895ba046c3fcdb598b97dc3e18423a29bd537a4197018ad207ede0a970ed",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-bdb5daae.so.61.7.100",
+          "member_size": 2896529,
+          "member_sha256": "e33a20c3145a4dbe7a66644c449915ad44716832ecdf5bc8f5698a9683b263d8",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-2a27f4d8.so.59.39.100",
+          "member_size": 996049,
+          "member_sha256": "43d24e2dcba3a36232202b5ef27de89c1cb10dbef2a0a9525d5147ccdbf929b2",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-e8b21d30.so.5.3.100",
+          "member_size": 328953,
+          "member_sha256": "d0cf7f195b8b7d0b053efcb4910b53526f408f56f9b729c47d18e722073cf4ae",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-53858ebe.so.8.3.100",
+          "member_size": 656753,
+          "member_sha256": "49663f356712610a1a96853be0274f92b665b1e0ee7a10a0784b069e8f897dbb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/ac/13/37737ef2193e83862ccacff23580c39de251da456a1bf0459e762cca273c/av-15.1.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "sha256": "11326f197e7001c4ca53a83b2dbc67fd39ddff8cdf62ce6be3b22d9f3f9338bd",
+      "size": 39915519,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-7ee0753d.so.61.19.101",
+          "member_size": 15457321,
+          "member_sha256": "ea371be1b2711cf7f1b38a6f97beab079cbf932b691f0a2d480fcf73d53b842a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-0a717e7d.so.61.3.100",
+          "member_size": 111513,
+          "member_sha256": "431b66d130a55e3c9ed6ad19ddc7b3d57f705173b5562a5f10ea38a8e41deffb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-7ceaa51a.so.10.4.100",
+          "member_size": 4509361,
+          "member_sha256": "4bbf737a05eb9ecccc080861b6204d4b115569b2d37000495311d1e213b212f0",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-f6caa08d.so.61.7.100",
+          "member_size": 2777777,
+          "member_sha256": "ff4c0c69c5a2ecfb60cee596dc79a5501edb6dc3056ec40e7662944eaf9c4382",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-a63ffd27.so.59.39.100",
+          "member_size": 1053481,
+          "member_sha256": "58199bb31a37f51b4fc50ba28275a3a3bf2eefe11d515d6a903ff939682b304d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-f1bdf0d4.so.5.3.100",
+          "member_size": 132361,
+          "member_sha256": "69ed02c6961b52aab847fe87ea0879c866fb5f0977d1ac27b485c43972971470",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-5efb2ca5.so.8.3.100",
+          "member_size": 644497,
+          "member_sha256": "bce7ad4ae62bd14fedf353b5616dc4004c2fe4668d092a32f72414cd91bda79d",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-musllinux_1_2_aarch64.whl",
+      "url": "https://files.pythonhosted.org/packages/26/e9/e8032c7b8f2a4129a03f63f896544f8b7cf068e2db2950326fa2400d5c47/av-15.1.0-cp312-cp312-musllinux_1_2_aarch64.whl",
+      "sha256": "a631ea879cc553080ee62874f4284765c42ba08ee0279851a98a85e2ceb3cc8d",
+      "size": 40286166,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-75605b14.so.61.19.101",
+          "member_size": 13253601,
+          "member_sha256": "f71904a4765c9e83929e031e6beb7b4f04a6e29ea0e146d6d42e1c7388d3ee38",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-d134ac6e.so.61.3.100",
+          "member_size": 272881,
+          "member_sha256": "15e1f86cebf77a1fd9c0a469d01d0c5781a0aab3909cd088b6414e2e81429acd",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-2b333401.so.10.4.100",
+          "member_size": 4005529,
+          "member_sha256": "50b4e0e58ddec2855592ebd10089565d5221b9d37bc6ba148eabc2d2e809c1ad",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-06899618.so.61.7.100",
+          "member_size": 2896617,
+          "member_sha256": "59efe2989b8b114847152ee0f62f6322ee4d74d597869bdaacdc0afa9f3699fb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-6f5212e1.so.59.39.100",
+          "member_size": 996049,
+          "member_sha256": "0ce1239c81e30e4e8b85ae72e94c0e1acb2c1b8e48252fd24e563c037cb63a24",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-e0f3b26e.so.5.3.100",
+          "member_size": 263473,
+          "member_sha256": "82d732491c35362abceaf7376377177f643c5d36e561ebac14566e1efe01185b",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-0fc0e72b.so.8.3.100",
+          "member_size": 591249,
+          "member_sha256": "3b4d6294eb864d79a4aa20045b52a425f44d5e1af56f12b742a96ee761e516d8",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-musllinux_1_2_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/e2/23/612c0fd809444d04b8387a2dfd942ccc77829507bd78a387ff65a9d98c24/av-15.1.0-cp312-cp312-musllinux_1_2_x86_64.whl",
+      "sha256": "8f383949b010c3e731c245f80351d19dc0c08f345e194fc46becb1cb279be3ff",
+      "size": 41150592,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/libavcodec-3c3286b2.so.61.19.101",
+          "member_size": 15612921,
+          "member_sha256": "1ddc828b3262b2dbd714fae4133ac957ff7fc9c8381ed341e1070801c073a0e2",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavdevice-b2d08d36.so.61.3.100",
+          "member_size": 117113,
+          "member_sha256": "48e5a1395fc260681e202e96eefa7f0454f05ab199b3879a85e1f3d6b9a67f8a",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavfilter-f49efc42.so.10.4.100",
+          "member_size": 4533921,
+          "member_sha256": "8eef816724e9e5d825376d9cc0dfa71daa35bbd400a3b8e6a64ee4aa50cf0439",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavformat-fb394167.so.61.7.100",
+          "member_size": 2810585,
+          "member_sha256": "05eaf80ae235208fd34d92dc8bca339458b0157d14b2201bcff185b632ef3bdb",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libavutil-7247585e.so.59.39.100",
+          "member_size": 1061577,
+          "member_sha256": "d10fab4f47e7ad22f7b30e358a41c06dc18f24325396de25d9bfe2d3e03db889",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswresample-9e6f42ea.so.5.3.100",
+          "member_size": 132385,
+          "member_sha256": "447145a9757b91f2181a0f193edfb8cc65e2d49795e1fc522e2d467181f936d7",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/libswscale-827af3b5.so.8.3.100",
+          "member_size": 644505,
+          "member_sha256": "b77fda598a5f3c0138e34a1dbcd1d51a9f064b5ca998cbcf4f0bbcd58c4aa044",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/tmp/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --disable-mediafoundation --enable-version3 --enable-gmp --enable-alsa --enable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --enable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    },
+    {
+      "filename": "av-15.1.0-cp312-cp312-win_amd64.whl",
+      "url": "https://files.pythonhosted.org/packages/15/74/6f8e38a3b0aea5f28e72813672ff45b64615f2c69e6a4a558718c95edb9f/av-15.1.0-cp312-cp312-win_amd64.whl",
+      "sha256": "d5921aa45f4c1f8c1a8d8185eb347e02aa4c3071278a2e2dd56368d54433d643",
+      "size": 31336093,
+      "native_configuration_member_count": 7,
+      "configuration_status": "observed",
+      "configuration_members": [
+        {
+          "member_path": "av.libs/avcodec-61-1306a7df8fab62262dd7797a8fb9f1cc.dll",
+          "member_size": 15509504,
+          "member_sha256": "86b100542ee64b8809704c0229cc2680c785102dfe1acce48fddb6216ebd4dd3",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avdevice-61-e0c82e5e3858696da14be9b630536084.dll",
+          "member_size": 152576,
+          "member_sha256": "18b38b33cfca2c355bc4ccdfc9f6f32a26f8171d9d066bb0918b2ed809675608",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avfilter-10-5bb04f06744e3b5f87175efe782a982e.dll",
+          "member_size": 4411392,
+          "member_sha256": "e4fee3ed637edf3f6ccbbee6d3e7f59ff69ba05de42bd91f6ffdbc131c6a2b5e",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avformat-61-acf30bd58e2953bb891c8d1e8a95ef10.dll",
+          "member_size": 2638848,
+          "member_sha256": "4f119f37d8d7ec410cb238bc26e05ba1b292a46b7c305cc42412238ed7ee2be7",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/avutil-59-7a7ccc29eb93e5eb7c701b6318a81c68.dll",
+          "member_size": 1089536,
+          "member_sha256": "dc671467a8bf479b5a55456fac81fa2ff482c21da82e069ff14b8ff989ca5744",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/swresample-5-bbeb9e2dd6ddd813d957e3c146229694.dll",
+          "member_size": 125952,
+          "member_sha256": "fb892075110831e1d4551b3d3e2ce7da1c4c0181641f76402af7f83247b395ec",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        },
+        {
+          "member_path": "av.libs/swscale-8-116e15521dab35ea4f71b8893caad3ac.dll",
+          "member_size": 671232,
+          "member_sha256": "74f0d8627a144bbef5ac91dd521bbdfe1909625bdde4f08c948229c105e0dc03",
+          "record_sha256_and_size_verified": true,
+          "configuration_string": "--prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --enable-gmp --disable-alsa --disable-gnutls --enable-libaom --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libspeex --enable-libsvtav1 --enable-libsrt --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libopenh264 --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd,vorbis' --disable-decoder=sonic --disable-libjack --disable-indev=jack"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "A configure string is a readable string embedded in the exact locked wheel; it does not prove build provenance or the full build inputs.",
+    "A missing string means only that no matching readable string was found in scanned native members; it does not prove a feature/component is absent.",
+    "This inventory does not map every binary component, verify source/notice completeness, determine license applicability, or approve redistribution."
+  ]
+}

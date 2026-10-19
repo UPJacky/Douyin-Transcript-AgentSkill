@@ -1,0 +1,4 @@
+/bin/
+/obj/
+/sandbox-results/**
+!/sandbox-results/.gitkeep

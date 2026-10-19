@@ -16,8 +16,8 @@ def _write_private_config(path, text):
 def test_cli_paths_override_environment_and_config(monkeypatch, tmp_path):
     data = tmp_path / "data"
     data.mkdir()
-    _write_private_config(data / "config.toml",
-        '[paths]\noutput_dir = "configured-output"\n'
+    _write_private_config(
+        data / "config.toml", '[paths]\noutput_dir = "configured-output"\n'
     )
     monkeypatch.setenv("DOUYIN_TRANSCRIPT_HOME", str(tmp_path / "env-data"))
     monkeypatch.setenv("DOUYIN_TRANSCRIPT_OUTPUT", str(tmp_path / "env-output"))
@@ -31,6 +31,15 @@ def test_cli_paths_override_environment_and_config(monkeypatch, tmp_path):
     assert paths.data_dir == data.resolve()
     assert paths.output_dir == (tmp_path / "cli-output").resolve()
     assert paths.config_path == (data / "config.toml").resolve()
+
+
+@pytest.mark.parametrize(
+    ("argument", "option"),
+    [("data_dir", "--data-dir"), ("output_dir", "--output-dir")],
+)
+def test_explicit_empty_path_is_rejected(tmp_path, argument, option):
+    with pytest.raises(ConfigurationError, match=option):
+        resolve_paths(**{argument: ""}, cwd=tmp_path)
 
 
 def test_environment_paths_override_config(monkeypatch, tmp_path):
@@ -47,6 +56,19 @@ def test_environment_paths_override_config(monkeypatch, tmp_path):
 
     assert paths.data_dir == data.resolve()
     assert paths.output_dir == output.resolve()
+    assert not paths.output_dir_is_default
+
+
+def test_implicit_output_defaults_to_selected_data_directory(monkeypatch, tmp_path):
+    data = tmp_path / "private-data"
+    monkeypatch.setenv("DOUYIN_TRANSCRIPT_HOME", str(data))
+    monkeypatch.delenv("DOUYIN_TRANSCRIPT_OUTPUT", raising=False)
+
+    paths = resolve_paths(cwd=tmp_path / "shared-working-directory")
+
+    assert paths.data_dir == data.resolve()
+    assert paths.output_dir == (data / "output").resolve()
+    assert paths.output_dir_is_default
 
 
 def test_invalid_config_fails_with_user_safe_error(monkeypatch, tmp_path):
@@ -119,6 +141,21 @@ def test_resource_limits_reject_unbounded_config_values(tmp_path):
         assert "limits" in str(exc)
     else:
         raise AssertionError("unbounded resource limits should be rejected")
+
+
+def test_unknown_resource_limit_names_have_display_controls_removed(tmp_path):
+    data = tmp_path / "data"
+    data.mkdir()
+    _write_private_config(
+        data / "config.toml",
+        '[limits]\n"bad\\u001b[31m" = true\n',
+    )
+
+    with pytest.raises(ConfigurationError) as exc_info:
+        resolve_paths(data_dir=data, cwd=tmp_path)
+
+    assert "\x1b" not in str(exc_info.value)
+    assert "bad[31m" in str(exc_info.value)
 
 
 @pytest.mark.skipif(os.name == "nt", reason="POSIX symlink traversal regression")

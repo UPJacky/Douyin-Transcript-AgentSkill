@@ -239,31 +239,46 @@ def collect_report(
     """Collect basic environment status without changing user files."""
     from .config import ConfigurationError, resolve_paths
 
-    config_error = False
+    config_error: str | None = None
+    output_dir: Path | None = None
     try:
         paths = resolve_paths(
             data_dir=data_dir_override,
             output_dir=output_dir_override,
         )
         data_dir, output_dir = paths.data_dir, paths.output_dir
-    except ConfigurationError:
-        config_error = True
+    except ConfigurationError as exc:
+        config_error = str(exc)
         data_dir = Path(data_dir_override).expanduser() if data_dir_override else default_data_dir()
         output_dir = (
-            Path(output_dir_override).expanduser()
+            None
+            if output_dir_override == ""
+            else Path(output_dir_override).expanduser()
             if output_dir_override is not None
-            else Path.cwd() / "douyin-transcripts" / "output"
+            else Path(os.environ["DOUYIN_TRANSCRIPT_OUTPUT"]).expanduser()
+            if os.environ.get("DOUYIN_TRANSCRIPT_OUTPUT")
+            else None
         )
     whisper = _module_status("faster_whisper")
     decoder = _module_status("av")
     playwright = _module_status("playwright")
     data_path = _directory_status(data_dir)
-    output_path = _directory_status(output_dir)
-    output_permissions = output_directory_permission_status(output_dir)
+    if output_dir is None:
+        output_detail = (
+            "--output-dir 不能为空；未检查输出路径"
+            if output_dir_override == ""
+            else "配置无效且没有可确定的输出目录；未检查输出路径"
+        )
+        output_path = {"status": "unknown", "detail": output_detail}
+        output_permissions = {
+            "status": "unknown",
+            "detail": output_detail.replace("输出路径", "输出路径权限"),
+        }
+    else:
+        output_path = _directory_status(output_dir)
+        output_permissions = output_directory_permission_status(output_dir)
     data_permissions = _permission_status(data_dir)
-    database_permissions = _permission_status(
-        data_dir / "tasks.sqlite3"
-    )
+    database_permissions = _permission_status(data_dir / "tasks.sqlite3")
     profile_permissions = _permission_status(data_dir / "browser-profile")
     cache_permissions = _permission_status(data_dir / "media-cache")
     checks: dict[str, dict[str, str]] = {
@@ -276,9 +291,13 @@ def collect_report(
         "model": _model_status(data_dir, profile),
         "playwright": playwright,
         "chromium": _chromium_status(playwright["status"]),
+        "browser_isolation": {
+            "status": "not_used",
+            "detail": "个人模式使用当前账号的 Chromium；不使用管理员 WFP 服务",
+        },
         "config": {
             "status": "invalid" if config_error else "ok",
-            "detail": "config.toml 格式无效" if config_error else "配置文件可读取",
+            "detail": config_error if config_error else "配置文件可读取",
         },
         "data_dir": data_path,
         "data_dir_permissions": data_permissions,
@@ -315,9 +334,10 @@ def collect_report(
     return {
         "project": "douyin-transcript",
         "version": "0.1.0",
+        "capture_mode": "personal",
         "overall": "ready" if local_ready else "setup_required",
         "data_dir": str(data_dir),
-        "output_dir": str(output_dir),
+        "output_dir": str(output_dir) if output_dir is not None else "",
         "checks": checks,
         "capabilities": {
             "local_transcription": "ready" if local_ready else "setup_required",

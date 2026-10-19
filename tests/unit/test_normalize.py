@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import pytest
+
+from douyin_transcript.limits import HARD_MAX_MEDIA_DURATION_SECONDS
 from douyin_transcript.normalize import format_timestamp, normalize_segments
 
 
@@ -58,6 +61,18 @@ def test_timestamp_handles_long_recordings_and_invalid_segment_times():
     assert format_timestamp(3605.8) == "[60:05]"
     assert result.timeline_lines == ("[60:05] 一小时后",)
     assert result.text == "一小时后保留无时间文本"
+
+
+def test_timestamp_rejects_values_beyond_the_hard_media_duration():
+    result = normalize_segments(
+        [{"start": 1e308, "end": 1e308, "text": "保留正文但不写异常时间"}]
+    )
+
+    assert result.text == "保留正文但不写异常时间"
+    assert result.timeline_lines == ()
+    assert format_timestamp(HARD_MAX_MEDIA_DURATION_SECONDS) == "[240:00]"
+    with pytest.raises(ValueError, match="supported media duration"):
+        format_timestamp(HARD_MAX_MEDIA_DURATION_SECONDS + 1)
 
 
 def test_timeline_is_chronological_without_reordering_transcript_text():

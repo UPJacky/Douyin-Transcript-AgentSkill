@@ -1,17 +1,18 @@
 from __future__ import annotations
 
+import hashlib
 import threading
 import time
 from collections import Counter
 from pathlib import Path
 
 from douyin_transcript.asr import TranscriptionResult, TranscriptSegment
-from douyin_transcript.capture import MediaCandidate, VideoMetadata
+from douyin_transcript.capture_client import CaptureClientError, CapturedMedia
+from douyin_transcript.capture_ipc import CaptureVideoMetadata
 from douyin_transcript.config import RuntimePaths
-from douyin_transcript.downloader import DownloadError, MediaFile
+from douyin_transcript.downloader import MediaFile
 from douyin_transcript.pipeline import TranscriptionPipeline
 from douyin_transcript.tasks import TaskStore
-from douyin_transcript.urls import ResolvedInput
 
 
 def test_fifty_item_mixed_batch_has_bounded_work_and_no_missing_results(tmp_path):
@@ -21,53 +22,47 @@ def test_fifty_item_mixed_batch_has_bounded_work_and_no_missing_results(tmp_path
         config_path=tmp_path / "data" / "config.toml",
     )
     state_lock = threading.Lock()
-    active_downloads = 0
-    maximum_downloads = 0
+    active_captures = 0
+    maximum_captures = 0
     active_asr = 0
     maximum_asr = 0
 
-    def resolve(value: str) -> ResolvedInput:
-        video_id = value.rsplit("/", 1)[-1]
-        canonical = f"https://www.douyin.com/video/{video_id}"
-        return ResolvedInput(canonical, canonical, video_id, "direct")
-
-    class Capture:
-        def __init__(self, _profile_dir: Path) -> None:
-            pass
-
-        def start(self) -> Capture:
-            return self
-
-        def capture(self, item: ResolvedInput) -> VideoMetadata:
-            return VideoMetadata(
-                item.video_id,
-                f"标题 {item.video_id}",
-                "模拟作者",
-                None,
-                item.canonical_url,
-                5.0,
-                [MediaCandidate("https://media.example.test/audio.m4a", "audio", "audio/mp4")],
-            )
-
-        def close(self) -> None:
-            pass
-
-    def download(video_id: str, _candidates, cache_dir: Path, **_kwargs) -> MediaFile:
-        nonlocal active_downloads, maximum_downloads
-        with state_lock:
-            active_downloads += 1
-            maximum_downloads = max(maximum_downloads, active_downloads)
-        try:
-            time.sleep(0.002)
-            if video_id in {"10", "11", "12", "13"}:
-                raise DownloadError("NETWORK_FAILED", "simulated download failure")
-            cache_dir.mkdir(parents=True, exist_ok=True)
-            media = cache_dir / f"{video_id}-audio-{'a' * 16}.m4a"
-            media.write_bytes(b"x" * 65536)
-            return MediaFile(media, "mp4", media.stat().st_size, 5.0)
-        finally:
+    class CaptureService:
+        def capture(self, original_url: str, **_kwargs) -> CapturedMedia:
+            nonlocal active_captures, maximum_captures
+            video_id = original_url.rsplit("/", 1)[-1]
             with state_lock:
-                active_downloads -= 1
+                active_captures += 1
+                maximum_captures = max(maximum_captures, active_captures)
+            try:
+                time.sleep(0.002)
+                if video_id in {"10", "11", "12", "13"}:
+                    raise CaptureClientError(
+                        "DOWNLOAD_FAILED", "simulated capture failure"
+                    )
+                media_bytes = b"x" * 65536
+                digest = hashlib.sha256(media_bytes).hexdigest()
+                cache_dir = paths.data_dir / "media-cache"
+                cache_dir.mkdir(parents=True, exist_ok=True)
+                media = cache_dir / f"{video_id}-audio-{digest[:16]}.m4a"
+                media.write_bytes(media_bytes)
+                return CapturedMedia(
+                    CaptureVideoMetadata(
+                        video_id,
+                        f"标题 {video_id}",
+                        "模拟作者",
+                        None,
+                        5.0,
+                    ),
+                    media,
+                    len(media_bytes),
+                    digest,
+                    "audio/mp4",
+                    5.0,
+                )
+            finally:
+                with state_lock:
+                    active_captures -= 1
 
     class SerialASR:
         def transcribe(self, _path: Path, *, language: str) -> TranscriptionResult:
@@ -89,18 +84,16 @@ def test_fifty_item_mixed_batch_has_bounded_work_and_no_missing_results(tmp_path
                     active_asr -= 1
 
     def validate_media(path: Path) -> MediaFile:
-        return MediaFile(path, "wav", path.stat().st_size, 5.0)
+        return MediaFile(path, "mp4", path.stat().st_size, 5.0)
 
     def make_pipeline() -> TranscriptionPipeline:
         return TranscriptionPipeline(
             paths,
             max_downloads=2,
             retries=0,
-            capture_factory=Capture,
-            downloader=download,
+            capture_service_client=CaptureService(),
             media_validator=validate_media,
             asr_factory=lambda *_args, **_kwargs: SerialASR(),
-            url_resolver=resolve,
         )
 
     first = make_pipeline().run_urls(
@@ -125,7 +118,7 @@ def test_fifty_item_mixed_batch_has_bounded_work_and_no_missing_results(tmp_path
         "skipped": 10,
         "failed": 5,
     }
-    assert maximum_downloads <= 2
+    assert maximum_captures <= 2
     assert maximum_asr == 1
     assert len(list(paths.output_dir.glob("*.md"))) == 43
     cache_files = list((paths.data_dir / "media-cache").glob("*-audio-*.m4a"))
@@ -143,6 +136,6 @@ def test_fifty_item_mixed_batch_has_bounded_work_and_no_missing_results(tmp_path
             if video_id != 0
         )
         assert all(
-            store.get_task(str(video_id)).error_code == "NETWORK_FAILED"
+            store.get_task(str(video_id)).error_code == "DOWNLOAD_FAILED"
             for video_id in range(10, 14)
         )

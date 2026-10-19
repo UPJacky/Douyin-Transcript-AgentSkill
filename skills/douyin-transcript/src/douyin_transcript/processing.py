@@ -308,9 +308,7 @@ class SupervisedProcessingWorker:
             pass
 
 
-def _read_responses(
-    process: subprocess.Popen[bytes], responses: queue.Queue[bytes | None]
-) -> None:
+def _read_responses(process: subprocess.Popen[bytes], responses: queue.Queue[bytes | None]) -> None:
     try:
         assert process.stdout is not None
         while True:
@@ -331,9 +329,12 @@ def _read_responses(
 
 def _encode_frame(payload: dict[str, Any], limit: int) -> bytes:
     try:
-        frame = json.dumps(
-            payload, ensure_ascii=False, allow_nan=False, separators=(",", ":")
-        ).encode("utf-8") + b"\n"
+        frame = (
+            json.dumps(payload, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode(
+                "utf-8"
+            )
+            + b"\n"
+        )
     except (TypeError, ValueError, UnicodeError):
         raise ValueError("invalid processing worker request") from None
     if len(frame) > limit:

@@ -7,6 +7,7 @@ tracking tokens. Request headers are not part of this module's API.
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
 import math
@@ -23,19 +24,25 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import quote, urlsplit, urlunsplit
 
-from .markdown import MAX_FRONTMATTER_CHARACTERS
+from .limits import HARD_MAX_OUTPUT_CHARACTERS, HARD_MAX_OUTPUT_SEGMENTS
+from .markdown import (
+    MAX_FRONTMATTER_CHARACTERS,
+    MAX_REVIEWED_TRANSCRIPT_BYTES,
+    REVIEWED_TRANSCRIPT_NOTICE,
+    TRANSCRIPT_SECTION_HEADING,
+)
 from .storage_security import (
     PrivateStorageError,
     create_private_file,
     ensure_private_directory,
     inspect_private_path,
 )
-from .text_safety import strip_display_controls
+from .text_safety import sanitize_error_message, strip_display_controls
 
 TaskState = str
 MediaValidator = Callable[[Path], bool]
 
-_SCHEMA_VERSION = 8
+_SCHEMA_VERSION = 9
 DEFAULT_STALE_AFTER_SECONDS = 300.0
 _VALID_STATES = {
     "pending",
@@ -57,15 +64,6 @@ _TRANSITIONS = {
     "completed": set(),
     "failed": set(),
 }
-_SENSITIVE_HEADER = re.compile(
-    r"(?i)\b(authorization|proxy-authorization|cookie|set-cookie|"
-    r"x-[a-z0-9_-]*(?:token|key|secret))\s*[:=]\s*[^\r\n]+"
-)
-_URL_IN_TEXT = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
-_SENSITIVE_QUERY_VALUE = re.compile(
-    r"(?i)([?&](?:signature|sig|token|access_token|auth|key|secret|expires?|"
-    r"x-amz-[a-z0-9-]+)=)[^&\s]+"
-)
 _ERROR_CODE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 _UNSET = object()
 _PROCESSING_OPTION_KEYS = {
@@ -82,6 +80,27 @@ _PROCESSING_OPTION_KEYS = {
     "correction_rules",
     "output_dir",
 }
+
+# `escape_markdown_text` can expand a Bidi control to eight ASCII characters;
+# UTF-8 contributes at most four bytes per unexpanded character. The transcript
+# bound covers frontmatter (including a second escaped title heading) and the
+# hard ASR text limit. The timeline bound covers the hard correction budget and
+# its per-segment timestamp allowance. Both include small fixed Markdown framing.
+_MARKDOWN_ESCAPE_MAX_BYTES_PER_CHAR = 8
+_HASHED_OUTPUT_FRAMING_BYTES = 4 * 1024
+MAX_TRANSCRIPT_OUTPUT_BYTES = (
+    12 * MAX_FRONTMATTER_CHARACTERS
+    + _MARKDOWN_ESCAPE_MAX_BYTES_PER_CHAR * HARD_MAX_OUTPUT_CHARACTERS
+    + _HASHED_OUTPUT_FRAMING_BYTES
+)
+MAX_TIMELINE_OUTPUT_BYTES = (
+    _MARKDOWN_ESCAPE_MAX_BYTES_PER_CHAR * MAX_FRONTMATTER_CHARACTERS
+    + _MARKDOWN_ESCAPE_MAX_BYTES_PER_CHAR
+    * (HARD_MAX_OUTPUT_CHARACTERS + HARD_MAX_OUTPUT_SEGMENTS * 16)
+    + _HASHED_OUTPUT_FRAMING_BYTES
+)
+
+
 @dataclass(frozen=True)
 class Task:
     task_id: str
@@ -117,6 +136,18 @@ class RecoveryResult:
     from_state: str
     to_state: str
     reason: str
+
+
+@dataclass(frozen=True)
+class ReviewSidecarRecord:
+    review_id: int
+    task_id: str
+    source_output_path: str
+    source_output_sha256: str
+    reviewed_path: str
+    reviewed_sha256: str
+    review_scope: str
+    created_at: str
 
 
 def canonicalize_source_url(source_url: str) -> str:
@@ -162,15 +193,12 @@ def _serialize_processing_options(options: dict[str, object] | None) -> str:
         raise ValueError("processing_options contains unsupported fields")
     rules = options.get("correction_rules", [])
     if not isinstance(rules, list) or any(
-        not isinstance(rule, dict)
-        or set(rule) - {"rule_id", "source", "replacement", "note"}
+        not isinstance(rule, dict) or set(rule) - {"rule_id", "source", "replacement", "note"}
         for rule in rules
     ):
         raise ValueError("processing_options contains invalid correction rules")
     try:
-        serialized = json.dumps(
-            options, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-        )
+        serialized = json.dumps(options, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     except (TypeError, ValueError) as exc:
         raise ValueError("processing_options must contain JSON-compatible values") from exc
     if len(serialized.encode("utf-8")) > 512 * 1024:
@@ -185,31 +213,46 @@ def _path_is_complete_file(path: Path) -> bool:
         return False
 
 
-def _sha256_file(path: Path) -> str:
+def _sha256_file(path: Path, *, max_bytes: int | None = None) -> str:
+    """Hash one regular-file handle, optionally refusing oversized content.
+
+    Size is checked against the opened handle before reading and again after a
+    bounded read. This prevents a concurrently replaced or growing output from
+    turning completion validation into an unbounded local I/O operation.
+    """
+    if max_bytes is not None and (
+        isinstance(max_bytes, bool) or not isinstance(max_bytes, int) or max_bytes < 0
+    ):
+        raise ValueError("max_bytes must be a non-negative integer or None")
     digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for block in iter(lambda: source.read(1024 * 1024), b""):
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0)
+    descriptor = os.open(path, flags)
+    try:
+        before = os.fstat(descriptor)
+        if not stat.S_ISREG(before.st_mode):
+            raise OSError(errno.EINVAL, "cannot hash a non-regular file", os.fspath(path))
+        if before.st_size < 0 or (max_bytes is not None and before.st_size > max_bytes):
+            raise OSError(errno.EFBIG, "file exceeds the hash size limit", os.fspath(path))
+
+        remaining = before.st_size
+        while remaining:
+            block = os.read(descriptor, min(1024 * 1024, remaining))
+            if not block:
+                raise OSError(errno.EIO, "file changed while hashing", os.fspath(path))
             digest.update(block)
-    return digest.hexdigest()
+            remaining -= len(block)
+        if os.read(descriptor, 1):
+            raise OSError(errno.EFBIG, "file grew while hashing", os.fspath(path))
+        after = os.fstat(descriptor)
+        if after.st_size != before.st_size:
+            raise OSError(errno.EAGAIN, "file changed while hashing", os.fspath(path))
+        return digest.hexdigest()
+    finally:
+        os.close(descriptor)
 
 
 def _sanitize_error_message(message: str | None) -> str | None:
-    if message is None:
-        return None
-    sanitized = _SENSITIVE_HEADER.sub(lambda match: f"{match.group(1)}: [REDACTED]", str(message))
-
-    def redact_url(match: re.Match[str]) -> str:
-        raw_url = match.group(0)
-        punctuation = ".,;:!)]}"
-        suffix = raw_url[len(raw_url.rstrip(punctuation)) :]
-        try:
-            return canonicalize_source_url(raw_url.rstrip(punctuation)) + suffix
-        except ValueError:
-            return "[REDACTED_URL]" + suffix
-
-    sanitized = _URL_IN_TEXT.sub(redact_url, sanitized)
-    sanitized = _SENSITIVE_QUERY_VALUE.sub(r"\1[REDACTED]", sanitized)
-    return sanitized[:1000]
+    return sanitize_error_message(message)
 
 
 def _require_claim_owner(
@@ -245,16 +288,12 @@ def _frontmatter(path: Path) -> dict[str, str] | None:
     try:
         with path.open("r", encoding="utf-8") as transcript:
             first_line = transcript.readline(MAX_FRONTMATTER_CHARACTERS + 1)
-            if len(first_line) > MAX_FRONTMATTER_CHARACTERS or not first_line.startswith(
-                "---\n"
-            ):
+            if len(first_line) > MAX_FRONTMATTER_CHARACTERS or not first_line.startswith("---\n"):
                 return None
             fields: dict[str, str] = {}
             characters_read = len(first_line)
             while characters_read < MAX_FRONTMATTER_CHARACTERS:
-                line = transcript.readline(
-                    MAX_FRONTMATTER_CHARACTERS - characters_read + 1
-                )
+                line = transcript.readline(MAX_FRONTMATTER_CHARACTERS - characters_read + 1)
                 if not line:
                     return None
                 characters_read += len(line)
@@ -300,7 +339,7 @@ def _output_matches_task(path: Path, task: Task) -> bool:
         return (
             actual_path == expected_path
             and _output_associated_with_task(path, task)
-            and _sha256_file(path) == task.output_sha256
+            and _sha256_file(path, max_bytes=MAX_TRANSCRIPT_OUTPUT_BYTES) == task.output_sha256
         )
     except OSError:
         return False
@@ -334,7 +373,8 @@ def _timeline_matches_task(path: Path, task: Task) -> bool:
             stat.S_ISREG(metadata.st_mode)
             and metadata.st_size > 0
             and actual_path.suffix.lower() != ".part"
-            and _sha256_file(actual_path) == task.timeline_sha256
+            and _sha256_file(actual_path, max_bytes=MAX_TIMELINE_OUTPUT_BYTES)
+            == task.timeline_sha256
         )
     except OSError:
         return False
@@ -361,6 +401,39 @@ def _task_outputs_match(task: Task) -> bool:
     if not task.timeline_required:
         return _timeline_matches_task(Path(""), task)
     return bool(task.timeline_path and _timeline_matches_task(Path(task.timeline_path), task))
+
+
+def _reviewed_sidecar_name_matches(raw_path: Path, reviewed_path: Path) -> bool:
+    expected_parent = os.path.normcase(str(raw_path.parent))
+    actual_parent = os.path.normcase(str(reviewed_path.parent))
+    if expected_parent != actual_parent:
+        return False
+    return bool(
+        re.fullmatch(
+            re.escape(raw_path.stem) + r"(?:__(?:[2-9]|[1-9][0-9]+))?\.reviewed\.md",
+            reviewed_path.name,
+        )
+    )
+
+
+def _reviewed_sidecar_has_scope_notice(path: Path) -> bool:
+    """Check the review notice before the transcript section without reading its body."""
+    notice_found = False
+    characters_read = 0
+    try:
+        with path.open("r", encoding="utf-8", newline=None) as stream:
+            for line in stream:
+                characters_read += len(line)
+                if characters_read > MAX_FRONTMATTER_CHARACTERS + 4096:
+                    return False
+                value = line.rstrip("\r\n")
+                if value == REVIEWED_TRANSCRIPT_NOTICE:
+                    notice_found = True
+                if value == TRANSCRIPT_SECTION_HEADING:
+                    return notice_found
+    except (OSError, UnicodeError):
+        return False
+    return False
 
 
 class TaskStore:
@@ -494,10 +567,13 @@ class TaskStore:
 
             if not protected:
                 local_path_text = str(resolved_path)
-                protected = self._connection.execute(
-                    "SELECT 1 FROM tasks WHERE local_path = ? LIMIT 1",
-                    (local_path_text,),
-                ).fetchone() is not None
+                protected = (
+                    self._connection.execute(
+                        "SELECT 1 FROM tasks WHERE local_path = ? LIMIT 1",
+                        (local_path_text,),
+                    ).fetchone()
+                    is not None
+                )
                 if not protected and os.name == "nt":
                     # Path.resolve() usually gives the same spelling as the
                     # stored path. Compare normalized values as a fallback for
@@ -586,9 +662,7 @@ class TaskStore:
                     for row in self._connection.execute("PRAGMA table_info(tasks)").fetchall()
                 }
                 if "output_sha256" not in columns:
-                    self._connection.execute(
-                        "ALTER TABLE tasks ADD COLUMN output_sha256 TEXT"
-                    )
+                    self._connection.execute("ALTER TABLE tasks ADD COLUMN output_sha256 TEXT")
                 version = 5
             if version < 6:
                 columns = {
@@ -614,11 +688,7 @@ class TaskStore:
                         options = json.loads(row["processing_options_json"])
                     except (json.JSONDecodeError, TypeError):
                         options = None
-                    timestamps = (
-                        options.get("timestamps")
-                        if isinstance(options, dict)
-                        else None
-                    )
+                    timestamps = options.get("timestamps") if isinstance(options, dict) else None
                     # Preserve the explicit no-sidecar case. For completed or
                     # interrupted writing rows with missing/invalid legacy
                     # options, fail closed because an unbound sidecar may exist.
@@ -638,8 +708,7 @@ class TaskStore:
                 }
                 if "claim_generation" not in columns:
                     self._connection.execute(
-                        "ALTER TABLE tasks ADD COLUMN claim_generation "
-                        "INTEGER NOT NULL DEFAULT 0"
+                        "ALTER TABLE tasks ADD COLUMN claim_generation INTEGER NOT NULL DEFAULT 0"
                     )
                 version = 7
             if version < 8:
@@ -650,6 +719,25 @@ class TaskStore:
                     "CREATE INDEX IF NOT EXISTS idx_tasks_video_id ON tasks(video_id)"
                 )
                 version = 8
+            if version < 9:
+                self._connection.execute(
+                    """CREATE TABLE IF NOT EXISTS task_review_sidecars (
+                        review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE,
+                        source_output_path TEXT NOT NULL,
+                        source_output_sha256 TEXT NOT NULL,
+                        reviewed_path TEXT NOT NULL UNIQUE,
+                        reviewed_sha256 TEXT NOT NULL,
+                        review_scope TEXT NOT NULL,
+                        created_at TEXT NOT NULL,
+                        UNIQUE(task_id, reviewed_path)
+                    )"""
+                )
+                self._connection.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_task_review_sidecars_task "
+                    "ON task_review_sidecars(task_id, created_at, review_id)"
+                )
+                version = 9
             self._connection.execute(f"PRAGMA user_version = {version}")
 
     @staticmethod
@@ -689,6 +777,114 @@ class TaskStore:
                 ).fetchall()
         return [self._to_task(row) for row in rows if row is not None]
 
+    def register_reviewed_sidecar(
+        self,
+        raw_path: str | os.PathLike[str],
+        reviewed_path: str | os.PathLike[str],
+    ) -> ReviewSidecarRecord | None:
+        """Bind a model-reviewed sidecar to one exact completed raw task.
+
+        Returns None when the raw path is not owned by a completed task. The
+        database stores only local paths, artifact hashes, scope and time; it
+        never stores transcript text or claims acoustic review.
+        """
+        raw = _lexical_absolute_path(Path(raw_path))
+        reviewed = _lexical_absolute_path(Path(reviewed_path))
+        if not _reviewed_sidecar_name_matches(raw, reviewed):
+            raise ValueError("reviewed file is not a sibling sidecar of the raw transcript")
+        for artifact in (raw, reviewed):
+            report = inspect_private_path(artifact)
+            if report.status != "private":
+                raise PrivateStorageError(
+                    "review sidecar artifacts must remain in verified private storage"
+                )
+
+        raw_digest = _sha256_file(raw, max_bytes=MAX_TRANSCRIPT_OUTPUT_BYTES)
+        reviewed_digest = _sha256_file(reviewed, max_bytes=MAX_REVIEWED_TRANSCRIPT_BYTES)
+        if not _reviewed_sidecar_has_scope_notice(reviewed):
+            raise ValueError("reviewed sidecar is missing the model-only review scope notice")
+        if _sha256_file(reviewed, max_bytes=MAX_REVIEWED_TRANSCRIPT_BYTES) != reviewed_digest:
+            raise ValueError("reviewed sidecar changed while its binding was being checked")
+
+        with self._lock:
+            rows = self._connection.execute(
+                "SELECT * FROM tasks WHERE state = 'completed' AND output_path = ?",
+                (str(raw),),
+            ).fetchall()
+            if not rows and os.name == "nt":
+                rows = self._connection.execute(
+                    "SELECT * FROM tasks WHERE state = 'completed' AND output_path IS NOT NULL"
+                ).fetchall()
+            matching_tasks = []
+            for row in rows:
+                task = self._to_task(row)
+                if task is None or not task.output_path:
+                    continue
+                if (
+                    os.path.normcase(str(_lexical_absolute_path(Path(task.output_path))))
+                    == os.path.normcase(str(raw))
+                    and task.output_sha256 == raw_digest
+                ):
+                    matching_tasks.append(task)
+
+            if not matching_tasks:
+                return None
+            if len(matching_tasks) != 1:
+                raise ValueError("raw transcript path matches multiple completed tasks")
+            task = matching_tasks[0]
+            if not _output_matches_task(raw, task):
+                raise ValueError("raw transcript no longer matches its completed task record")
+            if not _output_associated_with_task(reviewed, task):
+                raise ValueError("reviewed sidecar frontmatter does not match the raw task")
+
+            created_at = _now()
+            scope = "model_text_review_unheard"
+            with self._transaction():
+                existing = self._connection.execute(
+                    "SELECT * FROM task_review_sidecars WHERE reviewed_path = ?",
+                    (str(reviewed),),
+                ).fetchone()
+                if existing is not None:
+                    if (
+                        existing["task_id"] == task.task_id
+                        and existing["source_output_sha256"] == raw_digest
+                        and existing["reviewed_sha256"] == reviewed_digest
+                        and existing["review_scope"] == scope
+                    ):
+                        return ReviewSidecarRecord(**dict(existing))
+                    raise ValueError("reviewed sidecar path is already bound to different content")
+
+                self._connection.execute(
+                    """INSERT INTO task_review_sidecars (
+                        task_id, source_output_path, source_output_sha256,
+                        reviewed_path, reviewed_sha256, review_scope, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        task.task_id,
+                        str(raw),
+                        raw_digest,
+                        str(reviewed),
+                        reviewed_digest,
+                        scope,
+                        created_at,
+                    ),
+                )
+                row = self._connection.execute(
+                    "SELECT * FROM task_review_sidecars WHERE reviewed_path = ?",
+                    (str(reviewed),),
+                ).fetchone()
+                assert row is not None
+                return ReviewSidecarRecord(**dict(row))
+
+    def list_reviewed_sidecars(self, task_id: str) -> list[ReviewSidecarRecord]:
+        with self._lock:
+            rows = self._connection.execute(
+                """SELECT * FROM task_review_sidecars
+                   WHERE task_id = ? ORDER BY created_at, review_id""",
+                (task_id,),
+            ).fetchall()
+        return [ReviewSidecarRecord(**dict(row)) for row in rows]
+
     def create_remote_task(
         self,
         source_url: str,
@@ -714,8 +910,14 @@ class TaskStore:
                     created_at, updated_at, processing_options_json)
                    VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
                 (
-                    clean_video_id, canonical_url, clean_video_id, title, profile,
-                    now, now, options_json,
+                    clean_video_id,
+                    canonical_url,
+                    clean_video_id,
+                    title,
+                    profile,
+                    now,
+                    now,
+                    options_json,
                 ),
             )
             row = self._connection.execute(
@@ -894,17 +1096,13 @@ class TaskStore:
                 if isinstance(source_duration_seconds, bool) or not isinstance(
                     source_duration_seconds, (int, float)
                 ):
-                    raise ValueError(
-                        "source_duration_seconds must be a positive finite number"
-                    )
+                    raise ValueError("source_duration_seconds must be a positive finite number")
                 try:
                     duration = float(source_duration_seconds)
                 except OverflowError:
                     duration = float("inf")
                 if not math.isfinite(duration) or duration <= 0:
-                    raise ValueError(
-                        "source_duration_seconds must be a positive finite number"
-                    )
+                    raise ValueError("source_duration_seconds must be a positive finite number")
                 changes["source_duration_seconds"] = duration
         if timeline_required is not _UNSET:
             if not isinstance(timeline_required, bool):
@@ -1152,6 +1350,8 @@ class TaskStore:
         media_path: str | os.PathLike[str],
         *,
         worker_id: str | None = None,
+        profile: str | None = None,
+        processing_options: dict[str, object] | None = None,
     ) -> Task:
         """Queue a failed local task only after its original path/content validate."""
         if worker_id is not None:
@@ -1178,27 +1378,39 @@ class TaskStore:
             )
             if stored_path != normalized_path or task.content_hash != content_hash:
                 raise ValueError("local retry input path or content changed")
+            assignments = [
+                "state = 'downloaded'",
+                "error_code = NULL",
+                "error_message = NULL",
+                "output_path = NULL",
+                "output_sha256 = NULL",
+                "timeline_path = NULL",
+                "timeline_sha256 = NULL",
+                "timeline_required = 0",
+                "claim_generation = claim_generation + 1",
+                "completed_at = NULL",
+                "updated_at = ?",
+            ]
+            values: list[object] = [now]
+            if profile is not None:
+                assignments.append("profile = ?")
+                values.append(profile)
+            if processing_options is not None:
+                assignments.append("processing_options_json = ?")
+                values.append(_serialize_processing_options(processing_options))
             if worker_id is None:
-                self._connection.execute(
-                    """UPDATE tasks SET state = 'downloaded', error_code = NULL,
-                       error_message = NULL, output_path = NULL, output_sha256 = NULL,
-                       timeline_path = NULL, timeline_sha256 = NULL, timeline_required = 0,
-                       claimed_by = NULL, claimed_at = NULL,
-                       claim_generation = claim_generation + 1, completed_at = NULL,
-                       updated_at = ? WHERE task_id = ? AND state = 'failed'""",
-                    (now, task_id),
-                )
+                assignments.extend(("claimed_by = NULL", "claimed_at = NULL"))
             else:
-                self._connection.execute(
-                    """UPDATE tasks SET state = 'downloaded', error_code = NULL,
-                       error_message = NULL, output_path = NULL, output_sha256 = NULL,
-                       timeline_path = NULL, timeline_sha256 = NULL, timeline_required = 0,
-                       claimed_by = ?, claimed_at = ?,
-                       claim_generation = claim_generation + 1,
-                       attempt_count = attempt_count + 1, completed_at = NULL,
-                       updated_at = ? WHERE task_id = ? AND state = 'failed'""",
-                    (worker_id, now, now, task_id),
-                )
+                assignments.extend(("claimed_by = ?", "claimed_at = ?"))
+                values.extend((worker_id, now))
+                assignments.append("attempt_count = attempt_count + 1")
+            values.append(task_id)
+            self._connection.execute(
+                "UPDATE tasks SET "
+                + ", ".join(assignments)
+                + " WHERE task_id = ? AND state = 'failed'",
+                values,
+            )
             updated = self._connection.execute(
                 "SELECT * FROM tasks WHERE task_id = ?", (task_id,)
             ).fetchone()
@@ -1270,7 +1482,7 @@ class TaskStore:
                 raise ValueError("output path does not match the writing task")
             if (
                 not _output_associated_with_task(resolved, task)
-                or _sha256_file(resolved) != expected_sha256
+                or _sha256_file(resolved, max_bytes=MAX_TRANSCRIPT_OUTPUT_BYTES) != expected_sha256
             ):
                 raise ValueError("published output does not match this attempt")
             self._connection.execute(
@@ -1354,11 +1566,8 @@ class TaskStore:
             if task.state != "writing":
                 raise ValueError("task must be in writing state before completion")
             _require_claim_owner(task, worker_id, claim_generation)
-            if (
-                not _output_matches_task(resolved_output, task)
-                or not _timeline_matches_task(
-                    Path(task.timeline_path) if task.timeline_path else Path(""), task
-                )
+            if not _output_matches_task(resolved_output, task) or not _timeline_matches_task(
+                Path(task.timeline_path) if task.timeline_path else Path(""), task
             ):
                 raise ValueError(
                     "output file or timeline file is missing, changed, malformed, "
@@ -1446,9 +1655,7 @@ class TaskStore:
                 values.append(profile)
             if title is not _UNSET:
                 updates.append("title = ?")
-                values.append(
-                    strip_display_controls(title) if isinstance(title, str) else title
-                )
+                values.append(strip_display_controls(title) if isinstance(title, str) else title)
             if processing_options is not None:
                 updates.append("processing_options_json = ?")
                 values.append(_serialize_processing_options(processing_options))
@@ -1471,10 +1678,13 @@ class TaskStore:
         *,
         stale_after_seconds: float = 300,
         media_validator: MediaValidator | None = None,
+        defer_media_validation: bool = False,
     ) -> list[RecoveryResult]:
-        """Recover stale stages after validating media and any just-written output.
+        """Recover stale stages after checking media and any just-written output.
 
-        ``resolving`` resumes at ``pending`` unless a validated media cache exists.
+        ``resolving`` resumes at ``pending`` unless a usable media cache exists.
+        With ``defer_media_validation=True``, a complete cache is retained on a
+        pending task so the claimant can strictly validate it under its deadline.
         ``downloading`` becomes ``downloaded`` only for a complete non-.part file.
         ``transcribing`` and ``writing`` rerun from downloaded media; a valid output
         already present during ``writing`` becomes completed. Active claims newer
@@ -1482,6 +1692,8 @@ class TaskStore:
         """
         if stale_after_seconds < 0:
             raise ValueError("stale_after_seconds must be non-negative")
+        if not isinstance(defer_media_validation, bool):
+            raise ValueError("defer_media_validation must be a boolean")
         validate_media = media_validator or _path_is_complete_file
         cutoff = (datetime.now(UTC) - timedelta(seconds=stale_after_seconds)).isoformat(
             timespec="milliseconds"
@@ -1510,12 +1722,15 @@ class TaskStore:
                 except Exception:
                     media_ok = False
             output_ok = bool(
-                task.state == "writing"
-                and task.output_path
-                and _task_outputs_match(task)
+                task.state == "writing" and task.output_path and _task_outputs_match(task)
             )
             if output_ok:
                 target, reason = "completed", "valid associated output already exists"
+            elif media_ok and defer_media_validation:
+                target, reason = (
+                    "pending",
+                    "complete media cache retained for validation after claim",
+                )
             elif media_ok:
                 target, reason = "downloaded", "validated media cache can be reused"
             else:

@@ -123,24 +123,19 @@ def _verify_posix_directory_chain(path: Path, descriptors: list[int]) -> None:
         raise PrivateStorageError("无法核对敏感目录的固定句柄链")
     for index, name in enumerate(path.parts[1:], start=1):
         try:
-            entry_info = os.stat(
-                name, dir_fd=descriptors[index - 1], follow_symlinks=False
-            )
+            entry_info = os.stat(name, dir_fd=descriptors[index - 1], follow_symlinks=False)
             descriptor_info = os.fstat(descriptors[index])
         except OSError as exc:
             raise PrivateStorageError(
                 f"无法核对敏感目录对象身份：{path}（{type(exc).__name__}）"
             ) from None
-        if (
-            not stat.S_ISDIR(entry_info.st_mode)
-            or not _same_posix_object(entry_info, descriptor_info)
+        if not stat.S_ISDIR(entry_info.st_mode) or not _same_posix_object(
+            entry_info, descriptor_info
         ):
             raise PrivateStorageError(f"敏感目录在检查期间被替换：{path}")
 
 
-def _open_posix_directory_chain(
-    path: Path, *, create_missing: bool
-) -> list[int]:
+def _open_posix_directory_chain(path: Path, *, create_missing: bool) -> list[int]:
     """Pin and validate a directory chain, optionally creating private parts."""
     required_dir_fd = (os.open, os.mkdir, os.stat)
     required_flags = ("O_DIRECTORY", "O_NOFOLLOW")
@@ -189,9 +184,8 @@ def _open_posix_directory_chain(
                 raise PrivateStorageError(
                     f"无法核对敏感目录对象身份：{child_path}（{type(exc).__name__}）"
                 ) from None
-            if (
-                not stat.S_ISDIR(entry_info.st_mode)
-                or not _same_posix_object(entry_info, child_info)
+            if not stat.S_ISDIR(entry_info.st_mode) or not _same_posix_object(
+                entry_info, child_info
             ):
                 raise PrivateStorageError(f"敏感目录在检查期间被替换：{child_path}")
             if created:
@@ -257,14 +251,10 @@ def create_private_file(path: str | os.PathLike[str]) -> bool:
         report = PermissionReport("unknown", str(exc))
         raise PrivateStorageError(_unsafe_message(Path(path), report)) from None
     except (OSError, RuntimeError) as exc:
-        raise PrivateStorageError(
-            f"无法规范化敏感文件路径（{type(exc).__name__}）"
-        ) from None
+        raise PrivateStorageError(f"无法规范化敏感文件路径（{type(exc).__name__}）") from None
     if os.name != "nt":
         try:
-            directory_descriptors = _open_posix_directory_chain(
-                target.parent, create_missing=False
-            )
+            directory_descriptors = _open_posix_directory_chain(target.parent, create_missing=False)
         except PrivateStorageError:
             raise
         except OSError as exc:
@@ -457,12 +447,7 @@ def _open_posix_private_file(path: Path) -> int:
             directory_fd = next_fd
             current = next_path
 
-        file_flags = (
-            os.O_RDONLY
-            | os.O_NOFOLLOW
-            | os.O_NONBLOCK
-            | getattr(os, "O_CLOEXEC", 0)
-        )
+        file_flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
         file_fd = os.open(path.name, file_flags, dir_fd=directory_fd)
         file_info = os.fstat(file_fd)
         if not stat.S_ISREG(file_info.st_mode):
@@ -520,9 +505,7 @@ def _open_windows_private_file(path: Path) -> int:
         if report.status != "private":
             raise PrivateStorageError(_unsafe_message(path, report))
 
-        descriptor = msvcrt.open_osfhandle(
-            handle, os.O_RDONLY | getattr(os, "O_BINARY", 0)
-        )
+        descriptor = msvcrt.open_osfhandle(handle, os.O_RDONLY | getattr(os, "O_BINARY", 0))
         handle = None
         return descriptor
     finally:
@@ -650,7 +633,9 @@ def _current_user_sid() -> str:
     handle = ctypes.c_void_p()
     kernel.GetCurrentProcess.restype = ctypes.c_void_p
     if not advapi.OpenProcessToken(
-        kernel.GetCurrentProcess(), 0x0008, ctypes.byref(handle)  # TOKEN_QUERY
+        kernel.GetCurrentProcess(),
+        0x0008,
+        ctypes.byref(handle),  # TOKEN_QUERY
     ):
         raise ctypes.WinError(ctypes.get_last_error())
     try:
@@ -659,9 +644,7 @@ def _current_user_sid() -> str:
         if not needed.value:
             raise ctypes.WinError(ctypes.get_last_error())
         buffer = ctypes.create_string_buffer(needed.value)
-        if not advapi.GetTokenInformation(
-            handle, 1, buffer, needed.value, ctypes.byref(needed)
-        ):
+        if not advapi.GetTokenInformation(handle, 1, buffer, needed.value, ctypes.byref(needed)):
             raise ctypes.WinError(ctypes.get_last_error())
 
         class SidAndAttributes(ctypes.Structure):
@@ -699,9 +682,7 @@ def _new_windows_private_security_descriptor(*, is_directory: bool):
 
 def _create_windows_private_directory(path: Path) -> None:
     """Create a directory with a protected private DACL from its first instant."""
-    _advapi, kernel, descriptor = _new_windows_private_security_descriptor(
-        is_directory=True
-    )
+    _advapi, kernel, descriptor = _new_windows_private_security_descriptor(is_directory=True)
 
     class SecurityAttributes(ctypes.Structure):
         _fields_ = [
@@ -710,9 +691,7 @@ def _create_windows_private_directory(path: Path) -> None:
             ("inherit_handle", ctypes.c_int),
         ]
 
-    attributes = SecurityAttributes(
-        ctypes.sizeof(SecurityAttributes), descriptor, 0
-    )
+    attributes = SecurityAttributes(ctypes.sizeof(SecurityAttributes), descriptor, 0)
     try:
         if not kernel.CreateDirectoryW(str(path), ctypes.byref(attributes)):
             raise ctypes.WinError(ctypes.get_last_error())
@@ -722,9 +701,7 @@ def _create_windows_private_directory(path: Path) -> None:
 
 def _create_windows_private_file(path: Path) -> bool:
     """Create a private file atomically and verify its path/object identity."""
-    _advapi, kernel, descriptor = _new_windows_private_security_descriptor(
-        is_directory=False
-    )
+    _advapi, kernel, descriptor = _new_windows_private_security_descriptor(is_directory=False)
 
     class SecurityAttributes(ctypes.Structure):
         _fields_ = [
@@ -768,9 +745,7 @@ def _create_windows_private_file(path: Path) -> bool:
             _verify_windows_directory_chain(chain)
             path_handle = _open_windows_object_handle(path)
             try:
-                if _windows_handle_identity(handle) != _windows_handle_identity(
-                    path_handle
-                ):
+                if _windows_handle_identity(handle) != _windows_handle_identity(path_handle):
                     raise PrivateStorageError(f"敏感文件在检查期间被替换：{path}")
             finally:
                 kernel.CloseHandle(path_handle)
@@ -847,9 +822,7 @@ def _open_windows_directory_handle(path: Path) -> tuple[int, tuple[int, int, int
         raise
 
 
-def _verify_windows_directory_chain(
-    chain: list[tuple[Path, int, tuple[int, int, int]]]
-) -> None:
+def _verify_windows_directory_chain(chain: list[tuple[Path, int, tuple[int, int, int]]]) -> None:
     """Check that each path component still names its pinned directory object."""
     _advapi, kernel = _windows_api()
     for path, _handle, identity in chain:
@@ -1132,9 +1105,7 @@ def _inspect_windows_ancestor_handle(handle: int, path: Path) -> PermissionRepor
             return PermissionReport("unknown", "无法确认 Windows 祖先目录所有者 SID")
         trusted_owners = _trusted_windows_ancestor_sids(current_sid)
         if owner_sid not in trusted_owners:
-            return PermissionReport(
-                "shared", f"祖先目录由不可信主体所有（{owner_sid}）：{path}"
-            )
+            return PermissionReport("shared", f"祖先目录由不可信主体所有（{owner_sid}）：{path}")
 
         class Acl(ctypes.Structure):
             _fields_ = [
