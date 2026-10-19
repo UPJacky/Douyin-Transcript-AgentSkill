@@ -132,35 +132,10 @@ jobs:
           $bomPath = Join-Path $env:RUNNER_TEMP 'dotnet-windows-build-bom.json'
           python scripts/generate_dotnet_build_bom.py --dotnet (Get-Command dotnet).Source --output $bomPath
           if ($LASTEXITCODE -ne 0) { throw "Build BOM generation failed with exit code $LASTEXITCODE" }
-          $actual = Get-Content $bomPath -Raw | ConvertFrom-Json
-          $expected = Get-Content docs/dotnet-windows-build-bom.json -Raw | ConvertFrom-Json
-          foreach ($field in @('schemaVersion', 'scope', 'toolchain', 'sourceInputs', 'nugetLock', 'packages')) {
-            $actualValue = ConvertTo-Json -InputObject $actual.$field -Depth 100 -Compress
-            $expectedValue = ConvertTo-Json -InputObject $expected.$field -Depth 100 -Compress
-            if ($actualValue -cne $expectedValue) { throw "Generated .NET build BOM source field differs: $field" }
-          }
-          if ($actual.relatedBuilds.Count -ne 2) { throw 'Generated BOM does not contain exactly two related WFP prototype build records.' }
-          $runtimeFields = @('projects', 'targetFramework', 'runtimeIdentifier', 'purpose', 'globalJson', 'sourceInputs', 'nugetLocks', 'nugetPackages', 'buildCommand', 'limitations')
-          foreach ($field in $runtimeFields) {
-            $actualValue = ConvertTo-Json -InputObject $actual.relatedBuilds[0].$field -Depth 100 -Compress
-            $expectedValue = ConvertTo-Json -InputObject $expected.relatedBuilds[0].$field -Depth 100 -Compress
-            if ($actualValue -cne $expectedValue) { throw "Generated Runtime BOM source field differs: $field" }
-          }
-          if ($actual.relatedBuilds[0].buildOutputs.Count -eq 0) { throw 'Generated Runtime BOM has no Release outputs.' }
-          $readbackFields = @('projects', 'targetFramework', 'runtimeIdentifier', 'purpose', 'globalJson', 'sourceInputs', 'nugetLocks', 'nugetPackages', 'buildCommand', 'harnessCommand', 'limitations')
-          foreach ($field in $readbackFields) {
-            $actualValue = ConvertTo-Json -InputObject $actual.relatedBuilds[1].$field -Depth 100 -Compress
-            $expectedValue = ConvertTo-Json -InputObject $expected.relatedBuilds[1].$field -Depth 100 -Compress
-            if ($actualValue -cne $expectedValue) { throw "Generated native readback BOM source field differs: $field" }
-          }
-          if ($actual.relatedBuilds[1].buildOutputs.Count -eq 0) { throw 'Generated native readback BOM has no Release outputs.' }
-
-      - name: Compare .NET build output identities
-        shell: pwsh
-        run: |
-          $actualPath = Join-Path $env:RUNNER_TEMP 'dotnet-windows-build-bom.json'
-          python scripts/check_dotnet_build_bom_outputs.py --actual $actualPath
-          if ($LASTEXITCODE -ne 0) { throw "Build output identity comparison failed with exit code $LASTEXITCODE" }
+          python scripts/verify_dotnet_build_bom_sources.py --actual $bomPath
+          if ($LASTEXITCODE -ne 0) { throw "Build BOM source verification failed with exit code $LASTEXITCODE" }
+          python scripts/check_dotnet_build_bom_outputs.py --actual $bomPath
+          if ($LASTEXITCODE -ne 0) { throw "Build BOM output verification failed with exit code $LASTEXITCODE" }
 
   ci-checks:
     name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
