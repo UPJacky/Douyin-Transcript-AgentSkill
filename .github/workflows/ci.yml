@@ -129,8 +129,27 @@ jobs:
       - name: Verify pinned .NET build BOM
         shell: pwsh
         run: |
+          $dotnet = (Get-Command dotnet).Source
+          $dotnetRoot = Split-Path $dotnet
+          Write-Host "Resolved dotnet: $dotnet"
+          Write-Host "Resolved .NET SDK: $(& $dotnet --version)"
+          Write-Host "Installed .NET reference packs: $((Get-ChildItem (Join-Path $dotnetRoot 'packs/Microsoft.NETCore.App.Ref') -Directory | Select-Object -ExpandProperty Name) -join ', ')"
+          git ls-files --eol native/windows/shared/PublicUnicastAddressPolicy.cs native/windows/wfp-policy-core/WfpPolicy.Core.csproj native/windows/wfp-policy-core/packages.lock.json
+          $project = 'native/windows/wfp-policy-plan/WfpPolicyPlan.csproj'
+          $buildInputs = & $dotnet msbuild $project '-p:ContinuousIntegrationBuild=true' '-getProperty:SourceRevisionId,EnableSourceControlManagerQueries,EnableSourceLink,IncludeSourceRevisionInInformationalVersion,PathMap,TargetLatestRuntimePatch,DeterministicSourcePaths' '-getItem:KnownFrameworkReference' | ConvertFrom-Json
+          $buildInputs.Properties | ConvertTo-Json -Compress
+          $buildInputs.Items.KnownFrameworkReference | Where-Object Identity -eq 'Microsoft.NETCore.App' | Select-Object Identity,TargetingPackVersion,LatestRuntimeFrameworkVersion,DefaultRuntimeFrameworkVersion | ConvertTo-Json -Compress
+          foreach ($assemblyInfoRoot in @('native/windows/wfp-policy-plan/obj', 'native/windows/wfp-policy-core/obj', 'native/windows/wfp-policy-runtime/obj', 'native/windows/wfp-policy-native-readback/obj')) {
+            Get-ChildItem $assemblyInfoRoot -Recurse -Filter '*AssemblyInfo.cs' -ErrorAction SilentlyContinue | ForEach-Object {
+              $attribute = Select-String -Path $_.FullName -Pattern 'AssemblyInformationalVersionAttribute' | Select-Object -First 1
+              if ($attribute) { Write-Host "$($_.FullName): $($attribute.Line.Trim())" }
+            }
+          }
+          foreach ($assemblyInfoRoot in @('native/windows/wfp-policy-plan/obj', 'native/windows/wfp-policy-core/obj', 'native/windows/wfp-policy-runtime/obj', 'native/windows/wfp-policy-native-readback/obj')) {
+            Get-ChildItem $assemblyInfoRoot -Recurse -Filter '*.sourcelink.json' -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "SourceLink file: $($_.FullName)"; Get-Content $_.FullName }
+          }
           $bomPath = Join-Path $env:RUNNER_TEMP 'dotnet-windows-build-bom.json'
-          python scripts/generate_dotnet_build_bom.py --dotnet (Get-Command dotnet).Source --output $bomPath
+          python scripts/generate_dotnet_build_bom.py --dotnet $dotnet --output $bomPath
           if ($LASTEXITCODE -ne 0) { throw "Build BOM generation failed with exit code $LASTEXITCODE" }
           python scripts/verify_dotnet_build_bom_sources.py --actual $bomPath
           if ($LASTEXITCODE -ne 0) { throw "Build BOM source verification failed with exit code $LASTEXITCODE" }
