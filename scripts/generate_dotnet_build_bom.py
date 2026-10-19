@@ -280,6 +280,19 @@ def _file_record(
     return {"path": _relative(path, root), "sizeBytes": size, "sha256": digest}
 
 
+def _source_file_record(
+    path: Path, root: Path, *, max_bytes: int = MAX_EVIDENCE_FILE_BYTES
+) -> dict[str, Any]:
+    """Hash source text with its repository-declared LF line endings."""
+    content = _read_bounded(path, max_bytes=max_bytes, encoding="utf-8")
+    canonical = content.replace("\r\n", "\n").encode("utf-8")
+    return {
+        "path": _relative(path, root),
+        "sizeBytes": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+    }
+
+
 def _global_packages_root(dotnet: str, project_root: Path) -> Path:
     output = _run(
         [dotnet, "nuget", "locals", "global-packages", "--list"], cwd=project_root
@@ -659,11 +672,11 @@ def _native_readback_build_record(
         "purpose": "read-only native BFE/WFP snapshot prototype and unmanaged fake-API fixture harness; not connected to policy activation",
         "globalJson": _file_record(NATIVE_READBACK_GLOBAL_FILE, REPO_ROOT),
         "sourceInputs": [
-            _file_record(path, REPO_ROOT)
+            _source_file_record(path, REPO_ROOT)
             for path in _native_readback_source_inputs(REPO_ROOT)
         ],
         "nugetLocks": [
-            _file_record(path, REPO_ROOT)
+            _source_file_record(path, REPO_ROOT)
             for path in (NATIVE_READBACK_LOCK_FILE, NATIVE_READBACK_TEST_LOCK_FILE)
         ],
         "nugetPackages": [
@@ -814,10 +827,11 @@ def _runtime_build_record(
         "purpose": "source-only persistent WFP baseline coordinator, strict native readback adapter, and fake-store harness; no native WFP mutation store",
         "globalJson": _file_record(RUNTIME_GLOBAL_FILE, REPO_ROOT),
         "sourceInputs": [
-            _file_record(path, REPO_ROOT) for path in _runtime_source_inputs(REPO_ROOT)
+            _source_file_record(path, REPO_ROOT)
+            for path in _runtime_source_inputs(REPO_ROOT)
         ],
         "nugetLocks": [
-            _file_record(path, REPO_ROOT)
+            _source_file_record(path, REPO_ROOT)
             for path in (
                 RUNTIME_LOCK_FILE,
                 RUNTIME_TEST_LOCK_FILE,
@@ -1039,8 +1053,10 @@ def create_bom(dotnet: str, *, run_build: bool = True) -> dict[str, Any]:
             "buildCommand": "dotnet build <project> --configuration Release --runtime win-x64 --no-restore --nologo --verbosity quiet",
             "packageSignatureCommand": "dotnet nuget verify --all <nupkg>",
         },
-        "sourceInputs": [_file_record(path, REPO_ROOT) for path in source_inputs],
-        "nugetLock": _file_record(LOCK_FILE, REPO_ROOT),
+        "sourceInputs": [
+            _source_file_record(path, REPO_ROOT) for path in source_inputs
+        ],
+        "nugetLock": _source_file_record(LOCK_FILE, REPO_ROOT),
         "packages": packages,
         "generatedSources": [
             _file_record(path, PROJECT_ROOT) for path in generated_files

@@ -372,6 +372,18 @@ def test_source_inventory_uses_repository_relative_paths_without_user_paths() ->
     assert all("Users/" not in path and "Users\\" not in path for path in relative)
 
 
+def test_source_file_record_normalizes_crlf_to_repository_lf(tmp_path: Path) -> None:
+    source = tmp_path / "source.cs"
+    source.write_bytes(b"class Example\r\n{\r\n}\r\n")
+    crlf_record = bom._source_file_record(source, tmp_path)
+
+    source.write_bytes(b"class Example\n{\n}\n")
+    lf_record = bom._source_file_record(source, tmp_path)
+
+    assert crlf_record == lf_record
+    assert lf_record["sizeBytes"] == len(b"class Example\n{\n}\n")
+
+
 def test_runtime_source_inventory_includes_all_locked_projects_without_user_paths() -> (
     None
 ):

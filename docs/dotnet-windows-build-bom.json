@@ -231,8 +231,8 @@
   ],
   "nugetLock": {
     "path": "native/windows/wfp-policy-plan/packages.lock.json",
-    "sha256": "07d11b1b03db7621602ac37b65cf8f7c4ae92329d08d9e0a1fcb3a75b1ea22ad",
-    "sizeBytes": 1502
+    "sha256": "601175f5c301856198b02b2514fc3d5f1e91300b687e442542d27ca038c34c74",
+    "sizeBytes": 1463
   },
   "packages": [
     {
@@ -477,23 +477,23 @@
       "nugetLocks": [
         {
           "path": "native/windows/wfp-policy-runtime/packages.lock.json",
-          "sha256": "40373c99adf9ef6c8bd0d7b4ccead84a2a77074fee40f031b7606dbfa43855ba",
-          "sizeBytes": 220
+          "sha256": "b5cfb1fa9bb6a0794ad727a6b1d0ba4b33a5ccf72d919d96ef4076542d0985e2",
+          "sizeBytes": 208
         },
         {
           "path": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
-          "sha256": "66bf3e109975270ede8108bcb6401aab048d462313a8497af49063735588730e",
-          "sizeBytes": 458
+          "sha256": "b395e0d8f49561cf02c4d7726c2074744925709ee331af6ff093c2e4477331bd",
+          "sizeBytes": 438
         },
         {
           "path": "native/windows/wfp-policy-core/packages.lock.json",
-          "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
-          "sizeBytes": 66
+          "sha256": "a29c6aa8cfb81874ff8bb78dc369d7416f28c9b8cc47e99592bfc019b20c41eb",
+          "sizeBytes": 61
         },
         {
           "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
-          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
-          "sizeBytes": 1460
+          "sha256": "214886b2d90f316b29e3a57b26f478eaf61210dc8870f208500036da8c43078b",
+          "sizeBytes": 1424
         }
       ],
       "nugetPackages": [],
@@ -522,8 +522,8 @@
         },
         {
           "path": "native/windows/wfp-policy-core/packages.lock.json",
-          "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
-          "sizeBytes": 66
+          "sha256": "a29c6aa8cfb81874ff8bb78dc369d7416f28c9b8cc47e99592bfc019b20c41eb",
+          "sizeBytes": 61
         },
         {
           "path": "native/windows/wfp-policy-core/WfpPolicy.Core.csproj",
@@ -552,8 +552,8 @@
         },
         {
           "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
-          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
-          "sizeBytes": 1460
+          "sha256": "214886b2d90f316b29e3a57b26f478eaf61210dc8870f208500036da8c43078b",
+          "sizeBytes": 1424
         },
         {
           "path": "native/windows/wfp-policy-native-readback/SecurityDescriptorNormalizer.cs",
@@ -602,8 +602,8 @@
         },
         {
           "path": "native/windows/wfp-policy-runtime/packages.lock.json",
-          "sha256": "40373c99adf9ef6c8bd0d7b4ccead84a2a77074fee40f031b7606dbfa43855ba",
-          "sizeBytes": 220
+          "sha256": "b5cfb1fa9bb6a0794ad727a6b1d0ba4b33a5ccf72d919d96ef4076542d0985e2",
+          "sizeBytes": 208
         },
         {
           "path": "native/windows/wfp-policy-runtime/SharedSublayerReadbackContract.cs",
@@ -622,8 +622,8 @@
         },
         {
           "path": "native/windows/wfp-policy-runtime/tests/packages.lock.json",
-          "sha256": "66bf3e109975270ede8108bcb6401aab048d462313a8497af49063735588730e",
-          "sizeBytes": 458
+          "sha256": "b395e0d8f49561cf02c4d7726c2074744925709ee331af6ff093c2e4477331bd",
+          "sizeBytes": 438
         },
         {
           "path": "native/windows/wfp-policy-runtime/tests/Program.cs",
@@ -1238,8 +1238,8 @@
       "nugetLocks": [
         {
           "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
-          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
-          "sizeBytes": 1460
+          "sha256": "214886b2d90f316b29e3a57b26f478eaf61210dc8870f208500036da8c43078b",
+          "sizeBytes": 1424
         },
         {
           "path": "native/windows/wfp-policy-native-readback/tests/packages.lock.json",
@@ -1298,8 +1298,8 @@
         },
         {
           "path": "native/windows/wfp-policy-native-readback/packages.lock.json",
-          "sha256": "b1a97516275feae88a3a30da04e0ba2dda68283ab79927afff00e213d6f5863e",
-          "sizeBytes": 1460
+          "sha256": "214886b2d90f316b29e3a57b26f478eaf61210dc8870f208500036da8c43078b",
+          "sizeBytes": 1424
         },
         {
           "path": "native/windows/wfp-policy-native-readback/SecurityDescriptorNormalizer.cs",
@@ -1375,8 +1375,8 @@
     },
     {
       "path": "native/windows/wfp-policy-core/packages.lock.json",
-      "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
-      "sizeBytes": 66
+      "sha256": "a29c6aa8cfb81874ff8bb78dc369d7416f28c9b8cc47e99592bfc019b20c41eb",
+      "sizeBytes": 61
     },
     {
       "path": "native/windows/wfp-policy-core/WfpPolicy.Core.csproj",
@@ -1405,8 +1405,8 @@
     },
     {
       "path": "native/windows/wfp-policy-plan/packages.lock.json",
-      "sha256": "07d11b1b03db7621602ac37b65cf8f7c4ae92329d08d9e0a1fcb3a75b1ea22ad",
-      "sizeBytes": 1502
+      "sha256": "601175f5c301856198b02b2514fc3d5f1e91300b687e442542d27ca038c34c74",
+      "sizeBytes": 1463
     },
     {
       "path": "native/windows/wfp-policy-plan/PolicyPlan.cs",
