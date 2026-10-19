@@ -99,6 +99,7 @@ def verify_build_output_identities(
     actual_builds = _all_builds(actual, "generated BOM")
     expected_builds = _all_builds(expected, "checked-in BOM")
     total = 0
+    mismatches: list[str] = []
     for (actual_label, actual_build), (expected_label, expected_build) in zip(
         actual_builds, expected_builds, strict=True
     ):
@@ -117,15 +118,16 @@ def verify_build_output_identities(
                 actual_identity = actual_by_path.get(path)
                 expected_identity = expected_by_path.get(path)
                 if actual_identity != expected_identity:
-                    raise BomOutputError(
-                        f"{actual_label} build output path/size/SHA-256 inventory "
-                        f"differs at {path} (expected {expected_identity!r}, "
+                    mismatches.append(
+                        f"{actual_label}: {path} (expected {expected_identity!r}, "
                         f"got {actual_identity!r})"
                     )
-            raise BomOutputError(
-                f"{actual_label} build output path/size/SHA-256 inventory differs"
-            )
         total += len(actual_records)
+    if mismatches:
+        raise BomOutputError(
+            "build output path/size/SHA-256 inventory differs at "
+            + "; ".join(mismatches)
+        )
     return total
 
 
