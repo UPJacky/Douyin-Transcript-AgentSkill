@@ -376,7 +376,7 @@ def _source_inputs(project_root: Path, repo_root: Path) -> list[Path]:
             # Globs are rejected to keep the recorded source closure deterministic.
             if any(character in include for character in "*?[]"):
                 raise BomError("wildcard Compile Include needs explicit BOM support")
-            source = (project_dir / include).resolve()
+            source = (project_dir / include.replace("\\", "/")).resolve()
             if not source.is_file() or source.is_symlink():
                 raise BomError(
                     "explicit project source is missing or not a regular file"
@@ -386,7 +386,7 @@ def _source_inputs(project_root: Path, repo_root: Path) -> list[Path]:
             include = node.get("Include")
             if not include or any(character in include for character in "*?[]"):
                 raise BomError("project reference is missing or uses a wildcard")
-            referenced_project = (project_dir / include).resolve()
+            referenced_project = (project_dir / include.replace("\\", "/")).resolve()
             if not referenced_project.is_file() or referenced_project.is_symlink():
                 raise BomError("project reference is missing or not a regular file")
             paths.append(referenced_project)

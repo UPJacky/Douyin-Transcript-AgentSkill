@@ -64,7 +64,10 @@ def _open_parent_directory(
             _close_windows_parent(handles)
         return
 
-    required = (os.open, os.mkdir, os.replace)
+    # ``os.replace`` accepts dir_fd arguments on POSIX, but CPython does not
+    # list it in ``supports_dir_fd`` on every platform. ``os.rename`` provides
+    # the same atomic replacement semantics on POSIX and is capability-listed.
+    required = (os.open, os.mkdir, os.rename)
     if not all(function in os.supports_dir_fd for function in required):
         raise SafeOutputError("safe output requires directory-relative file operations")
     if not getattr(os, "O_NOFOLLOW", 0) or not getattr(os, "O_DIRECTORY", 0):
@@ -417,7 +420,7 @@ def write_atomic_text(path: Path, content: str, *, create_parents: bool = True) 
                         stream.write(content)
                         stream.flush()
                         os.fsync(stream.fileno())
-                    os.replace(
+                    os.rename(
                         temporary_name,
                         destination.name,
                         src_dir_fd=descriptor,

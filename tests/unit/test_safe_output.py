@@ -181,14 +181,14 @@ def test_atomic_replace_stays_in_pinned_directory_during_parent_swap(
     outside = tmp_path / "outside"
     parent.mkdir()
     outside.mkdir()
-    actual_replace = os.replace
+    actual_rename = os.rename
 
-    def swap_parent_then_replace(src, dst, **kwargs):
+    def swap_parent_then_rename(src, dst, **kwargs):
         parent.rename(moved_parent)
         parent.symlink_to(outside, target_is_directory=True)
-        return actual_replace(src, dst, **kwargs)
+        return actual_rename(src, dst, **kwargs)
 
-    monkeypatch.setattr(safe_output.os, "replace", swap_parent_then_replace)
+    monkeypatch.setattr(safe_output.os, "rename", swap_parent_then_rename)
     write_atomic_text(parent / "evidence.txt", "pinned\n")
 
     assert (moved_parent / "evidence.txt").read_text(encoding="utf-8") == "pinned\n"

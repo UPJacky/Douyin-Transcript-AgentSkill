@@ -86,8 +86,6 @@ class WindowsNamedPipeTransport:
         pipe_name: str = DEFAULT_CAPTURE_PIPE_NAME,
         required_session_id: int = 0,
     ) -> None:
-        if os.name != "nt":
-            raise OSError("The Windows capture pipe is unavailable on this platform.")
         if not isinstance(pipe_name, str) or not _PIPE_NAME_PATTERN.fullmatch(pipe_name):
             raise ValueError("pipe_name is invalid")
         if (
@@ -98,6 +96,8 @@ class WindowsNamedPipeTransport:
             raise ValueError("required_session_id is invalid")
         if not isinstance(service_sid, str) or not _SID_PATTERN.fullmatch(service_sid):
             raise ValueError("service_sid is invalid")
+        if os.name != "nt":
+            raise OSError("The Windows capture pipe is unavailable on this platform.")
         self._api = _WindowsPipeApi()
         self._pipe_name = pipe_name
         self._expected_service_sid = self._api.validate_service_sid(service_sid)

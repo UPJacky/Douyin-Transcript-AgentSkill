@@ -600,7 +600,16 @@ def open_pinned_https(
             raise UnsupportedUrlError("网络请求已取消", "CANCELLED")
         connection.arm_deadline()
         connection.request(method, path, headers=headers or {"User-Agent": "douyin-transcript/0.1"})
-        return connection, connection.getresponse()
+        response = connection.getresponse()
+        if cancellation is not None and cancellation.is_set():
+            response.close()
+            raise TimeoutError("HTTPS request was cancelled")
+        if deadline is not None and (
+            time.monotonic() >= deadline or getattr(connection, "_deadline_expired", False)
+        ):
+            response.close()
+            raise TimeoutError("HTTPS request exceeded its total deadline")
+        return connection, response
     except Exception:
         connection.close()
         raise

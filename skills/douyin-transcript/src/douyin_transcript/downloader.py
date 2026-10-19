@@ -474,6 +474,28 @@ def _download_candidate(
                     suffix = _MEDIA_EXTENSIONS.get(mime, ".media")
                     final = cache / f"{video_id}-{candidate.kind}-{digest.hexdigest()[:16]}{suffix}"
                     part.replace(final)
+                    final_identity = checked.identity
+                    if checked.identity is not None:
+                        try:
+                            final_info = os.stat(final, follow_symlinks=False)
+                            published_identity = MediaIdentity.from_stat(final_info)
+                            if (
+                                not stat.S_ISREG(final_info.st_mode)
+                                or published_identity.device != checked.identity.device
+                                or published_identity.inode != checked.identity.inode
+                                or published_identity.size_bytes != checked.identity.size_bytes
+                                or published_identity.mtime_ns != checked.identity.mtime_ns
+                            ):
+                                raise DownloadError(
+                                    "MEDIA_CHANGED",
+                                    "媒体文件在校验后发生变化",
+                                )
+                            # Rename may update ctime on POSIX. Pin the identity
+                            # of the validated file at its published cache path.
+                            final_identity = published_identity
+                        except BaseException:
+                            final.unlink(missing_ok=True)
+                            raise
                     try:
                         _require_time_remaining(deadline)
                     except DownloadError:
@@ -484,7 +506,7 @@ def _download_candidate(
                         checked.format,
                         total,
                         checked.duration_seconds,
-                        checked.identity,
+                        final_identity,
                     )
                 finally:
                     _close_response_and_connection(response, connection)

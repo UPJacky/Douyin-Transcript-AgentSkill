@@ -170,10 +170,29 @@ def _open_posix_git_file(root: Path, parts: tuple[str, ...]):
     directory_flags |= getattr(os, "O_CLOEXEC", 0)
     current_fd = os.open(root.anchor, directory_flags)
     file_fd: int | None = None
+
+    def open_without_following_links(name: str, flags: int) -> int:
+        try:
+            return os.open(name, flags, dir_fd=current_fd)
+        except OSError as exc:
+            # O_NOFOLLOW commonly reports ELOOP for a symlink. Preserve a
+            # precise policy result instead of collapsing it into a generic
+            # inspection error, while still relying on the pinned descriptor
+            # and no-follow open to prevent traversal.
+            try:
+                info = os.stat(name, dir_fd=current_fd, follow_symlinks=False)
+            except OSError:
+                raise exc from None
+            if stat.S_ISLNK(info.st_mode):
+                raise _UnsafeGitPathError(
+                    "symbolic link or reparse point cannot be content-scanned"
+                ) from exc
+            raise exc from None
+
     try:
         components = (*root.parts[1:], *parts[:-1])
         for component in components:
-            next_fd = os.open(component, directory_flags, dir_fd=current_fd)
+            next_fd = open_without_following_links(component, directory_flags)
             if not stat.S_ISDIR(os.fstat(next_fd).st_mode):
                 os.close(next_fd)
                 raise _UnsafeGitPathError(
@@ -184,7 +203,7 @@ def _open_posix_git_file(root: Path, parts: tuple[str, ...]):
 
         file_flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
         file_flags |= getattr(os, "O_CLOEXEC", 0)
-        file_fd = os.open(parts[-1], file_flags, dir_fd=current_fd)
+        file_fd = open_without_following_links(parts[-1], file_flags)
         if not stat.S_ISREG(os.fstat(file_fd).st_mode):
             raise _UnsafeGitPathError("Git-visible path is not a regular file")
         stream = os.fdopen(file_fd, "rb")

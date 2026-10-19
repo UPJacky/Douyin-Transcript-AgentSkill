@@ -1,4 +1,9 @@
 native/windows/**/*.cs text eol=lf
+native/windows/**/*.csproj text eol=lf
+native/windows/**/global.json text eol=lf
+native/windows/**/packages.lock.json text eol=lf
+native/windows/**/NativeMethods.txt text eol=lf
+native/windows/wfp-policy-plan/artifacts/native-filter-plan.example.json text eol=lf
 scripts/schemas/spdx-2.3.schema.json text eol=lf
 skills/douyin-transcript/uv.lock text eol=lf
 docs/third-party-license-evidence.json text eol=lf
