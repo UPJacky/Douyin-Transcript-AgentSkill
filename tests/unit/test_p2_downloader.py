@@ -811,6 +811,13 @@ def test_total_timeout_interrupts_slow_response_headers(monkeypatch):
         def __init__(self, host, ip_address, *, timeout, deadline=None):
             super().__init__(host, ip_address, timeout=timeout, deadline=deadline)
             self.sock, self._peer = socket.socketpair()
+            # This fake skips connect(), which normally bounds socket reads by the deadline.
+            remaining = (
+                timeout
+                if deadline is None
+                else min(timeout, deadline - time.monotonic())
+            )
+            self.sock.settimeout(max(remaining, 0.001))
             self._sender = None
 
         def request(self, _method, _path, headers=None):
