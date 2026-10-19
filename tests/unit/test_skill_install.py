@@ -72,11 +72,9 @@ def test_clean_install_json_helpers_validate_dry_run_and_setup_required_doctor()
     None
 ):
     _validate_dry_run_report(
-        '{"status":"needs_attention","items":[{"input_status":"valid",'
-        '"status":"capture_unavailable",'
-        '"error_code":"BROWSER_ISOLATION_UNAVAILABLE"}],'
-        '"url_capture":{"status":"unavailable",'
-        '"error_code":"BROWSER_ISOLATION_UNAVAILABLE"},"paths":'
+        '{"status":"ready","items":[{"input_status":"valid",'
+        '"status":"valid"}],'
+        '"url_capture":{"status":"not_checked","mode":"personal"},"paths":'
         '{"data_dir":{"status":"writable"},"output_dir":{"status":"writable"}}}'
     )
     _validate_doctor_report(
@@ -92,8 +90,8 @@ def test_clean_install_json_parser_rejects_invalid_objects(stdout: str) -> None:
 
 
 def test_clean_install_json_helpers_reject_unexpected_statuses() -> None:
-    with pytest.raises(SystemExit, match="did not report unavailable URL capture"):
-        _validate_dry_run_report('{"status":"ready","items":[],"paths":{}}')
+    with pytest.raises(SystemExit, match="did not report ready inputs and paths"):
+        _validate_dry_run_report('{"status":"needs_attention","items":[],"paths":{}}')
     with pytest.raises(SystemExit, match="must report setup_required"):
         _validate_doctor_report(
             '{"project":"douyin-transcript","overall":"ready",'

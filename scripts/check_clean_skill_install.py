@@ -53,27 +53,26 @@ def validate_dry_run_report(stdout: str) -> None:
     items = report.get("items")
     paths = report.get("paths")
     url_capture = report.get("url_capture")
-    if report.get("status") != "needs_attention":
+    if report.get("status") != "ready":
         raise SystemExit(
-            "the copied Skill dry-run did not report unavailable URL capture"
+            "the copied Skill dry-run did not report ready inputs and paths"
         )
     if not isinstance(items, list) or not items or not isinstance(items[0], dict):
         raise SystemExit("the copied Skill dry-run returned no valid input item")
     if (
         items[0].get("input_status") != "valid"
-        or items[0].get("status") != "capture_unavailable"
-        or items[0].get("error_code") != "BROWSER_ISOLATION_UNAVAILABLE"
+        or items[0].get("status") != "valid"
     ):
         raise SystemExit(
-            "the copied Skill dry-run did not fail closed for the sample URL"
+            "the copied Skill dry-run did not validate the sample URL"
         )
     if (
         not isinstance(url_capture, dict)
-        or url_capture.get("status") != "unavailable"
-        or url_capture.get("error_code") != "BROWSER_ISOLATION_UNAVAILABLE"
+        or url_capture.get("status") != "not_checked"
+        or url_capture.get("mode") != "personal"
     ):
         raise SystemExit(
-            "the copied Skill dry-run returned an unexpected capture capability"
+            "the copied Skill dry-run returned an unexpected personal capture mode"
         )
     if not isinstance(paths, dict) or any(
         not isinstance(paths.get(name), dict) or paths[name].get("status") != "writable"
