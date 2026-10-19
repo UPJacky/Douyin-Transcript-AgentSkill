@@ -1,2 +1,6 @@
 native/windows/**/*.cs text eol=lf
 scripts/schemas/spdx-2.3.schema.json text eol=lf
+skills/douyin-transcript/uv.lock text eol=lf
+docs/third-party-license-evidence.json text eol=lf
+docs/third-party-sbom.spdx.json text eol=lf
+scripts/generate_spdx_sbom.py text eol=lf

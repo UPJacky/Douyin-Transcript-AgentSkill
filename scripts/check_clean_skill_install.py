@@ -59,13 +59,8 @@ def validate_dry_run_report(stdout: str) -> None:
         )
     if not isinstance(items, list) or not items or not isinstance(items[0], dict):
         raise SystemExit("the copied Skill dry-run returned no valid input item")
-    if (
-        items[0].get("input_status") != "valid"
-        or items[0].get("status") != "valid"
-    ):
-        raise SystemExit(
-            "the copied Skill dry-run did not validate the sample URL"
-        )
+    if items[0].get("input_status") != "valid" or items[0].get("status") != "valid":
+        raise SystemExit("the copied Skill dry-run did not validate the sample URL")
     if (
         not isinstance(url_capture, dict)
         or url_capture.get("status") != "not_checked"

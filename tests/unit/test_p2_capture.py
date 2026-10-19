@@ -157,7 +157,9 @@ def test_context_routes_do_not_use_the_local_dns_resolver(monkeypatch):
 
 
 @pytest.mark.parametrize("personal", [False, True])
-def test_browser_context_guards_share_the_active_capture_deadline(monkeypatch, personal):
+def test_browser_context_guards_share_the_active_capture_deadline(
+    monkeypatch, personal
+):
     calls = []
     monkeypatch.setattr(
         capture_module,

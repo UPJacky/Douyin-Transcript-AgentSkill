@@ -419,9 +419,7 @@ def test_doctor_separates_local_and_url_capabilities(monkeypatch, tmp_path):
     assert report["checks"]["model"]["detail"] == "fast"
 
 
-def test_doctor_personal_url_capability_uses_installed_browser(
-    monkeypatch, tmp_path
-):
+def test_doctor_personal_url_capability_uses_installed_browser(monkeypatch, tmp_path):
     monkeypatch.setattr(
         doctor, "_module_status", lambda _name: {"status": "ok", "detail": "test"}
     )

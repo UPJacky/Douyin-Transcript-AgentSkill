@@ -943,7 +943,9 @@ class TranscriptionPipeline:
             )
             if not queued:
                 return task, ItemResult(
-                    "failed", video_id=task.video_id, error_code="TASK_LOCKED",
+                    "failed",
+                    video_id=task.video_id,
+                    error_code="TASK_LOCKED",
                     hint="任务状态已改变，请稍后重试。",
                 )
             task = queued[0]

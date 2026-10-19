@@ -450,9 +450,7 @@ class BrowserCapture:
             except Exception:
                 pass
             return
-        _guard_browser_request(
-            route, deadline=self._capture_deadline, personal=self.personal
-        )
+        _guard_browser_request(route, deadline=self._capture_deadline, personal=self.personal)
 
     def _guard_websocket(self, route: Any) -> None:
         if not self._route_lease_active():

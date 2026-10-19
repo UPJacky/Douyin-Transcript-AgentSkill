@@ -1043,20 +1043,27 @@ def test_remote_force_retries_only_the_requested_login_failure(tmp_path, force):
             claimed = store.claim_task(task.task_id, "prior")
             assert claimed is not None
             store.fail_task(
-                task.task_id, "LOGIN_REQUIRED", worker_id="prior",
+                task.task_id,
+                "LOGIN_REQUIRED",
+                worker_id="prior",
                 claim_generation=claimed.claim_generation,
             )
     service = _CaptureServiceFake(paths)
     pipeline = TranscriptionPipeline(
-        paths, capture_service_client=service, force=force,
-        media_validator=_validator, asr_factory=_asr_factory,
+        paths,
+        capture_service_client=service,
+        force=force,
+        media_validator=_validator,
+        asr_factory=_asr_factory,
     )
     try:
         result = pipeline.run_urls(["https://www.douyin.com/video/123"])[0]
     finally:
         pipeline.close()
     assert result.status == ("success" if force else "failed")
-    assert service.capture_calls == (["https://www.douyin.com/video/123"] if force else [])
+    assert service.capture_calls == (
+        ["https://www.douyin.com/video/123"] if force else []
+    )
     with TaskStore(paths.data_dir / "tasks.sqlite3") as store:
         assert store.get_task("456").state == "failed"
 

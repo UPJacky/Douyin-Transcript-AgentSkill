@@ -22,5 +22,6 @@
 
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
+    <Compile Remove="sandbox/**/*.cs" />
   </ItemGroup>
 </Project>
