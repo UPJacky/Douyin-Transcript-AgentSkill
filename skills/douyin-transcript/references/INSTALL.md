@@ -1,5 +1,7 @@
 # Installation
 
+Download or clone the public GitHub source repository to get a checkout. There is currently no GitHub Release, installer, or prebundled model/browser; follow the setup steps below after downloading. The project license has not been approved. Public visibility and downloading do not grant permission to reuse or redistribute original project material; third-party components retain their own license and notice terms.
+
 These steps assume you already have a checkout of this repository. They do not require a published package or repository URL. Use Python 3.11 or 3.12 and install [uv](https://docs.astral.sh/uv/) for your operating system. CI currently pins uv 0.12.7; older versions have not been verified.
 
 **Support status:** The supported target is Windows 11 x64 with Python 3.11 or 3.12. The macOS and Linux commands below are compatibility-check examples only; those platforms are not supported release targets.

@@ -4,6 +4,16 @@ Douyin Transcript is a command-line tool and Agent Skill for turning authorized 
 
 The CLI writes transcript text to local Markdown files. Its JSON and quiet summaries report status and file paths without including transcript bodies. An optional, user-supplied terminology dictionary applies literal, case-sensitive replacements; it is disabled unless explicitly selected. Markdown metadata stores a ruleset hash and aggregate counts only, without rule IDs, source/replacement text, notes, or per-rule counts. The hash may still be matched against a known dictionary. Full rules remain in the protected local task database for retries.
 
+## Download and use
+
+The GitHub repository is public. Get the source with `git clone` or **Code → Download ZIP**. This is a source checkout that needs setup, not a ready-to-run installer. There is currently no GitHub Release, installer, or prebundled speech model or browser. Follow the [installation guide](skills/douyin-transcript/references/INSTALL.md) from the repository root.
+
+The supported target is Windows 11 x64 with Python 3.11 or 3.12 and uv 0.12.7 (earlier versions are unverified). After the basic install, run `doctor`. Local audio/video transcription also needs the ASR dependencies and a downloaded model. Douyin URL capture needs Playwright and Chromium; sign in manually if prompted. Process one URL at a time. Access depends on the account and platform state.
+
+To use the Agent Skill in Codex, clone or download the repository and open its root directory in Codex. The Skill is in `.codex/skills/douyin-transcript/`; see the [Skill instructions](skills/douyin-transcript/SKILL.md). Model proofreading places transcript text in the current Agent's model context and may send it to the model provider; obtain user authorization first.
+
+**License status:** No project license has been approved. Public access and downloading do not grant permission to modify, integrate, or redistribute original project material. Third-party components retain their own licenses and notices.
+
 ## Scope
 
 - The official support target is Windows 11 x64 with Python 3.11 or 3.12. macOS and Linux are not supported.
@@ -74,7 +84,7 @@ Cache inspection is available with cache inspect. Cache cleanup is manual and pr
 
 The tool does not bypass login, CAPTCHA, DRM, or access controls. Browser state can retain login cookies. Keep the application data directory private, and do not put transcripts, browser profiles, cookies, signed media URLs, or private media into public repositories or support reports.
 
-The project license has not been approved; do not treat this repository as granting a reuse license for its original material. Third-party components retain their own license and notice terms. The planned initial distribution is source only; it does not bundle wheels, models, browsers, or prebuilt binaries. See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
+Third-party components retain their own license and notice terms. The planned initial distribution is source only; it does not bundle wheels, models, browsers, or prebuilt binaries. See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
 
 ## FAQ
 

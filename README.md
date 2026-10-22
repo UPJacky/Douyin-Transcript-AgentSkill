@@ -2,6 +2,16 @@
 
 把**有权处理的**本地音视频或抖音链接转成 Markdown 口播逐字稿，优先按标题命名，缺失时使用视频 ID。当前面向个人 Windows 自用：以现有普通账号运行专用 Chromium profile，一次处理一个 URL，不要求管理员服务。三条不同真实授权链接已完成采集、下载、本地 ASR、当前默认模型文本校对及独立校对稿注册；原稿保留，声学听审未验证。后两条没有独立短标题，使用视频 ID 文件名，见[当前交付状态](docs/CURRENT_DELIVERY_STATUS.md)。ASR 在本机运行；CLI 不调用 LLM，也不会把逐字稿正文输出到终端或 JSON。经用户要求或授权后，Agent Skill 使用调用它的 Agent 当前默认模型检查明显的 ASR 错词并补充中文标点，另存并核验 `.reviewed.md` 校对稿；只有完成这一步才报告端到端任务完成。校对会将正文放入该 Agent 的模型上下文，可能发送给模型服务商；首次校对前须说明这一数据流。用户可要求本地模式跳过此步骤，此时结果仍是未校对的原始稿。
 
+## 下载和使用说明
+
+GitHub 仓库公开，可通过 `git clone` 或仓库页面的 **Code → Download ZIP** 获取源码。下载的是需要配置的源码项目，不是开箱即用的安装包；目前没有 GitHub Release、安装程序或预打包的语音模型和浏览器。请从仓库根目录按[安装指南](skills/douyin-transcript/references/INSTALL.md)准备环境。
+
+当前支持目标为 Windows 11 x64、Python 3.11/3.12 和 uv 0.12.7（更早版本未经验证）。基础安装后先运行 `doctor`。本地音视频转写还需安装 ASR 依赖并下载所选模型；抖音链接采集还需 Playwright/Chromium，遇到登录要求时须手动登录。每次只处理一个 URL，链接是否可访问取决于账号和平台状态。
+
+若要在 Codex 中使用 Agent Skill，请下载或克隆仓库并在 Codex 中打开仓库目录；Skill 文件位于 `.codex/skills/douyin-transcript/`，完整流程见[Skill 说明](skills/douyin-transcript/SKILL.md)。模型校对会把正文放入当前 Agent 的模型上下文，可能发送给模型服务商，使用前须获得用户授权。
+
+**许可证状态：** 项目许可证尚未确定。公开访问和下载不表示已获准修改、集成或再发布项目原创内容；第三方组件仍适用各自的许可证和 NOTICE。
+
 ## 能力范围
 
 - 官方支持目标为 Windows 11 x64、Python 3.11/3.12；macOS 和 Linux 暂不支持。
@@ -182,4 +192,4 @@ uv run --project .\skills\douyin-transcript --locked --no-sync --group dev ruff 
 
 ## 安全与版权
 
-只处理你有权访问和转录的内容，并尊重平台条款、作者版权及隐私。Cookie 保留在用户浏览器 profile；仓库不导出 Cookie，也不上传媒体或逐字稿。项目许可证尚未确定；请勿将本仓库视为已授予其中原创内容的复用许可。第三方依赖仍按各自许可和 NOTICE。当前计划交付范围不包含 wheel、模型、浏览器或预构建二进制。
+只处理你有权访问和转录的内容，并尊重平台条款、作者版权及隐私。Cookie 保留在用户浏览器 profile；仓库不导出 Cookie，也不上传媒体或逐字稿。第三方依赖仍按各自许可和 NOTICE。当前计划交付范围不包含 wheel、模型、浏览器或预构建二进制。
