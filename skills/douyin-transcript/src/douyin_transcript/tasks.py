@@ -28,7 +28,7 @@ from .limits import HARD_MAX_OUTPUT_CHARACTERS, HARD_MAX_OUTPUT_SEGMENTS
 from .markdown import (
     MAX_FRONTMATTER_CHARACTERS,
     MAX_REVIEWED_TRANSCRIPT_BYTES,
-    REVIEWED_TRANSCRIPT_NOTICE,
+    REVIEWED_TRANSCRIPT_NOTICES,
     TRANSCRIPT_SECTION_HEADING,
 )
 from .storage_security import (
@@ -427,7 +427,7 @@ def _reviewed_sidecar_has_scope_notice(path: Path) -> bool:
                 if characters_read > MAX_FRONTMATTER_CHARACTERS + 4096:
                     return False
                 value = line.rstrip("\r\n")
-                if value == REVIEWED_TRANSCRIPT_NOTICE:
+                if value in REVIEWED_TRANSCRIPT_NOTICES:
                     notice_found = True
                 if value == TRANSCRIPT_SECTION_HEADING:
                     return notice_found

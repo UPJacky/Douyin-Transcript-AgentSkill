@@ -269,7 +269,7 @@ def test_reviewed_sidecar_preserves_raw_frontmatter_and_never_overwrites(tmp_pat
     )
     raw_before = raw_path.read_bytes()
     raw_frontmatter = raw_before.split(b"\n---\n", 1)[0] + b"\n---"
-    reviewed_body = "这里是校对后的闭源术语，标点完整。\n\n下一段保留原意！"
+    reviewed_body = "这里是校对后的闭源术语保留原意\n\n下一段继续原来的内容"
 
     first = write_reviewed_transcript_markdown(raw_path, reviewed_body)
     first_bytes = first.read_bytes()
@@ -282,8 +282,8 @@ def test_reviewed_sidecar_preserves_raw_frontmatter_and_never_overwrites(tmp_pat
     assert first_bytes.startswith(raw_frontmatter)
     assert b'video_id: "synthetic-123"' in first_bytes
     assert "未经人工逐字校对".encode() not in first_bytes
-    assert "当前 Agent 默认模型进行文本校对和标点整理".encode() in first_bytes
-    assert "这里是校对后的闭源术语，标点完整。".encode() in first_bytes
+    assert "当前 Agent 默认模型进行文本校对和分段整理".encode() in first_bytes
+    assert "这里是校对后的闭源术语保留原意".encode() in first_bytes
     assert "原始正文不能被覆盖".encode() not in first_bytes
 
 
@@ -291,9 +291,6 @@ def test_reviewed_sidecar_preserves_raw_frontmatter_and_never_overwrites(tmp_pat
     ("reviewed_body", "message"),
     [
         ("", "reviewed text is empty"),
-        ("一段没有句读标点的文字", "Chinese sentence punctuation"),
-        ("一句里有逗号，和冒号：但没有句末标点", "Chinese sentence punctuation"),
-        ("只有列表顿号、分号；也没有句末标点", "Chinese sentence punctuation"),
         ("甲" * 299 + "。", "paragraph breaks"),
     ],
 )
@@ -308,28 +305,26 @@ def test_reviewed_sidecar_rejects_incomplete_review_format(
     assert not list(tmp_path.glob("*.reviewed.md"))
 
 
-def test_reviewed_sidecar_rejects_long_unpunctuated_run(tmp_path):
+def test_reviewed_sidecar_accepts_long_punctuation_free_text(tmp_path):
     raw_path = write_transcript_markdown(
         tmp_path, "punctuation-check", "raw text。", {}
     )
-    reviewed_body = "转写文字" * 41 + "，这里虽然出现了一个标点，但前文过长。"
+    reviewed_body = "转写文字" * 41
 
-    with pytest.raises(ValueError, match="unpunctuated run"):
-        write_reviewed_transcript_markdown(raw_path, reviewed_body)
+    reviewed_path = write_reviewed_transcript_markdown(raw_path, reviewed_body)
 
-    assert not list(tmp_path.glob("*.reviewed.md"))
+    assert reviewed_path.read_text(encoding="utf-8").endswith(reviewed_body + "\n")
 
 
-def test_reviewed_sidecar_rejects_a_punctuation_free_paragraph(tmp_path):
+def test_reviewed_sidecar_accepts_punctuation_free_paragraphs(tmp_path):
     raw_path = write_transcript_markdown(
         tmp_path, "paragraph-punctuation-check", "raw text。", {}
     )
-    reviewed_body = "甲" * 149 + "，\n\n" + "乙" * 151
+    reviewed_body = "甲" * 149 + "\n\n" + "乙" * 151
 
-    with pytest.raises(ValueError, match="every reviewed paragraph"):
-        write_reviewed_transcript_markdown(raw_path, reviewed_body)
+    reviewed_path = write_reviewed_transcript_markdown(raw_path, reviewed_body)
 
-    assert not list(tmp_path.glob("*.reviewed.md"))
+    assert reviewed_path.read_text(encoding="utf-8").endswith(reviewed_body + "\n")
 
 
 def test_reviewed_sidecar_rejects_symlinked_raw_input(tmp_path):
@@ -343,7 +338,7 @@ def test_reviewed_sidecar_rejects_symlinked_raw_input(tmp_path):
         )
 
     with pytest.raises(PermissionError):
-        write_reviewed_transcript_markdown(alias, "已校对正文。")
+        write_reviewed_transcript_markdown(alias, "已校对正文")
 
     assert not (tmp_path / "alias.reviewed.md").exists()
 

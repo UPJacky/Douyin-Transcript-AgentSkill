@@ -28,13 +28,19 @@ _NON_LINEBREAK_CONTROLS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]")
 MAX_FRONTMATTER_CHARACTERS = 4 * 1024 * 1024
 MAX_REVIEWED_TRANSCRIPT_BYTES = 16 * 1024 * 1024
 MAX_REVIEWED_TRANSCRIPT_CHARACTERS = 1_000_000
-MAX_UNPUNCTUATED_REVIEWED_CHARACTERS = 160
 RAW_TRANSCRIPT_NOTICE = "> 本文为自动语音识别逐字稿，未经人工逐字校对。"
 REVIEWED_TRANSCRIPT_NOTICE = (
-    "> 本文已由当前 Agent 默认模型进行文本校对和标点整理；未对照音视频逐字听审，存疑处需复听确认。"
+    "> 本文已由当前 Agent 默认模型进行文本校对和分段整理；未对照音视频逐字听审，存疑处需复听确认。"
+)
+REVIEWED_TRANSCRIPT_NOTICES = frozenset(
+    (
+        REVIEWED_TRANSCRIPT_NOTICE,
+        # Keep previously generated sidecars recognizable after the scope
+        # notice wording changed to describe text and paragraph review.
+        "> 本文已由当前 Agent 默认模型进行文本校对和标点整理；未对照音视频逐字听审，存疑处需复听确认。",
+    )
 )
 TRANSCRIPT_SECTION_HEADING = "## 口播逐字稿"
-_CHINESE_SENTENCE_ENDINGS = frozenset("。！？…")
 
 
 def strip_control_characters(text: str) -> str:
@@ -423,17 +429,6 @@ def write_reviewed_transcript_markdown(raw_path: Path, reviewed_body: str) -> Pa
     ]
     if len(normalized_body) >= 300 and len(paragraphs) < 2:
         raise ValueError("long reviewed text needs readable paragraph breaks")
-    for paragraph in paragraphs:
-        if not any(character in _CHINESE_SENTENCE_ENDINGS for character in paragraph):
-            raise ValueError(
-                "every reviewed paragraph needs Chinese sentence punctuation (。！？…)"
-            )
-        unpunctuated_runs = re.split(r"[，。！？；：、…,.!?;:]", paragraph)
-        if any(len(run) > MAX_UNPUNCTUATED_REVIEWED_CHARACTERS for run in unpunctuated_runs):
-            raise ValueError(
-                "reviewed text has an unpunctuated run over "
-                f"{MAX_UNPUNCTUATED_REVIEWED_CHARACTERS} characters"
-            )
 
     rendered = "".join(prefix_lines) + escape_markdown_text(normalized_body) + "\n"
     for destination in candidate_output_paths(
