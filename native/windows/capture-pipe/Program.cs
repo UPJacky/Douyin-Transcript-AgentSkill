@@ -42,7 +42,7 @@ internal static class Program
             }
             catch (Exception exception)
             {
-                Console.Error.WriteLine($"FAIL {exception.GetType().Name}: {exception.Message}");
+                Console.Error.WriteLine($"FAIL {exception}");
                 return 1;
             }
         }

@@ -37,7 +37,10 @@ REVIEWED_TRANSCRIPT_NOTICES = frozenset(
         REVIEWED_TRANSCRIPT_NOTICE,
         # Keep previously generated sidecars recognizable after the scope
         # notice wording changed to describe text and paragraph review.
-        "> 本文已由当前 Agent 默认模型进行文本校对和标点整理；未对照音视频逐字听审，存疑处需复听确认。",
+        (
+            "> 本文已由当前 Agent 默认模型进行文本校对和标点整理；"
+            "未对照音视频逐字听审，存疑处需复听确认。"
+        ),
     )
 )
 TRANSCRIPT_SECTION_HEADING = "## 口播逐字稿"

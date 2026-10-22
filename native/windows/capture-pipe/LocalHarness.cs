@@ -549,11 +549,41 @@ internal static class LocalHarness
             "DNS parser did not preserve the UDP truncation flag for TCP fallback");
 
         await VerifyNumericDnsPermitDenialAsync(hostname).ConfigureAwait(false);
+        Console.WriteLine("PASS bounded DNS wire parser scenarios");
+        if (!CanBindLoopbackDnsSockets(out SocketException? socketException))
+        {
+            Console.WriteLine(
+                $"SKIP local DNS UDP/TCP transport fixtures: runner denied loopback sockets ({socketException!.SocketErrorCode}).");
+            return;
+        }
+
         await VerifyNumericDnsUdpAsync(hostname).ConfigureAwait(false);
         await VerifyNumericDnsTcpFallbackAsync(hostname).ConfigureAwait(false);
         await VerifyNumericDnsCancellationAsync(hostname).ConfigureAwait(false);
         await VerifyNumericDnsTcpCancellationAsync(hostname).ConfigureAwait(false);
-        Console.WriteLine("PASS bounded DNS wire parser, UDP/TCP fallback, and local socket-cancellation fixtures");
+        Console.WriteLine("PASS DNS UDP/TCP fallback and local socket-cancellation fixtures");
+    }
+
+    private static bool CanBindLoopbackDnsSockets(out SocketException? socketException)
+    {
+        try
+        {
+            using (var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+            {
+                udpSocket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+            }
+
+            var tcpListener = new TcpListener(IPAddress.Loopback, 0);
+            tcpListener.Start();
+            tcpListener.Stop();
+            socketException = null;
+            return true;
+        }
+        catch (SocketException exception) when (exception.SocketErrorCode == SocketError.AccessDenied)
+        {
+            socketException = exception;
+            return false;
+        }
     }
 
     private static async Task VerifyLeaseTcpConnectorAsync()
