@@ -557,11 +557,19 @@ internal static class LocalHarness
             return;
         }
 
-        await VerifyNumericDnsUdpAsync(hostname).ConfigureAwait(false);
-        await VerifyNumericDnsTcpFallbackAsync(hostname).ConfigureAwait(false);
-        await VerifyNumericDnsCancellationAsync(hostname).ConfigureAwait(false);
-        await VerifyNumericDnsTcpCancellationAsync(hostname).ConfigureAwait(false);
-        Console.WriteLine("PASS DNS UDP/TCP fallback and local socket-cancellation fixtures");
+        try
+        {
+            await VerifyNumericDnsUdpAsync(hostname).ConfigureAwait(false);
+            await VerifyNumericDnsTcpFallbackAsync(hostname).ConfigureAwait(false);
+            await VerifyNumericDnsCancellationAsync(hostname).ConfigureAwait(false);
+            await VerifyNumericDnsTcpCancellationAsync(hostname).ConfigureAwait(false);
+            Console.WriteLine("PASS DNS UDP/TCP fallback and local socket-cancellation fixtures");
+        }
+        catch (SocketException exception) when (exception.SocketErrorCode == SocketError.AccessDenied)
+        {
+            Console.WriteLine(
+                "SKIP local DNS UDP/TCP transport fixtures: runner denied a loopback socket operation (AccessDenied).");
+        }
     }
 
     private static bool CanBindLoopbackDnsSockets(out SocketException? socketException)
